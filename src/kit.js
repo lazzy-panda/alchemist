@@ -31,7 +31,25 @@ export const KIT = {
   fillPurple: require('../assets/kit/fill_purple.png'),
   fillOrange: require('../assets/kit/fill_orange.png'),
   levelupBanner: require('../assets/kit/levelup_banner.png'),
+  orb: require('../assets/kit/orb.png'),
 };
+
+function hexHue(hex) {
+  try {
+    const n = parseInt(hex.slice(1), 16);
+    let r = ((n >> 16) & 255) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+    let h = 0;
+    if (d) {
+      if (mx === r) h = ((g - b) / d) % 6;
+      else if (mx === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h *= 60; if (h < 0) h += 360;
+    }
+    return h;
+  } catch (e) { return 0; }
+}
+const ORB_BASE_HUE = 212; // hue of the kit blue gem center
 const FILLS = {
   // resources
   hp: KIT.fillRed, qi: KIT.fillBlue, xp: KIT.fillGreen,
@@ -174,13 +192,19 @@ export function KitRound({ size = 230, style, children }) {
   );
 }
 
-/* ---------- gem / medallion on a real kit stone slot ---------- */
-export function KitGem({ size = 54, color = '#fff', han, fontSize, glyphStyle }) {
-  const b = Math.max(7, Math.round(size * 0.26));
+/* ---------- gem / medallion — real kit gem (stone ring + glossy centre),
+   centre hue-rotated to the category/stat colour; han symbol on top ---------- */
+export function KitGem({ size = 54, color = '#888', han, fontSize, glyphStyle }) {
+  const ref = useRef(null);
+  const rot = Math.round((hexHue(color) - ORB_BASE_HUE + 360) % 360);
+  useEffect(() => {
+    if (WEB && ref.current) ref.current.style.filter = `hue-rotate(${rot}deg) saturate(1.55)`;
+  }, [rot]);
   return (
-    <NineSlice source={KIT.panel} slice={56} border={b} style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={[{ fontFamily: FONT.han, fontSize: fontSize || size * 0.5, color, lineHeight: (fontSize || size * 0.5) * 1.02, textAlign: 'center' }, glyphStyle]}>{han}</Text>
-    </NineSlice>
+    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      <Image ref={ref} source={KIT.orb} style={{ position: 'absolute', width: size, height: size }} resizeMode="contain" />
+      <Text style={[{ fontFamily: FONT.han, fontSize: fontSize || size * 0.42, color: '#fff', textShadowColor: 'rgba(0,0,0,0.6)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }, glyphStyle]}>{han}</Text>
+    </View>
   );
 }
 
