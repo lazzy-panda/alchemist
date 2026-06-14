@@ -1,20 +1,30 @@
+import React from 'react';
+import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { C } from './src/theme';
+import { useAppFonts } from './src/fonts';
+import { AuthProvider, useAuth } from './src/auth';
+import { EffectsProvider } from './src/effects';
+import { AuthScreen } from './src/AuthScreen';
+import { MainApp } from './src/MainApp';
 
-export default function App() {
+function Gate() {
+  const fontsReady = useAppFonts();
+  const { ready, user } = useAuth();
+  if (!fontsReady || !ready) return <View style={{ flex: 1, backgroundColor: C.paper }} />;
+  if (!user) return <AuthScreen />;
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <EffectsProvider>
+      <MainApp />
+    </EffectsProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <AuthProvider>
+      <Gate />
+      <StatusBar style="dark" />
+    </AuthProvider>
+  );
+}

@@ -1,24 +1,36 @@
 {
   "expo": {
-    "name": "alchemist",
+    "name": "Alchemist",
     "slug": "alchemist",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "alchemist",
     "userInterfaceStyle": "light",
+    "backgroundColor": "#EFE6CB",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#EFE6CB",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "name": "Alchemist",
+      "themeColor": "#3E8C60",
+      "backgroundColor": "#EFE6CB"
+    },
+    "plugins": [
+      "expo-font"
+    ],
+    "experiments": {
+      "baseUrl": "/alchemist"
     }
   }
 }
