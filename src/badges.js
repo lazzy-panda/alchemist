@@ -11,28 +11,9 @@ import { KitPanel, KitBar, KitGem, KitPill, KitParchPill } from './kit';
 const WEB = Platform.OS === 'web';
 
 /* ---------- gem medallion (.mh) ---------- */
-export function Mh({ size = 20, color, han, fontSize, radius, opacity = 1, square = false }) {
-  const br = radius != null ? radius : square ? Math.round(size * 0.28) : size / 2;
-  return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: br,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: color,
-        borderWidth: 2,
-        borderColor: C.stoneLine,
-        overflow: 'hidden',
-        opacity,
-        boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.45), inset 0px -2px 4px rgba(0,0,0,0.2)',
-      }}
-    >
-      <Han style={{ fontSize: fontSize || size * 0.62, color: '#fff', textAlign: 'center' }}>{han}</Han>
-      <Gloss radius={br} />
-    </View>
-  );
+export function Mh({ size = 20, color, han, fontSize }) {
+  // every small gem is the real kit gem (hue-rotated centre)
+  return <KitGem size={size} color={color} han={han} fontSize={fontSize} />;
 }
 
 export function StatMedal({ stat, size = 18, fontSize }) {
