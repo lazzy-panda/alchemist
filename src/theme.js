@@ -44,6 +44,19 @@ export const C = {
   redDeep: '#A8341F',
   redLine: '#6E1D0F',
 
+  // stone (RPG kit frames) — replaces wood framing
+  stoneLight: '#C9C4B6',
+  stoneMid: '#A29C8C',
+  stoneDark: '#6E6A5B',
+  stoneLine: '#46433A',
+  stoneEdge: '#DCD7C8',
+
+  // blue accent (kit info / secondary pills)
+  blue: '#3F92C8',
+  blueLight: '#6FBDE8',
+  blueDark: '#2A6F9E',
+  blueLine: '#1C5478',
+
   // characteristic semantics (CSS --c-*)
   cEnergy: '#34A18C',
   cStrength: '#C66A38',

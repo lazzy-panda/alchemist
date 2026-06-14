@@ -19,9 +19,9 @@ function GoldPill({ children, style }) {
 
 function CheckDot({ on }) {
   if (on) {
-    return <Gradient colors={[C.jadeLight, C.jade]} angle={180} style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2.5, borderColor: C.woodLine, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.4)' }} />;
+    return <Gradient colors={[C.jadeLight, C.jade]} angle={180} style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2.5, borderColor: C.stoneLine, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.4)' }} />;
   }
-  return <View style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2.5, borderColor: C.woodLine, backgroundColor: '#e3d8bf', boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.4)' }} />;
+  return <View style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: '#e3d8bf', boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.4)' }} />;
 }
 
 const PMT = {
@@ -33,7 +33,7 @@ function PmtRow({ badge, kind, label, value, onChange, mini, placeholder }) {
   const p = PMT[kind];
   return (
     <View style={{ flexDirection: 'row', gap: 9, alignItems: 'flex-start', marginBottom: 9 }}>
-      <Gradient colors={p.colors} angle={180} style={{ width: 32, height: 32, borderRadius: 9, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.woodLine, marginTop: 2, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.4), 0px 2px 0px rgba(0,0,0,0.16)' }}>
+      <Gradient colors={p.colors} angle={180} style={{ width: 32, height: 32, borderRadius: 9, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, marginTop: 2, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.4), 0px 2px 0px rgba(0,0,0,0.16)' }}>
         <Text style={{ fontFamily: FONT.display, fontWeight: '800', fontSize: 17, color: p.text }}>{badge}</Text>
       </Gradient>
       <View style={{ flex: 1, minWidth: 0 }}>
@@ -83,8 +83,8 @@ function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChan
           <PmtRow badge="✓" kind="todo" label="Сделать — на ближайшие часы" value={c.todo} onChange={(val) => onChange('todo', val)} />
           <Pressable onPress={onComplete}>
             {({ pressed }) => (
-              <Gradient colors={c.done ? ['#fff', '#f1e6c8'] : [C.jadeLight, C.jade]} angle={180} style={{ marginTop: 12, paddingVertical: 12, borderRadius: 16, alignItems: 'center', borderWidth: 2.5, borderColor: c.done ? C.wood2 : C.jadeLine, boxShadow: c.done ? '0px 4px 0px #c2a877' : `0px 4px 0px ${C.jadeLine}`, transform: pressed ? [{ translateY: 3 }] : [] }}>
-                <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: c.done ? C.jadeDeep : '#fff' }}>{c.done ? '✓ Обновить проверку' : 'Отметить проверку'}</Text>
+              <Gradient colors={c.done ? ['#CFCABC', '#A29C8C'] : [C.jadeLight, C.jade]} angle={180} style={{ marginTop: 12, paddingVertical: 12, borderRadius: 16, alignItems: 'center', borderWidth: 2.5, borderColor: c.done ? '#46433A' : C.jadeLine, boxShadow: c.done ? '0px 4px 0px #46433A' : `0px 4px 0px ${C.jadeLine}`, transform: pressed ? [{ translateY: 3 }] : [] }}>
+                <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: c.done ? '#3a362c' : '#fff' }}>{c.done ? '✓ Обновить проверку' : 'Отметить проверку'}</Text>
               </Gradient>
             )}
           </Pressable>

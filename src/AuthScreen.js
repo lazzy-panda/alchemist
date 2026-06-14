@@ -39,7 +39,7 @@ export function AuthScreen() {
               </View>
 
               {/* card */}
-              <Gradient colors={[C.paperCell, C.paperLight]} angle={180} style={{ borderRadius: 26, borderWidth: 5, borderColor: C.wood3, padding: 22, boxShadow: `inset 0px 0px 0px 3px ${C.woodEdge}, 0px 14px 34px rgba(20,12,4,0.45)` }}>
+              <Gradient colors={[C.paperCell, C.paperLight]} angle={180} style={{ borderRadius: 26, borderWidth: 5, borderColor: C.stoneDark, padding: 22, boxShadow: `inset 0px 0px 0px 3px ${C.stoneEdge}, 0px 14px 34px rgba(20,12,4,0.45)` }}>
                 {/* tabs */}
                 <View style={{ flexDirection: 'row', gap: 8, marginBottom: 18, backgroundColor: 'rgba(120,80,40,0.12)', borderRadius: 999, padding: 4 }}>
                   {[['login', 'Вход'], ['register', 'Регистрация']].map(([m, lbl]) => {

@@ -99,7 +99,7 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
             <Gradient
               colors={[cat.color, shade(cat.color, -18)]}
               angle={150}
-              style={{ width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.woodLine, overflow: 'hidden', boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.5), inset 0px -4px 8px rgba(0,0,0,0.25), 0px 3px 0px rgba(0,0,0,0.18)' }}
+              style={{ width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, overflow: 'hidden', boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.5), inset 0px -4px 8px rgba(0,0,0,0.25), 0px 3px 0px rgba(0,0,0,0.18)' }}
             >
               <Han style={{ fontSize: 25, color: '#fff', textShadowColor: 'rgba(0,0,0,0.35)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>{cat.han}</Han>
               <Gloss radius={16} />
@@ -140,7 +140,7 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
                   <CheckMark done />
                 </Gradient>
               ) : (
-                <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.wood2, backgroundColor: C.paperWarm, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.7), 0px 3px 0px rgba(120,80,40,0.25)', transform: pressed ? [{ scale: 1.07 }] : [] }}>
+                <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.stoneMid, backgroundColor: C.paperWarm, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.7), 0px 3px 0px rgba(120,80,40,0.25)', transform: pressed ? [{ scale: 1.07 }] : [] }}>
                   <CheckMark done={false} />
                 </View>
               )

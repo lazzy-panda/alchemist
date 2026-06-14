@@ -102,7 +102,7 @@ function Perk({ p, wide }) {
   const basis = wide ? '31%' : '31%';
   const inner = (
     <>
-      <View style={{ width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.woodLine, backgroundColor: p.open ? p.color : 'rgba(120,92,48,0.25)', overflow: 'hidden', boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.45), inset 0px -3px 6px rgba(0,0,0,0.2)' }}>
+      <View style={{ width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: p.open ? p.color : 'rgba(120,92,48,0.25)', overflow: 'hidden', boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.45), inset 0px -3px 6px rgba(0,0,0,0.2)' }}>
         {p.open ? <Han style={{ fontSize: 20, color: '#fff' }}>{p.han}</Han> : <Text style={{ fontSize: 18 }}>🔒</Text>}
         {p.open ? <Gloss radius={21} /> : null}
       </View>

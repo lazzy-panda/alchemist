@@ -22,7 +22,7 @@ export function Mh({ size = 20, color, han, fontSize, radius, opacity = 1, squar
         justifyContent: 'center',
         backgroundColor: color,
         borderWidth: 2,
-        borderColor: C.woodLine,
+        borderColor: C.stoneLine,
         overflow: 'hidden',
         opacity,
         boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.45), inset 0px -2px 4px rgba(0,0,0,0.2)',
@@ -110,7 +110,7 @@ export function QiTag({ qi }) {
 export function Bar({ pct, colors, color, height = 16 }) {
   const cols = colors || [color, color];
   return (
-    <View style={{ height, borderRadius: 999, overflow: 'hidden', borderWidth: 2.5, borderColor: C.woodLine, backgroundColor: '#46301a', boxShadow: 'inset 0px 2px 5px rgba(0,0,0,0.5)' }}>
+    <View style={{ height, borderRadius: 999, overflow: 'hidden', borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: '#46301a', boxShadow: 'inset 0px 2px 5px rgba(0,0,0,0.5)' }}>
       <Gradient colors={cols} angle={180} style={[{ height: '100%', width: clamp(pct, 0, 100) + '%', borderRadius: 999, boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.45), inset 0px -4px 7px rgba(0,0,0,0.22)' }, tr('width', 0.6)]} />
     </View>
   );
@@ -137,7 +137,7 @@ export function ResourceBar({ kind, han, label, value, max, glow }) {
           borderRadius: 999,
           overflow: 'hidden',
           borderWidth: 2.5,
-          borderColor: C.woodLine,
+          borderColor: C.stoneLine,
           backgroundColor: '#46301a',
           boxShadow: 'inset 0px 2px 5px rgba(0,0,0,0.5)',
         }}
@@ -218,10 +218,10 @@ export function Avatar({ flow, size = 96 }) {
           alignItems: 'center',
           justifyContent: 'center',
           borderWidth: 3,
-          borderColor: C.woodLine,
+          borderColor: C.stoneLine,
           boxShadow: flow
-            ? `inset 0px 0px 0px 3px ${C.jadeLight}, inset 0px 3px 6px rgba(255,255,255,0.6), 0px 0px 16px rgba(94,200,150,0.6), 0px 4px 0px ${C.woodLine}`
-            : `inset 0px 0px 0px 3px ${C.gold}, inset 0px 3px 6px rgba(255,255,255,0.6), 0px 4px 0px ${C.woodLine}`,
+            ? `inset 0px 0px 0px 3px ${C.jadeLight}, inset 0px 3px 6px rgba(255,255,255,0.6), 0px 0px 16px rgba(94,200,150,0.6), 0px 4px 0px ${C.stoneLine}`
+            : `inset 0px 0px 0px 3px ${C.gold}, inset 0px 3px 6px rgba(255,255,255,0.6), 0px 4px 0px ${C.stoneLine}`,
         }}
       >
         <Han style={{ fontSize: size * 0.42, color: C.jadeDeep, ...ts('rgba(255,255,255,0.5)', 0, 1) }}>修</Han>

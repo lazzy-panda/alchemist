@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT, shade } from './theme';
 import { CATS, STATS, PRACTICES } from './data';
-import { Card, Btn, IconBtn, Gradient, Gloss, Han, T, SectionHead, Seal, Stepper, SelChip, Field, Input, kf, KF, EASE } from './ui';
+import { Card, Btn, IconBtn, Gradient, Gloss, Han, T, SectionHead, Seal, Stepper, SelChip, Field, Input, ts, kf, KF, EASE } from './ui';
 import { RewardMedal, QiTag, StateChip, MedalPill } from './badges';
 import { CircularTimer } from './svg';
 import { PracticeCard } from './PracticeCard';
@@ -55,7 +55,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
             <Btn variant="ghost" onPress={onClose} style={{ paddingVertical: 8, paddingHorizontal: 10, marginLeft: -8 }}>‹ Назад</Btn>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 22 }}>
-            <Gradient colors={[cat.color, shade(cat.color, -18)]} angle={150} style={{ width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.woodLine, overflow: 'hidden', boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.5), inset 0px -4px 8px rgba(0,0,0,0.25), 0px 3px 0px rgba(0,0,0,0.18)' }}>
+            <Gradient colors={[cat.color, shade(cat.color, -18)]} angle={150} style={{ width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, overflow: 'hidden', boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.5), inset 0px -4px 8px rgba(0,0,0,0.25), 0px 3px 0px rgba(0,0,0,0.18)' }}>
               <Han style={{ fontSize: 25, color: '#fff' }}>{cat.han}</Han>
               <Gloss radius={16} />
             </Gradient>
@@ -114,8 +114,8 @@ function TStep({ label, onPress, disabled }) {
   return (
     <Pressable onPress={disabled ? undefined : onPress}>
       {({ pressed }) => (
-        <Gradient colors={['#fff', '#f1e6c8']} angle={180} style={{ borderRadius: 999, borderWidth: 2.5, borderColor: C.wood2, paddingVertical: 9, paddingHorizontal: 12, opacity: disabled ? 0.35 : 1, boxShadow: disabled ? 'none' : '0px 3px 0px #c2a877, inset 0px 2px 0px rgba(255,255,255,0.7)', transform: pressed && !disabled ? [{ translateY: 3 }] : [] }}>
-          <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 13, color: C.jadeDeep }}>{label}</Text>
+        <Gradient colors={['#CFCABC', '#A29C8C']} angle={180} style={{ borderRadius: 999, borderWidth: 2.5, borderColor: '#46433A', paddingVertical: 9, paddingHorizontal: 12, opacity: disabled ? 0.35 : 1, boxShadow: disabled ? 'none' : '0px 3px 0px #46433A, inset 0px 2px 0px rgba(255,255,255,0.6)', transform: pressed && !disabled ? [{ translateY: 3 }] : [] }}>
+          <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 13, color: '#3a362c' }}>{label}</Text>
         </Gradient>
       )}
     </Pressable>
@@ -144,10 +144,10 @@ function Sheet({ children, onClose, maxHeightPct = 90 }) {
   return (
     <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 150, justifyContent: 'flex-end' }}>
       <Pressable onPress={close} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: 'rgba(35,25,12,0.45)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out, dir: closing ? 'reverse' : 'normal' })]} />
-      <View style={[{ backgroundColor: C.paperLight, borderTopLeftRadius: 26, borderTopRightRadius: 26, borderWidth: 5, borderBottomWidth: 0, borderColor: C.wood3, maxHeight: maxHeightPct + '%', boxShadow: `inset 0px 0px 0px 3px ${C.woodEdge}, 0px -12px 40px rgba(20,12,4,0.4)` }, kf(closing ? SHEET_DOWN : SHEET_UP, closing ? 0.28 : 0.38, { ease: EASE.out, fill: 'forwards' })]}>
-        <View style={{ width: 48, height: 5, borderRadius: 3, backgroundColor: 'rgba(118,80,43,0.45)', alignSelf: 'center', marginTop: 12, marginBottom: 2 }} />
-        <View style={{ height: 13, borderRadius: 999, marginHorizontal: 14, marginVertical: 8, borderWidth: 2.5, borderColor: C.woodLine, overflow: 'hidden' }}>
-          <Gradient colors={['#d2a866', '#9c7140', '#6f4d27']} angle={180} style={{ flex: 1 }} />
+      <View style={[{ backgroundColor: C.paperLight, borderTopLeftRadius: 26, borderTopRightRadius: 26, borderWidth: 5, borderBottomWidth: 0, borderColor: C.stoneDark, maxHeight: maxHeightPct + '%', boxShadow: `inset 0px 0px 0px 3px ${C.stoneEdge}, 0px -12px 40px rgba(0,0,0,0.42)` }, kf(closing ? SHEET_DOWN : SHEET_UP, closing ? 0.28 : 0.38, { ease: EASE.out, fill: 'forwards' })]}>
+        <View style={{ width: 48, height: 5, borderRadius: 3, backgroundColor: 'rgba(70,67,58,0.5)', alignSelf: 'center', marginTop: 12, marginBottom: 2 }} />
+        <View style={{ height: 13, borderRadius: 999, marginHorizontal: 14, marginVertical: 8, borderWidth: 2.5, borderColor: C.stoneLine, overflow: 'hidden' }}>
+          <Gradient colors={[C.stoneLight, C.stoneMid, C.stoneDark]} angle={180} style={{ flex: 1 }} />
         </View>
         {typeof children === 'function' ? children(close) : children}
       </View>
@@ -257,6 +257,16 @@ export function DayDetailSheet({ day, onClose }) {
 /* ============================================================
    LEVEL-UP OVERLAY
    ============================================================ */
+function LevelWing({ side }) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 3, transform: [{ scaleX: side === 'l' ? 1 : -1 }] }}>
+      {[10, 16, 22].map((h, i) => (
+        <View key={i} style={{ width: 6, height: h, borderRadius: 3, backgroundColor: i === 2 ? C.goldLight : C.gold, borderWidth: 1.5, borderColor: C.goldLine, transform: [{ rotate: '-14deg' }] }} />
+      ))}
+    </View>
+  );
+}
+
 export function LevelUpOverlay({ stage, onClose }) {
   useEffect(() => {
     const t = setTimeout(onClose, 3200);
@@ -265,14 +275,21 @@ export function LevelUpOverlay({ stage, onClose }) {
   return (
     <Pressable onPress={onClose} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 250, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(35,25,12,0.5)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
       <View pointerEvents="none" style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: 'rgba(246,214,133,0.25)' }, kf(KF.goldBurst, 0.9, { ease: EASE.out, fill: 'forwards' })]} />
-      <View style={[{ width: '84%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 34, paddingBottom: 28, borderRadius: 26, borderWidth: 4, borderColor: C.wood3, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(60,38,12,0.32)` }, kf(KF.popIn, 0.5, { ease: EASE.overshoot })]}>
-        <Seal size={58} fontSize={30} style={{ marginBottom: 16 }} />
-        <Text style={T.eyebrow}>Новая высота</Text>
-        <Text style={[T.displayL, { marginTop: 4, marginBottom: 12 }]}>Ступень {stage}</Text>
-        <Text style={[T.body, { color: C.inkMuted, marginBottom: 14, textAlign: 'center' }]}>Туман рассеялся ещё на один пик. Твоя культивация углубилась.</Text>
-        <Gradient colors={[C.goldLight, C.gold]} angle={180} style={{ paddingVertical: 9, paddingHorizontal: 24, borderRadius: 11, borderWidth: 2.5, borderColor: C.goldLine, boxShadow: `0px 3px 0px ${C.goldLine}, inset 0px 2px 0px rgba(255,255,255,0.5)` }}>
-          <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: '#4a3410' }}>修真 · Ступень {stage}</Text>
+      <View style={[{ width: '84%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 30, paddingBottom: 26, borderRadius: 26, borderWidth: 4, borderColor: C.stoneDark, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(0,0,0,0.4)` }, kf(KF.popIn, 0.5, { ease: EASE.overshoot })]}>
+        {/* winged number medallion (kit LEVEL UP banner) */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <LevelWing side="l" />
+          <Gradient colors={[C.goldLight, C.gold]} angle={180} style={{ width: 84, height: 84, borderRadius: 42, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: 3, borderColor: C.goldLine, boxShadow: `inset 0px 3px 0px rgba(255,255,255,0.6), 0px 5px 0px ${C.goldLine}, 0px 9px 16px rgba(154,98,18,0.4)` }}>
+            <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 42, color: '#5a3d10', ...ts('rgba(255,255,255,0.5)', 0, 1) }}>{stage}</Text>
+            <Gloss radius={42} />
+          </Gradient>
+          <LevelWing side="r" />
+        </View>
+        <Gradient colors={[C.goldLight, C.gold]} angle={180} style={{ paddingVertical: 7, paddingHorizontal: 22, borderRadius: 9, borderWidth: 2.5, borderColor: C.goldLine, marginBottom: 12, boxShadow: `0px 3px 0px ${C.goldLine}, inset 0px 2px 0px rgba(255,255,255,0.5)` }}>
+          <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 15, letterSpacing: 1, color: '#5a3d10', ...ts('rgba(255,255,255,0.4)', 0, 1) }}>НОВАЯ СТУПЕНЬ</Text>
         </Gradient>
+        <Text style={[T.body, { color: C.inkMuted, marginBottom: 6, textAlign: 'center' }]}>Туман рассеялся ещё на один пик. Твоя культивация углубилась.</Text>
+        <Han style={{ fontSize: 14, color: C.inkFaint, letterSpacing: 3, marginTop: 2 }}>修真之路</Han>
       </View>
     </Pressable>
   );

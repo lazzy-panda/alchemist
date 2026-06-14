@@ -78,7 +78,7 @@ export function SectionHead({ title, right, style }) {
   return (
     <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 26, marginBottom: 13, marginHorizontal: 2 }, style]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Text style={{ fontSize: 9, color: C.wood2 }}>◆</Text>
+        <Text style={{ fontSize: 9, color: C.stoneMid }}>◆</Text>
         <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.6, color: C.title, ...ts('rgba(255,255,255,0.6)', 0, 1) }}>{title}</Text>
       </View>
       {right != null ? (typeof right === 'string' ? <Text style={T.caption}>{right}</Text> : right) : null}
@@ -119,38 +119,47 @@ const BTN_BASE = {
   justifyContent: 'center',
   gap: 9,
 };
+// candy buttons — palette transferred 1:1 from the RPG kit (NORMAL/PRESSED states)
 const BTN_VARIANTS = {
   primary: {
-    colors: [C.jadeLight, C.jade],
-    border: C.jadeLine,
+    colors: ['#8FCB63', '#4E9B3A'],
+    border: '#2E6B22',
     text: '#fff',
-    shadow: `0px 5px 0px ${C.jadeLine}, 0px 9px 16px rgba(35,92,62,0.35), inset 0px 2px 0px rgba(255,255,255,0.4)`,
-    pressShadow: `0px 1px 0px ${C.jadeLine}, inset 0px 2px 0px rgba(255,255,255,0.4)`,
-    tshadow: ts('rgba(0,0,0,0.22)', 0, 1),
+    shadow: `0px 5px 0px #2E6B22, 0px 9px 16px rgba(46,107,34,0.35), inset 0px 2px 0px rgba(255,255,255,0.55)`,
+    pressShadow: `0px 1px 0px #2E6B22, inset 0px 2px 0px rgba(255,255,255,0.55)`,
+    tshadow: ts('rgba(0,0,0,0.28)', 0, 1),
   },
   gold: {
-    colors: [C.goldLight, C.gold],
-    border: C.goldLine,
-    text: '#4a3410',
-    shadow: `0px 5px 0px ${C.goldLine}, 0px 9px 16px rgba(138,99,32,0.35), inset 0px 2px 0px rgba(255,255,255,0.55)`,
-    pressShadow: `0px 1px 0px ${C.goldLine}, inset 0px 2px 0px rgba(255,255,255,0.55)`,
-    tshadow: ts('rgba(255,255,255,0.5)', 0, 1),
+    colors: ['#F6C752', '#E0902A'],
+    border: '#9A6212',
+    text: '#fff',
+    shadow: `0px 5px 0px #9A6212, 0px 9px 16px rgba(154,98,18,0.35), inset 0px 2px 0px rgba(255,255,255,0.6)`,
+    pressShadow: `0px 1px 0px #9A6212, inset 0px 2px 0px rgba(255,255,255,0.6)`,
+    tshadow: ts('rgba(0,0,0,0.25)', 0, 1),
+  },
+  blue: {
+    colors: ['#6FBDE8', '#2F86C0'],
+    border: '#1C5478',
+    text: '#fff',
+    shadow: `0px 5px 0px #1C5478, 0px 9px 16px rgba(28,84,120,0.35), inset 0px 2px 0px rgba(255,255,255,0.55)`,
+    pressShadow: `0px 1px 0px #1C5478, inset 0px 2px 0px rgba(255,255,255,0.55)`,
+    tshadow: ts('rgba(0,0,0,0.28)', 0, 1),
   },
   secondary: {
-    colors: ['#fff', '#f1e6c8'],
-    border: C.wood2,
-    text: C.jadeDeep,
-    shadow: `0px 5px 0px #c2a877, 0px 8px 14px rgba(120,92,48,0.2), inset 0px 2px 0px rgba(255,255,255,0.7)`,
-    pressShadow: `0px 1px 0px #c2a877, inset 0px 2px 0px rgba(255,255,255,0.7)`,
-    tshadow: null,
+    colors: ['#CFCABC', '#A29C8C'],
+    border: '#46433A',
+    text: '#3a362c',
+    shadow: `0px 5px 0px #46433A, 0px 8px 14px rgba(70,67,58,0.25), inset 0px 2px 0px rgba(255,255,255,0.6)`,
+    pressShadow: `0px 1px 0px #46433A, inset 0px 2px 0px rgba(255,255,255,0.6)`,
+    tshadow: ts('rgba(255,255,255,0.4)', 0, 1),
   },
   danger: {
-    colors: ['#fff', '#f6e3dd'],
-    border: C.redLine,
-    text: C.redDeep,
-    shadow: `0px 5px 0px #b0786c, 0px 8px 14px rgba(120,60,40,0.2), inset 0px 2px 0px rgba(255,255,255,0.7)`,
-    pressShadow: `0px 1px 0px #b0786c, inset 0px 2px 0px rgba(255,255,255,0.7)`,
-    tshadow: null,
+    colors: ['#EC7257', '#C23725'],
+    border: '#7C1E10',
+    text: '#fff',
+    shadow: `0px 5px 0px #7C1E10, 0px 8px 14px rgba(124,30,16,0.3), inset 0px 2px 0px rgba(255,255,255,0.5)`,
+    pressShadow: `0px 1px 0px #7C1E10, inset 0px 2px 0px rgba(255,255,255,0.5)`,
+    tshadow: ts('rgba(0,0,0,0.28)', 0, 1),
   },
 };
 
@@ -204,7 +213,7 @@ export function IconBtn({ onPress, children, style }) {
     <Pressable onPress={onPress} style={style}>
       {({ pressed }) => (
         <LinearGradient
-          colors={['#e8654a', '#c2402a']}
+          colors={['#EC7257', '#C23725']}
           start={se.start}
           end={se.end}
           style={{
@@ -214,12 +223,12 @@ export function IconBtn({ onPress, children, style }) {
             alignItems: 'center',
             justifyContent: 'center',
             borderWidth: 2.5,
-            borderColor: C.redLine,
-            boxShadow: pressed ? `0px 0px 0px ${C.redLine}, inset 0px 1px 0px rgba(255,255,255,0.4)` : `0px 3px 0px ${C.redLine}, inset 0px 1px 0px rgba(255,255,255,0.4)`,
+            borderColor: '#7C1E10',
+            boxShadow: pressed ? `0px 0px 0px #7C1E10, inset 0px 2px 0px rgba(255,255,255,0.5)` : `0px 3px 0px #7C1E10, inset 0px 2px 0px rgba(255,255,255,0.5)`,
             transform: pressed ? [{ translateY: 3 }] : [],
           }}
         >
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>{children}</Text>
+          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800', ...ts('rgba(0,0,0,0.3)', 0, 1) }}>{children}</Text>
         </LinearGradient>
       )}
     </Pressable>
@@ -229,7 +238,7 @@ export function IconBtn({ onPress, children, style }) {
 /* ---------- stepper ---------- */
 export function Stepper({ value, onDec, onInc, suffix = ' мин' }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', borderWidth: 2.5, borderColor: C.wood2, borderRadius: 12, overflow: 'hidden', backgroundColor: '#fff', boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.7), 0px 3px 0px rgba(120,80,40,0.16)' }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', borderWidth: 2.5, borderColor: C.stoneMid, borderRadius: 12, overflow: 'hidden', backgroundColor: '#fff', boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.7), 0px 3px 0px rgba(0,0,0,0.18)' }}>
       <Pressable onPress={onDec} style={({ pressed }) => [{ width: 48, height: 46, alignItems: 'center', justifyContent: 'center' }, pressed && { backgroundColor: 'rgba(62,140,96,0.1)' }]}>
         <Text style={{ fontSize: 22, color: C.jadeDeep, fontWeight: '700' }}>−</Text>
       </Pressable>
@@ -298,7 +307,7 @@ export function Input(props) {
           color: C.ink,
           backgroundColor: '#fff',
           borderWidth: 2.5,
-          borderColor: focus ? C.jade : C.wood2,
+          borderColor: focus ? C.jade : C.stoneMid,
           borderRadius: 12,
           paddingVertical: 12,
           paddingHorizontal: 14,
@@ -327,7 +336,7 @@ export function DiaryInput(props) {
           color: C.ink,
           backgroundColor: '#fff',
           borderWidth: 2,
-          borderColor: focus ? C.jade : C.wood2,
+          borderColor: focus ? C.jade : C.stoneMid,
           borderRadius: 10,
           paddingVertical: 9,
           paddingHorizontal: 11,
@@ -341,7 +350,7 @@ export function DiaryInput(props) {
 }
 
 /* ---------- wood plank surface ---------- */
-export function WoodPlank({ colors = [C.wood1, C.wood3], angle = 180, style, children, lines = true, ...rest }) {
+export function WoodPlank({ colors = [C.stoneLight, C.stoneDark], angle = 180, style, children, lines = true, ...rest }) {
   return (
     <Gradient colors={colors} angle={angle} style={style} {...rest}>
       {lines ? (
@@ -363,7 +372,7 @@ export function BrushDivider({ style }) {
       <Svg width="100%" height="100%" viewBox="0 0 300 12" preserveAspectRatio="none">
         <Path
           d="M2 7 C 40 3, 70 9, 110 6 C 150 3, 185 8, 220 6 C 250 4, 280 8, 298 6 L 298 8 C 280 10, 250 6, 220 8 C 185 10, 150 5, 110 8 C 70 11, 40 5, 2 9 Z"
-          fill={C.wood2}
+          fill={C.stoneMid}
           opacity={0.4}
         />
       </Svg>

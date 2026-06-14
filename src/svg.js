@@ -54,7 +54,7 @@ export function RadarMandala({ values, size = 230, animate = true, tick = 0 }) {
           borderRadius: size / 2,
           backgroundColor: C.paperLight,
           borderWidth: 4,
-          borderColor: C.wood3,
+          borderColor: C.stoneDark,
           boxShadow: `inset 0px 0px 0px 4px ${C.gold}, inset 0px 0px 22px rgba(120,80,30,0.18), 0px 6px 16px rgba(80,52,18,0.22)`,
         }}
       >
