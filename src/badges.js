@@ -101,10 +101,12 @@ export function Avatar({ flow, size = 96 }) {
     <View style={{ width: size, height: size }}>
       <KitPanel
         slice={56}
-        border={Math.round(size * 0.2)}
+        border={Math.round(size * 0.17)}
         style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}
       >
-        <Han style={{ fontSize: size * 0.4, color: C.jadeDeep, ...ts('rgba(255,255,255,0.5)', 0, 1) }}>修</Han>
+        <View style={{ width: size * 0.56, height: size * 0.56, borderRadius: Math.round(size * 0.1), backgroundColor: '#3b4654', alignItems: 'center', justifyContent: 'center', boxShadow: 'inset 0px 3px 8px rgba(0,0,0,0.6), inset 0px -2px 4px rgba(255,255,255,0.12)' }}>
+          <Han style={{ fontSize: size * 0.34, color: '#ECE0BA', ...ts('rgba(0,0,0,0.5)', 0, 1) }}>修</Han>
+        </View>
       </KitPanel>
       {flow ? (
         <View
