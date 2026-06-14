@@ -5,7 +5,7 @@ import Svg, { Path } from 'react-native-svg';
 import { C, FONT, shade } from './theme';
 import { CATS, STAT } from './data';
 import { Gradient, Gloss, Han } from './ui';
-import { KIT } from './kit';
+import { KIT, KitCheck } from './kit';
 import { RewardMedal, QiTag } from './badges';
 import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
@@ -149,9 +149,7 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
           <Pressable onPress={handleCheck} accessibilityLabel={p.done ? 'Отменить' : 'Выполнить'}>
             {({ pressed }) =>
               p.done ? (
-                <Gradient colors={[C.jadeLight, C.jade]} angle={180} style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.jadeLine, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.4), 0px 3px 0px ' + C.jadeLine, transform: pressed ? [{ scale: 1.07 }] : [] }}>
-                  <CheckMark done />
-                </Gradient>
+                <KitCheck size={40} style={{ transform: pressed ? [{ scale: 1.07 }] : [] }} />
               ) : (
                 <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.stoneMid, backgroundColor: C.paperWarm, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.7), 0px 3px 0px rgba(120,80,40,0.25)', transform: pressed ? [{ scale: 1.07 }] : [] }}>
                   <CheckMark done={false} />

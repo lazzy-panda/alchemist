@@ -11,11 +11,33 @@ const ts = (color, x, y, radius = 0) => ({ textShadowColor: color, textShadowOff
 export const KIT = {
   panel: require('../assets/kit/panel.png'),
   parchment: require('../assets/kit/parchment.png'),
+  stone: require('../assets/kit/stone.png'),
   btnGreen: require('../assets/kit/btn_green.png'),
   btnRed: require('../assets/kit/btn_red.png'),
   btnGold: require('../assets/kit/btn_gold.png'),
   btnBlue: require('../assets/kit/btn_blue.png'),
   close: require('../assets/kit/close.png'),
+  checkOn: require('../assets/kit/check_on.png'),
+  xCircle: require('../assets/kit/x_circle.png'),
+  dial: require('../assets/kit/dial.png'),
+  stoneTab: require('../assets/kit/stone_tab.png'),
+  banner: require('../assets/kit/banner.png'),
+  star: require('../assets/kit/star.png'),
+  fillGreen: require('../assets/kit/fill_green.png'),
+  fillRed: require('../assets/kit/fill_red.png'),
+  fillBlue: require('../assets/kit/fill_blue.png'),
+  fillGold: require('../assets/kit/fill_gold.png'),
+  fillOlive: require('../assets/kit/fill_olive.png'),
+  fillPurple: require('../assets/kit/fill_purple.png'),
+  fillOrange: require('../assets/kit/fill_orange.png'),
+};
+const FILLS = {
+  // resources
+  hp: KIT.fillRed, qi: KIT.fillBlue, xp: KIT.fillGreen,
+  // plain colors
+  red: KIT.fillRed, green: KIT.fillGreen, blue: KIT.fillBlue, gold: KIT.fillGold, olive: KIT.fillOlive, purple: KIT.fillPurple, orange: KIT.fillOrange,
+  // stat keys (Character)
+  energy: KIT.fillBlue, strength: KIT.fillOrange, flex: KIT.fillOlive, focus: KIT.fillBlue, kind: KIT.fillPurple, sex: KIT.fillPurple,
 };
 
 function uriOf(source) {
@@ -120,5 +142,33 @@ export function KitClose({ onPress, size = 34, style }) {
     <Pressable onPress={onPress} style={style}>
       {({ pressed }) => <Image source={KIT.close} style={{ width: size, height: size, transform: pressed ? [{ translateY: 2 }] : [] }} resizeMode="contain" />}
     </Pressable>
+  );
+}
+
+/* ---------- progress bar: dark track + real kit glossy fill clipped to % ---------- */
+export function KitBar({ pct, color = 'green', height = 18 }) {
+  const fill = FILLS[color] || KIT.fillGreen;
+  const w = Math.max(0, Math.min(100, pct || 0));
+  return (
+    <View style={{ height, borderRadius: 999, overflow: 'hidden', borderWidth: 2.5, borderColor: '#3a3327', backgroundColor: '#2b2620', boxShadow: 'inset 0px 2px 5px rgba(0,0,0,0.55)' }}>
+      <View style={{ width: w + '%', height: '100%', overflow: 'hidden' }}>
+        <ImageBackground source={fill} resizeMode="stretch" style={{ width: '100%', height: '100%' }} />
+      </View>
+    </View>
+  );
+}
+
+/* ---------- round check (real kit green ✓) ---------- */
+export function KitCheck({ size = 40, style }) {
+  return <Image source={KIT.checkOn} style={[{ width: size, height: size }, style]} resizeMode="contain" />;
+}
+
+/* ---------- round dial frame (real kit), content centered on top ---------- */
+export function KitRound({ size = 230, style, children }) {
+  return (
+    <View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }, style]}>
+      <Image source={KIT.dial} style={{ position: 'absolute', width: size, height: size }} resizeMode="stretch" />
+      {children}
+    </View>
   );
 }

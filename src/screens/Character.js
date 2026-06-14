@@ -7,6 +7,7 @@ import { ScreenScroll, PadView } from '../layout';
 import { Card, Han, T, SectionHead, Gradient, Gloss, kf, KF, EASE } from '../ui';
 import { ResourceBar, StatMedal, Bar, Mh } from '../badges';
 import { RadarMandala } from '../svg';
+import { KitPanel } from '../kit';
 
 function StatRow({ s, sl, open, onToggle, last }) {
   const feeders = PRACTICES.filter((p) => (p.r || {})[s.key]).slice(0, 4);
@@ -19,7 +20,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
             <Text style={{ fontFamily: FONT.ui, fontWeight: '700', fontSize: 15, color: C.ink }}>{s.name}</Text>
             <Text style={{ fontFamily: FONT.ui, fontWeight: '800', color: s.color, fontVariant: ['tabular-nums'] }}>ур. {sl.lvl}</Text>
           </View>
-          <Bar pct={(sl.xp / sl.next) * 100} color={s.color} height={16} />
+          <Bar pct={(sl.xp / sl.next) * 100} color={s.key} height={16} />
         </View>
         <Text style={{ color: C.inkFaint, fontSize: 18, transform: open ? [{ rotate: '90deg' }] : [] }}>›</Text>
       </Pressable>
@@ -99,40 +100,22 @@ export function CharacterScreen({ ctx }) {
 }
 
 function Perk({ p, wide }) {
-  const basis = wide ? '31%' : '31%';
-  const inner = (
-    <>
-      <View style={{ width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: p.open ? p.color : 'rgba(120,92,48,0.25)', overflow: 'hidden', boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.45), inset 0px -3px 6px rgba(0,0,0,0.2)' }}>
-        {p.open ? <Han style={{ fontSize: 20, color: '#fff' }}>{p.han}</Han> : <Text style={{ fontSize: 18 }}>🔒</Text>}
-        {p.open ? <Gloss radius={21} /> : null}
+  return (
+    <KitPanel slice={56} border={13} style={{ flexGrow: 1, flexBasis: '31%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center', gap: 4, opacity: p.open ? 1 : 0.72 }}>
+      <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: p.open ? p.color : 'rgba(120,92,48,0.3)', overflow: 'hidden', boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.45), inset 0px -3px 6px rgba(0,0,0,0.2)' }}>
+        {p.open ? <Han style={{ fontSize: 19, color: '#fff' }}>{p.han}</Han> : <Text style={{ fontSize: 17 }}>🔒</Text>}
+        {p.open ? <Gloss radius={20} /> : null}
       </View>
       <Text style={{ fontFamily: FONT.display, fontSize: 10.5, fontWeight: '600', lineHeight: 13, color: C.inkMuted, textAlign: 'center' }}>{p.name}</Text>
       {!p.open ? <Text style={[T.caption, { fontSize: 9.5, textAlign: 'center' }]}>{p.req}</Text> : null}
-    </>
+    </KitPanel>
   );
-  const style = { flexGrow: 1, flexBasis: basis, aspectRatio: 1, borderRadius: 18, alignItems: 'center', justifyContent: 'center', gap: 5, padding: 8, borderWidth: 2.5, borderColor: C.paperDeep };
-  if (p.open) {
-    return (
-      <Gradient colors={['#fffaee', C.paperLight]} angle={180} style={[style, { boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.7), 0px 3px 8px rgba(80,52,18,0.18)' }]}>
-        {inner}
-      </Gradient>
-    );
-  }
-  return <View style={[style, { backgroundColor: C.paperWarm, opacity: 0.72 }]}>{inner}</View>;
 }
 
 function Relic({ r, wide }) {
-  const style = { flexGrow: 1, flexBasis: '22%', aspectRatio: 1, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5 };
-  if (r.got) {
-    return (
-      <Gradient colors={['#fcf3da', '#f0e0b4']} angle={160} style={[style, { borderColor: C.gold, boxShadow: 'inset 0px 0px 0px 2px rgba(246,214,133,0.5), 0px 3px 8px rgba(80,52,18,0.18)' }]}>
-        <Text style={{ fontSize: 27 }}>{r.icon}</Text>
-      </Gradient>
-    );
-  }
   return (
-    <View style={[style, { borderColor: 'rgba(118,80,43,0.42)', borderStyle: 'dashed', backgroundColor: 'rgba(0,0,0,0.02)' }]}>
-      <Text style={{ fontSize: 27, color: C.inkFaint }}>◌</Text>
-    </View>
+    <KitPanel slice={56} border={12} style={{ flexGrow: 1, flexBasis: '22%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center', opacity: r.got ? 1 : 0.6 }}>
+      <Text style={{ fontSize: 26, opacity: r.got ? 1 : 0.5 }}>{r.got ? r.icon : '◌'}</Text>
+    </KitPanel>
   );
 }

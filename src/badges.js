@@ -6,7 +6,7 @@ import { C, FONT, clamp } from './theme';
 import { STAT } from './data';
 import { Gradient, Gloss, Han, ts, angleToStartEnd } from './ui';
 import { kf, tr, KF, EASE } from './anim';
-import { KitPanel } from './kit';
+import { KitPanel, KitBar } from './kit';
 
 const WEB = Platform.OS === 'web';
 
@@ -107,20 +107,14 @@ export function QiTag({ qi }) {
   );
 }
 
-/* ---------- plain progress bar (dark track + colored fill) ---------- */
-export function Bar({ pct, colors, color, height = 16 }) {
-  const cols = colors || [color, color];
-  return (
-    <View style={{ height, borderRadius: 999, overflow: 'hidden', borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: '#46301a', boxShadow: 'inset 0px 2px 5px rgba(0,0,0,0.5)' }}>
-      <Gradient colors={cols} angle={180} style={[{ height: '100%', width: clamp(pct, 0, 100) + '%', borderRadius: 999, boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.45), inset 0px -4px 7px rgba(0,0,0,0.22)' }, tr('width', 0.6)]} />
-    </View>
-  );
+/* ---------- progress bar — real kit glossy fill (color = key) ---------- */
+export function Bar({ pct, color = 'green', height = 16 }) {
+  return <KitBar pct={pct} color={color} height={height} />;
 }
 
-/* ---------- resource bar ---------- */
+/* ---------- resource bar — real kit glossy fill ---------- */
 export function ResourceBar({ kind, han, label, value, max, glow }) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
-  const fillColors = kind === 'hp' ? ['#e8836a', C.red] : ['#66ccba', '#259081'];
   return (
     <View style={{ gap: 5 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -132,37 +126,7 @@ export function ResourceBar({ kind, han, label, value, max, glow }) {
           {Math.round(value)} / {max}
         </Text>
       </View>
-      <View
-        style={{
-          height: 18,
-          borderRadius: 999,
-          overflow: 'hidden',
-          borderWidth: 2.5,
-          borderColor: C.stoneLine,
-          backgroundColor: '#46301a',
-          boxShadow: 'inset 0px 2px 5px rgba(0,0,0,0.5)',
-        }}
-      >
-        <Gradient
-          colors={fillColors}
-          angle={180}
-          style={[{ height: '100%', width: pct + '%', borderRadius: 999, overflow: 'hidden', boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.45), inset 0px -4px 7px rgba(0,0,0,0.22)' }, tr('width', 0.6)]}
-        >
-          {/* sheen */}
-          <View
-            pointerEvents="none"
-            style={[
-              { position: 'absolute', top: 0, bottom: 0, width: '40%', backgroundColor: 'transparent' },
-              WEB ? { backgroundImage: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)' } : { backgroundColor: 'rgba(255,255,255,0.18)' },
-              kf(KF.sheen, 3.4, { ease: EASE.linear, iter: 'infinite' }),
-            ]}
-          />
-          {/* glow */}
-          {glow ? (
-            <View pointerEvents="none" style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 999, boxShadow: '0px 0px 14px 2px rgba(94,205,186,0.8)' }, kf(KF.barGlow, 2.6, { ease: EASE.soft, iter: 'infinite' })]} />
-          ) : null}
-        </Gradient>
-      </View>
+      <KitBar pct={pct} color={kind} height={18} />
     </View>
   );
 }
