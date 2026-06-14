@@ -7,7 +7,7 @@ import { Card, Btn, IconBtn, Gradient, Gloss, Han, T, SectionHead, Seal, Stepper
 import { RewardMedal, QiTag, StateChip, MedalPill } from './badges';
 import { CircularTimer } from './svg';
 import { PracticeCard } from './PracticeCard';
-import { KitPanel, KitClose } from './kit';
+import { KitPanel, KitClose, KitGem, KitBanner } from './kit';
 
 const SHEET_UP = { '0%': { transform: [{ translateY: 820 }] }, '100%': { transform: [{ translateY: 0 }] } };
 const SHEET_DOWN = { '0%': { transform: [{ translateY: 0 }] }, '100%': { transform: [{ translateY: 820 }] } };
@@ -57,10 +57,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
             <KitClose onPress={onClose} size={34} />
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 22 }}>
-            <Gradient colors={[cat.color, shade(cat.color, -18)]} angle={150} style={{ width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, overflow: 'hidden', boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.5), inset 0px -4px 8px rgba(0,0,0,0.25), 0px 3px 0px rgba(0,0,0,0.18)' }}>
-              <Han style={{ fontSize: 25, color: '#fff' }}>{cat.han}</Han>
-              <Gloss radius={16} />
-            </Gradient>
+            <KitGem size={54} color={cat.color} han={cat.han} fontSize={26} />
             <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
               <Text style={[T.displayM, { fontSize: 22, lineHeight: 24 }]}>{practice.name}</Text>
               <Text style={{ fontFamily: FONT.ui, fontSize: 11, fontWeight: '700', color: cat.color }}>{cat.name}{practice.mult ? ' · ×' + practice.mult : ''}</Text>
@@ -279,18 +276,13 @@ export function LevelUpOverlay({ stage, onClose }) {
     <Pressable onPress={onClose} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 250, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(35,25,12,0.5)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
       <View pointerEvents="none" style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: 'rgba(246,214,133,0.25)' }, kf(KF.goldBurst, 0.9, { ease: EASE.out, fill: 'forwards' })]} />
       <View style={[{ width: '84%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 30, paddingBottom: 26, borderRadius: 26, borderWidth: 4, borderColor: C.stoneDark, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(0,0,0,0.4)` }, kf(KF.popIn, 0.5, { ease: EASE.overshoot })]}>
-        {/* winged number medallion (kit LEVEL UP banner) */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <LevelWing side="l" />
-          <Gradient colors={[C.goldLight, C.gold]} angle={180} style={{ width: 84, height: 84, borderRadius: 42, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: 3, borderColor: C.goldLine, boxShadow: `inset 0px 3px 0px rgba(255,255,255,0.6), 0px 5px 0px ${C.goldLine}, 0px 9px 16px rgba(154,98,18,0.4)` }}>
-            <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 42, color: '#5a3d10', ...ts('rgba(255,255,255,0.5)', 0, 1) }}>{stage}</Text>
-            <Gloss radius={42} />
-          </Gradient>
-          <LevelWing side="r" />
-        </View>
-        <Gradient colors={[C.goldLight, C.gold]} angle={180} style={{ paddingVertical: 7, paddingHorizontal: 22, borderRadius: 9, borderWidth: 2.5, borderColor: C.goldLine, marginBottom: 12, boxShadow: `0px 3px 0px ${C.goldLine}, inset 0px 2px 0px rgba(255,255,255,0.5)` }}>
-          <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 15, letterSpacing: 1, color: '#5a3d10', ...ts('rgba(255,255,255,0.4)', 0, 1) }}>НОВАЯ СТУПЕНЬ</Text>
+        {/* real kit LEVEL UP! winged banner */}
+        <KitBanner width={270} style={{ marginTop: -36, marginBottom: 6 }} />
+        <Gradient colors={[C.goldLight, C.gold]} angle={180} style={{ width: 82, height: 82, borderRadius: 41, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: 3, borderColor: C.goldLine, marginBottom: 12, boxShadow: `inset 0px 3px 0px rgba(255,255,255,0.6), 0px 5px 0px ${C.goldLine}, 0px 9px 16px rgba(154,98,18,0.4)` }}>
+          <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 40, color: '#5a3d10', ...ts('rgba(255,255,255,0.5)', 0, 1) }}>{stage}</Text>
+          <Gloss radius={41} />
         </Gradient>
+        <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: C.titleDeep, marginBottom: 6 }}>Ступень {stage}</Text>
         <Text style={[T.body, { color: C.inkMuted, marginBottom: 6, textAlign: 'center' }]}>Туман рассеялся ещё на один пик. Твоя культивация углубилась.</Text>
         <Han style={{ fontSize: 14, color: C.inkFaint, letterSpacing: 3, marginTop: 2 }}>修真之路</Han>
       </View>

@@ -1,11 +1,12 @@
 /* Alchemist — SVG visualisations: radar mandala, circular timer, growth chart */
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import Svg, { Polygon, Line, Circle, Path, G, Defs, LinearGradient as SvgGrad, Stop } from 'react-native-svg';
 import { C, FONT } from './theme';
 import { STATS } from './data';
 import { Han } from './ui';
 import { kf, KF, EASE } from './anim';
+import { KIT } from './kit';
 
 const easeOutCubic = (k) => 1 - Math.pow(1 - k, 3);
 
@@ -45,30 +46,17 @@ export function RadarMandala({ values, size = 230, animate = true, tick = 0 }) {
 
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* medallion backdrop */}
-      <View
-        style={{
-          position: 'absolute',
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: C.paperLight,
-          borderWidth: 4,
-          borderColor: C.stoneDark,
-          boxShadow: `inset 0px 0px 0px 4px ${C.gold}, inset 0px 0px 22px rgba(120,80,30,0.18), 0px 6px 16px rgba(80,52,18,0.22)`,
-        }}
-      >
-        <View style={{ position: 'absolute', left: 18, top: 18, right: 18, bottom: 18, borderRadius: size / 2, borderWidth: 1.5, borderColor: 'rgba(120,80,40,0.22)', borderStyle: 'dashed' }} />
-      </View>
+      {/* real kit dial backdrop */}
+      <Image source={KIT.dial} style={{ position: 'absolute', width: size, height: size }} resizeMode="stretch" />
       <Svg width={size} height={size} style={{ position: 'relative', zIndex: 1 }}>
         {rings.map((rr, ri) => (
-          <Polygon key={ri} points={STATS.map((s, i) => pt(i, rr).join(',')).join(' ')} fill="none" stroke="rgba(120,92,48,0.14)" strokeWidth="1" />
+          <Polygon key={ri} points={STATS.map((s, i) => pt(i, rr).join(',')).join(' ')} fill="none" stroke="rgba(255,250,235,0.18)" strokeWidth="1" />
         ))}
         {STATS.map((s, i) => {
           const [x, y] = pt(i, 1);
-          return <Line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(120,92,48,0.12)" strokeWidth="1" />;
+          return <Line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(255,250,235,0.14)" strokeWidth="1" />;
         })}
-        <Polygon points={poly} fill="rgba(62,124,90,0.22)" stroke={C.jade} strokeWidth="2" strokeLinejoin="round" />
+        <Polygon points={poly} fill="rgba(110,200,150,0.34)" stroke="#8FE0B0" strokeWidth="2.5" strokeLinejoin="round" />
         {STATS.map((s, i) => {
           const [x, y] = pt(i, targetFrac(s) * grow);
           return <Circle key={i} cx={x} cy={y} r="4" fill={s.color} stroke="#fff" strokeWidth="1.5" />;
@@ -101,14 +89,15 @@ export function CircularTimer({ remaining, total, running, size = 230 }) {
         running ? kf(KF.timerBreathe, 4, { ease: EASE.soft, iter: 'infinite' }) : null,
       ]}
     >
+      <Image source={KIT.dial} style={{ position: 'absolute', width: size, height: size }} resizeMode="stretch" />
       <Svg width={size} height={size} style={{ transform: [{ rotate: '-90deg' }] }}>
         <Defs>
           <SvgGrad id="jadegrad" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0" stopColor="#5EA37D" />
+            <Stop offset="0" stopColor="#7BD0A0" />
             <Stop offset="1" stopColor="#2A5740" />
           </SvgGrad>
         </Defs>
-        <Circle cx={size / 2} cy={size / 2} r={r} stroke="#4f371b" strokeWidth="13" fill="none" />
+        <Circle cx={size / 2} cy={size / 2} r={r} stroke="rgba(0,0,0,0.35)" strokeWidth="13" fill="none" />
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -122,7 +111,7 @@ export function CircularTimer({ remaining, total, running, size = 230 }) {
         />
       </Svg>
       <View style={{ position: 'absolute', alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontVariant: ['tabular-nums'], fontSize: size * 0.26, color: C.titleDeep }}>
+        <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontVariant: ['tabular-nums'], fontSize: size * 0.26, color: '#F4ECD8', textShadowColor: 'rgba(0,0,0,0.55)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 }}>
           {String(mm).padStart(2, '0')}:{String(ss).padStart(2, '0')}
         </Text>
       </View>

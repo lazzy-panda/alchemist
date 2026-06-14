@@ -6,7 +6,7 @@ import { C, FONT, clamp } from './theme';
 import { STAT } from './data';
 import { Gradient, Gloss, Han, ts, angleToStartEnd } from './ui';
 import { kf, tr, KF, EASE } from './anim';
-import { KitPanel, KitBar } from './kit';
+import { KitPanel, KitBar, KitGem, KitPill, KitParchPill } from './kit';
 
 const WEB = Platform.OS === 'web';
 
@@ -37,60 +37,24 @@ export function Mh({ size = 20, color, han, fontSize, radius, opacity = 1, squar
 
 export function StatMedal({ stat, size = 18, fontSize }) {
   const s = STAT[stat] || stat;
-  return <Mh size={size} color={s.color} han={s.han} fontSize={fontSize} square />;
+  return <KitGem size={size} color={s.color} han={s.han} fontSize={fontSize} />;
 }
 
-/* ---------- reward medallion (+N) ---------- */
+/* ---------- reward medallion (+N) — real kit parchment chip + kit gem ---------- */
 export function RewardMedal({ stat, value }) {
   const s = STAT[stat];
   if (!s) return null;
   return (
-    <Gradient
-      colors={['#fff', C.paperWarm]}
-      angle={180}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 5,
-        height: 26,
-        paddingLeft: 4,
-        paddingRight: 10,
-        borderRadius: 999,
-        borderWidth: 2,
-        borderColor: C.paperDeep,
-        boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.8), 0px 2px 0px rgba(120,80,40,0.18)',
-      }}
-    >
-      <Mh size={20} color={s.color} han={s.han} fontSize={11} />
+    <KitParchPill style={{ height: 26, paddingLeft: 3, paddingRight: 9, gap: 4 }}>
+      <KitGem size={19} color={s.color} han={s.han} fontSize={11} />
       <Text style={{ fontFamily: FONT.display, fontSize: 12.5, fontWeight: '700', fontVariant: ['tabular-nums'], color: s.color }}>+{value}</Text>
-    </Gradient>
+    </KitParchPill>
   );
 }
 
-/* ---------- plain medal pill (custom content) ---------- */
+/* ---------- plain medal pill (real kit parchment chip) ---------- */
 export function MedalPill({ children, style }) {
-  return (
-    <Gradient
-      colors={['#fff', C.paperWarm]}
-      angle={180}
-      style={[
-        {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 5,
-          height: 26,
-          paddingHorizontal: 10,
-          borderRadius: 999,
-          borderWidth: 2,
-          borderColor: C.paperDeep,
-          boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.8), 0px 2px 0px rgba(120,80,40,0.18)',
-        },
-        style,
-      ]}
-    >
-      {children}
-    </Gradient>
-  );
+  return <KitParchPill style={[{ height: 26 }, style]}>{children}</KitParchPill>;
 }
 
 /* ---------- qi tag ---------- */
@@ -133,37 +97,20 @@ export function ResourceBar({ kind, han, label, value, max, glow }) {
 
 /* ---------- state chip ---------- */
 export const STATE_DEFS = {
-  flow: { ico: '🌀', label: 'В потоке', colors: [C.jadeLight, C.jade], border: C.jadeLine, text: '#fff' },
-  inspired: { ico: '✨', label: 'Вдохновлён', colors: [C.goldLight, C.gold], border: C.goldLine, text: '#4a3410' },
-  spent: { ico: '🥀', label: 'Истощён', colors: ['#e08a76', C.red], border: C.redLine, text: '#fff' },
-  streak: { ico: '🔥', label: '', colors: ['#5bc0a8', '#2c8c7b'], border: '#1c5d50', text: '#fff' },
-  calm: { ico: '🌙', label: 'Покой', colors: ['#8ba6d6', '#5571a6'], border: '#38507c', text: '#fff' },
+  flow: { ico: '🌀', label: 'В потоке', pill: 'primary' },
+  inspired: { ico: '✨', label: 'Вдохновлён', pill: 'gold' },
+  spent: { ico: '🥀', label: 'Истощён', pill: 'danger' },
+  streak: { ico: '🔥', label: '', pill: 'primary' },
+  calm: { ico: '🌙', label: 'Покой', pill: 'blue' },
 };
 
 export function StateChip({ state, text }) {
   const d = STATE_DEFS[state] || STATE_DEFS.flow;
   return (
-    <Gradient
-      colors={d.colors}
-      angle={180}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 7,
-        paddingVertical: 7,
-        paddingLeft: 9,
-        paddingRight: 14,
-        borderRadius: 999,
-        borderWidth: 2.5,
-        borderColor: d.border,
-        boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.3), 0px 3px 0px rgba(0,0,0,0.18)',
-      }}
-    >
-      <Text style={{ fontSize: 14 }}>{d.ico}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 13, fontWeight: '600', color: d.text, ...(d.text === '#fff' ? ts('rgba(0,0,0,0.25)', 0, 1) : ts('rgba(255,255,255,0.4)', 0, 1)) }}>
-        {text || d.label}
-      </Text>
-    </Gradient>
+    <KitPill color={d.pill} style={{ paddingHorizontal: 12 }}>
+      <Text style={{ fontSize: 13 }}>{d.ico}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 13, fontWeight: '700', color: '#fff', ...ts('rgba(0,0,0,0.3)', 0, 1) }}>{text || d.label}</Text>
+    </KitPill>
   );
 }
 

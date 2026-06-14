@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { C, R, FONT } from './theme';
 import { kf, tr, KF, EASE } from './anim';
-import { KitButton, KIT } from './kit';
+import { KitButton, KitPill, KitParchPill, KitGem, KIT } from './kit';
 
 const WEB = Platform.OS === 'web';
 
@@ -246,49 +246,28 @@ export function IconBtn({ onPress, children, style }) {
   );
 }
 
-/* ---------- stepper ---------- */
+/* ---------- stepper — real kit pills ---------- */
 export function Stepper({ value, onDec, onInc, suffix = ' мин' }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', borderWidth: 2.5, borderColor: C.stoneMid, borderRadius: 12, overflow: 'hidden', backgroundColor: '#fff', boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.7), 0px 3px 0px rgba(0,0,0,0.18)' }}>
-      <Pressable onPress={onDec} style={({ pressed }) => [{ width: 48, height: 46, alignItems: 'center', justifyContent: 'center' }, pressed && { backgroundColor: 'rgba(62,140,96,0.1)' }]}>
-        <Text style={{ fontSize: 22, color: C.jadeDeep, fontWeight: '700' }}>−</Text>
-      </Pressable>
-      <Text style={{ minWidth: 80, textAlign: 'center', fontFamily: FONT.display, fontWeight: '700', fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
-      <Pressable onPress={onInc} style={({ pressed }) => [{ width: 48, height: 46, alignItems: 'center', justifyContent: 'center' }, pressed && { backgroundColor: 'rgba(62,140,96,0.1)' }]}>
-        <Text style={{ fontSize: 22, color: C.jadeDeep, fontWeight: '700' }}>+</Text>
-      </Pressable>
+    <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 10 }}>
+      <KitPill color="primary" onPress={onDec} style={{ minHeight: 44, paddingHorizontal: 18 }}>
+        <Text style={{ fontSize: 22, color: '#fff', fontWeight: '800', ...ts('rgba(0,0,0,0.3)', 0, 1) }}>−</Text>
+      </KitPill>
+      <Text style={{ minWidth: 84, textAlign: 'center', fontFamily: FONT.display, fontWeight: '700', fontSize: 16, fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
+      <KitPill color="primary" onPress={onInc} style={{ minHeight: 44, paddingHorizontal: 18 }}>
+        <Text style={{ fontSize: 22, color: '#fff', fontWeight: '800', ...ts('rgba(0,0,0,0.3)', 0, 1) }}>+</Text>
+      </KitPill>
     </View>
   );
 }
 
-/* ---------- selectable chip ---------- */
+/* ---------- selectable chip — real kit parchment chip + kit gem ---------- */
 export function SelChip({ on, color, han, hanColor, label, onPress }) {
-  const se = angleToStartEnd(180);
   return (
-    <Pressable onPress={onPress}>
-      <LinearGradient
-        colors={['#fff', C.paperWarm]}
-        start={se.start}
-        end={se.end}
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 7,
-          paddingVertical: 7,
-          paddingRight: 13,
-          paddingLeft: 7,
-          borderRadius: 999,
-          borderWidth: 2.5,
-          borderColor: on ? (color || C.ink) : C.paperDeep,
-          boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.8), 0px 2px 0px rgba(120,80,40,0.14)',
-        }}
-      >
-        <View style={{ width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center', backgroundColor: hanColor, opacity: on ? 1 : 0.45 }}>
-          <Text style={{ fontFamily: FONT.han, fontSize: 12, color: '#fff' }}>{han}</Text>
-        </View>
-        <Text style={{ fontFamily: FONT.display, fontSize: 13, fontWeight: '600', color: on ? C.ink : C.inkMuted }}>{label}</Text>
-      </LinearGradient>
-    </Pressable>
+    <KitParchPill onPress={onPress} style={{ paddingLeft: 5, paddingRight: 13, gap: 7, minHeight: 34, opacity: on ? 1 : 0.72, borderColor: on ? color || C.ink : '#b9a06f' }}>
+      <KitGem size={24} color={on ? hanColor || color : C.inkFaint} han={han} fontSize={12} />
+      <Text style={{ fontFamily: FONT.display, fontSize: 13, fontWeight: '600', color: on ? C.ink : C.inkMuted }}>{label}</Text>
+    </KitParchPill>
   );
 }
 
@@ -301,63 +280,30 @@ export function Field({ label, children, style }) {
     </View>
   );
 }
-export function Input(props) {
+function KitField({ props, radius, fontSize, fontWeight, padV, padH, borderW }) {
   const [focus, setFocus] = React.useState(false);
   return (
-    <TextInput
-      {...props}
-      onFocus={(e) => { setFocus(true); props.onFocus && props.onFocus(e); }}
-      onBlur={(e) => { setFocus(false); props.onBlur && props.onBlur(e); }}
-      placeholderTextColor={C.inkFaint}
-      style={[
-        {
-          width: '100%',
-          fontFamily: FONT.ui,
-          fontSize: 15,
-          fontWeight: '600',
-          color: C.ink,
-          backgroundColor: '#fff',
-          borderWidth: 2.5,
-          borderColor: focus ? C.jade : C.stoneMid,
-          borderRadius: 12,
-          paddingVertical: 12,
-          paddingHorizontal: 14,
-          boxShadow: focus ? 'inset 0px 2px 5px rgba(120,80,30,0.12), 0px 0px 0px 3px rgba(94,200,150,0.35)' : 'inset 0px 2px 5px rgba(120,80,30,0.18)',
-          ...(WEB ? { outlineStyle: 'none' } : null),
-        },
-        props.style,
-      ]}
-    />
+    <ImageBackground
+      source={KIT.parchment}
+      resizeMode="stretch"
+      imageStyle={{ borderRadius: radius }}
+      style={{ width: '100%', borderRadius: radius, overflow: 'hidden', borderWidth: borderW, borderColor: focus ? C.jade : C.stoneMid, boxShadow: focus ? 'inset 0px 2px 6px rgba(120,80,30,0.28), 0px 0px 0px 3px rgba(94,200,150,0.35)' : 'inset 0px 2px 6px rgba(120,80,30,0.3)' }}
+    >
+      <TextInput
+        {...props}
+        onFocus={(e) => { setFocus(true); props.onFocus && props.onFocus(e); }}
+        onBlur={(e) => { setFocus(false); props.onBlur && props.onBlur(e); }}
+        placeholderTextColor={C.inkMuted}
+        style={[{ width: '100%', fontFamily: FONT.ui, fontSize, fontWeight, color: C.ink, backgroundColor: 'transparent', paddingVertical: padV, paddingHorizontal: padH, ...(WEB ? { outlineStyle: 'none' } : null) }, props.style]}
+      />
+    </ImageBackground>
   );
 }
+export function Input(props) {
+  return <KitField props={props} radius={12} fontSize={15} fontWeight="600" padV={12} padH={14} borderW={2.5} />;
+}
 export function DiaryInput(props) {
-  const [focus, setFocus] = React.useState(false);
-  return (
-    <TextInput
-      {...props}
-      onFocus={(e) => { setFocus(true); props.onFocus && props.onFocus(e); }}
-      onBlur={(e) => { setFocus(false); props.onBlur && props.onBlur(e); }}
-      placeholderTextColor={C.inkFaint}
-      style={[
-        {
-          width: '100%',
-          fontFamily: FONT.ui,
-          fontSize: 14,
-          fontWeight: '500',
-          color: C.ink,
-          backgroundColor: '#fff',
-          borderWidth: 2,
-          borderColor: focus ? C.jade : C.stoneMid,
-          borderRadius: 10,
-          paddingVertical: 9,
-          paddingHorizontal: 11,
-          boxShadow: focus ? 'inset 0px 2px 4px rgba(120,80,30,0.1), 0px 0px 0px 3px rgba(94,200,150,0.3)' : 'inset 0px 2px 4px rgba(120,80,30,0.14)',
-          ...(WEB ? { outlineStyle: 'none' } : null),
-        },
-        props.style,
-      ]}
-    />
-  );
+  return <KitField props={props} radius={10} fontSize={14} fontWeight="500" padV={9} padH={11} borderW={2} />;
 }
 
 /* ---------- wood plank surface ---------- */

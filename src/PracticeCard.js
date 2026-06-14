@@ -5,7 +5,7 @@ import Svg, { Path } from 'react-native-svg';
 import { C, FONT, shade } from './theme';
 import { CATS, STAT } from './data';
 import { Gradient, Gloss, Han } from './ui';
-import { KIT, KitCheck } from './kit';
+import { KIT, KitCheck, KitGem } from './kit';
 import { RewardMedal, QiTag } from './badges';
 import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
@@ -108,15 +108,8 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
               transform: pressed && !locked ? [{ translateY: -3 }] : [],
             }}
           >
-            {/* category gem */}
-            <Gradient
-              colors={[cat.color, shade(cat.color, -18)]}
-              angle={150}
-              style={{ width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, overflow: 'hidden', boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.5), inset 0px -4px 8px rgba(0,0,0,0.25), 0px 3px 0px rgba(0,0,0,0.18)' }}
-            >
-              <Han style={{ fontSize: 25, color: '#fff', textShadowColor: 'rgba(0,0,0,0.35)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>{cat.han}</Han>
-              <Gloss radius={16} />
-            </Gradient>
+            {/* category gem — real kit stone slot */}
+            <KitGem size={54} color={cat.color} han={cat.han} fontSize={26} />
 
             {/* body */}
             <View style={{ flex: 1, minWidth: 0 }}>

@@ -7,13 +7,14 @@ import { DIARY_TIMES, DIARY_SETS } from '../data';
 import { ScreenScroll, PadView } from '../layout';
 import { Card, Gradient, T, SectionHead, DiaryInput, kf, KF, EASE } from '../ui';
 import { SelChip } from '../ui';
+import { KitPill } from '../kit';
 import { useEffects } from '../effects';
 
 function GoldPill({ children, style }) {
   return (
-    <Gradient colors={[C.goldLight, C.gold]} angle={180} style={[{ borderRadius: 999, borderWidth: 2, borderColor: C.goldLine, paddingVertical: 5, paddingHorizontal: 12, boxShadow: `inset 0px 1px 0px rgba(255,255,255,0.55), 0px 2px 0px ${C.goldLine}` }, style]}>
-      <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 13, color: '#4a3410' }}>{children}</Text>
-    </Gradient>
+    <KitPill color="gold" style={[{ paddingHorizontal: 12, minHeight: 26 }, style]}>
+      <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 13, color: '#fff', textShadowColor: 'rgba(0,0,0,0.25)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 1 }}>{children}</Text>
+    </KitPill>
   );
 }
 
@@ -24,18 +25,13 @@ function CheckDot({ on }) {
   return <View style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: '#e3d8bf', boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.4)' }} />;
 }
 
-const PMT = {
-  plus: { colors: [C.jadeLight, C.jade], text: '#fff' },
-  minus: { colors: ['#e08a76', C.red], text: '#fff' },
-  todo: { colors: [C.goldLight, C.gold], text: '#4a3410' },
-};
+const PMT = { plus: 'primary', minus: 'danger', todo: 'gold' };
 function PmtRow({ badge, kind, label, value, onChange, mini, placeholder }) {
-  const p = PMT[kind];
   return (
     <View style={{ flexDirection: 'row', gap: 9, alignItems: 'flex-start', marginBottom: 9 }}>
-      <Gradient colors={p.colors} angle={180} style={{ width: 32, height: 32, borderRadius: 9, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, marginTop: 2, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.4), 0px 2px 0px rgba(0,0,0,0.16)' }}>
-        <Text style={{ fontFamily: FONT.display, fontWeight: '800', fontSize: 17, color: p.text }}>{badge}</Text>
-      </Gradient>
+      <KitPill color={PMT[kind]} style={{ width: 34, minHeight: 34, paddingHorizontal: 0, marginTop: 2 }}>
+        <Text style={{ fontFamily: FONT.display, fontWeight: '800', fontSize: 16, color: '#fff', textShadowColor: 'rgba(0,0,0,0.3)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 1 }}>{badge}</Text>
+      </KitPill>
       <View style={{ flex: 1, minWidth: 0 }}>
         {label && !mini ? <Text style={[T.caption, { marginBottom: 4 }]}>{label}</Text> : null}
         <DiaryInput value={value} onChangeText={onChange} placeholder={placeholder || 'Конкретный, реальный случай…'} />

@@ -1,40 +1,48 @@
 /* Alchemist — Journal screen (ported 1:1 from screens2.jsx) */
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, ImageBackground } from 'react-native';
 import { C, FONT } from '../theme';
 import { HEAT, GROWTH, STAT } from '../data';
 import { ScreenScroll, PadView } from '../layout';
 import { Card, T, SectionHead, Gradient, kf, KF, EASE } from '../ui';
 import { GrowthChart } from '../svg';
+import { KIT } from '../kit';
 
+// heat levels mapped to real kit assets (parchment → olive → green), with depth tint for lvl 3
 const HEAT_STYLES = {
-  0: { colors: ['#e7d6ab', '#dcc896'], border: 'rgba(118,80,43,0.35)', text: C.inkFaint },
-  1: { colors: ['#a9d6bd', '#8cc4a4'], border: 'rgba(35,92,62,0.4)', text: C.jadeDeep },
-  2: { colors: ['#63b88f', '#3f9468'], border: C.jadeDeep, text: '#fff' },
-  3: { colors: ['#3e8c60', '#235c3e'], border: C.jadeLine, text: '#fff' },
+  0: { asset: KIT.parchment, border: 'rgba(118,80,43,0.4)', text: C.inkFaint, tint: null },
+  1: { asset: KIT.fillOlive, border: 'rgba(35,92,62,0.5)', text: '#fff', tint: null },
+  2: { asset: KIT.fillGreen, border: C.jadeDeep, text: '#2a4a1e', tint: null },
+  3: { asset: KIT.fillGreen, border: C.jadeLine, text: '#fff', tint: 'rgba(20,50,30,0.4)' },
 };
 
 function HeatCell({ v, n, today, onPress, delay }) {
   const st = HEAT_STYLES[v];
   return (
     <Pressable style={{ flex: 1 }} onPress={onPress}>
-      <Gradient
-        colors={st.colors}
-        angle={180}
+      <ImageBackground
+        source={st.asset}
+        resizeMode="stretch"
+        imageStyle={{ borderRadius: 9 }}
         style={[
-          { aspectRatio: 1, borderRadius: 9, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: st.border, boxShadow: today ? `0px 0px 0px 3px ${C.gold}, inset 0px 1px 0px rgba(255,255,255,0.4)` : 'inset 0px 1px 0px rgba(255,255,255,0.5)' },
+          { aspectRatio: 1, borderRadius: 9, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: st.border, boxShadow: today ? `0px 0px 0px 3px ${C.gold}, inset 0px 1px 0px rgba(255,255,255,0.4)` : 'inset 0px 1px 0px rgba(255,255,255,0.4)' },
           kf(KF.fadeUp, 0.4, { ease: EASE.out, delay }),
         ]}
       >
-        <Text style={{ fontFamily: FONT.display, fontSize: 10, fontWeight: '600', color: st.text }}>{n}</Text>
-      </Gradient>
+        {st.tint ? <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: st.tint }} /> : null}
+        <Text style={{ fontFamily: FONT.display, fontSize: 10, fontWeight: '700', color: st.text }}>{n}</Text>
+      </ImageBackground>
     </Pressable>
   );
 }
 
 function LegendSwatch({ v }) {
   const st = HEAT_STYLES[v];
-  return <Gradient colors={st.colors} angle={180} style={{ width: 14, height: 14, borderRadius: 5, borderWidth: 2, borderColor: st.border }} />;
+  return (
+    <ImageBackground source={st.asset} resizeMode="stretch" imageStyle={{ borderRadius: 5 }} style={{ width: 14, height: 14, borderRadius: 5, overflow: 'hidden', borderWidth: 2, borderColor: st.border }}>
+      {st.tint ? <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: st.tint }} /> : null}
+    </ImageBackground>
+  );
 }
 
 function SummaryCard({ big, label, sub, color }) {

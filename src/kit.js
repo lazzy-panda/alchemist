@@ -30,6 +30,7 @@ export const KIT = {
   fillOlive: require('../assets/kit/fill_olive.png'),
   fillPurple: require('../assets/kit/fill_purple.png'),
   fillOrange: require('../assets/kit/fill_orange.png'),
+  levelupBanner: require('../assets/kit/levelup_banner.png'),
 };
 const FILLS = {
   // resources
@@ -171,4 +172,41 @@ export function KitRound({ size = 230, style, children }) {
       {children}
     </View>
   );
+}
+
+/* ---------- gem / medallion on a real kit stone slot ---------- */
+export function KitGem({ size = 54, color = '#fff', han, fontSize, glyphStyle }) {
+  const b = Math.max(7, Math.round(size * 0.26));
+  return (
+    <NineSlice source={KIT.panel} slice={56} border={b} style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={[{ fontFamily: FONT.han, fontSize: fontSize || size * 0.5, color, lineHeight: (fontSize || size * 0.5) * 1.02, textAlign: 'center' }, glyphStyle]}>{han}</Text>
+    </NineSlice>
+  );
+}
+
+/* ---------- colored candy pill (real kit) for chips / state ---------- */
+export function KitPill({ color = 'primary', children, style, onPress }) {
+  const asset = BTN_ASSET[color] || KIT.btnGreen;
+  const body = (
+    <NineSlice source={asset} slice={[7, 22, 9, 22]} border={{ top: 6, right: 15, bottom: 8, left: 15 }} style={[{ minHeight: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: 10 }, style]}>
+      {children}
+    </NineSlice>
+  );
+  return onPress ? <Pressable onPress={onPress}>{body}</Pressable> : body;
+}
+
+/* ---------- neutral parchment chip (real kit parchment) ---------- */
+export function KitParchPill({ children, style, onPress }) {
+  const body = (
+    <ImageBackground source={KIT.parchment} resizeMode="stretch" imageStyle={{ borderRadius: 999 }} style={[{ minHeight: 26, borderRadius: 999, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: '#b9a06f' }, style]}>
+      {children}
+    </ImageBackground>
+  );
+  return onPress ? <Pressable onPress={onPress}>{body}</Pressable> : body;
+}
+
+/* ---------- level-up banner ribbon (real kit) ---------- */
+export function KitBanner({ width = 300, style }) {
+  const ar = 468 / 117;
+  return <Image source={KIT.levelupBanner} style={[{ width, height: width / ar }, style]} resizeMode="contain" />;
 }
