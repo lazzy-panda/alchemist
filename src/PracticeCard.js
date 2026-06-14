@@ -1,10 +1,11 @@
 /* Alchemist — practice card (ported 1:1 from components.jsx) */
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, Pressable, Platform } from 'react-native';
+import { View, Text, Pressable, ImageBackground, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { C, FONT, shade } from './theme';
 import { CATS, STAT } from './data';
 import { Gradient, Gloss, Han } from './ui';
+import { KIT } from './kit';
 import { RewardMedal, QiTag } from './badges';
 import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
@@ -37,6 +38,21 @@ function CheckMark({ done }) {
   );
 }
 
+function CardBase({ done, style, children }) {
+  if (done) {
+    return (
+      <Gradient colors={['#d8efdd', '#c2e6cd']} angle={180} style={style}>
+        {children}
+      </Gradient>
+    );
+  }
+  return (
+    <ImageBackground source={KIT.parchment} resizeMode="stretch" imageStyle={{ borderRadius: 20 }} style={style}>
+      {children}
+    </ImageBackground>
+  );
+}
+
 export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
   const cat = CATS[p.cat];
   const cardRef = useRef(null);
@@ -63,8 +79,6 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
     onToggle && onToggle(p);
   };
 
-  const bgColors = p.done ? ['#d8efdd', '#c2e6cd'] : locked ? [C.paperWarm, C.paperWarm] : [C.paperCell, C.paperLight];
-
   return (
     <View
       ref={cardRef}
@@ -76,9 +90,8 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
     >
       <Pressable onPress={() => onOpen && onOpen(p)} disabled={locked}>
         {({ pressed }) => (
-          <Gradient
-            colors={bgColors}
-            angle={180}
+          <CardBase
+            done={p.done}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -91,7 +104,7 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
               borderColor: p.done ? '#8fc9a6' : active ? C.jade : C.paperDeep,
               opacity: locked ? 0.6 : 1,
               overflow: 'hidden',
-              boxShadow: pressed && !locked ? 'inset 0px 2px 0px rgba(255,255,255,0.7), 0px 6px 16px rgba(80,52,18,0.22)' : 'inset 0px 2px 0px rgba(255,255,255,0.7), 0px 3px 8px rgba(80,52,18,0.18)',
+              boxShadow: pressed && !locked ? 'inset 0px 2px 0px rgba(255,255,255,0.5), 0px 6px 16px rgba(80,52,18,0.22)' : 'inset 0px 2px 0px rgba(255,255,255,0.5), 0px 3px 8px rgba(80,52,18,0.18)',
               transform: pressed && !locked ? [{ translateY: -3 }] : [],
             }}
           >
@@ -122,7 +135,7 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
                 {compact ? <QiTag qi={p.qi} /> : null}
               </View>
             </View>
-          </Gradient>
+          </CardBase>
         )}
       </Pressable>
 

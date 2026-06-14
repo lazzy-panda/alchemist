@@ -1,10 +1,11 @@
 /* Alchemist — core UI primitives (ported 1:1 from styles.css) */
 import React from 'react';
-import { View, Text, Pressable, TextInput, Platform } from 'react-native';
+import { View, Text, Pressable, TextInput, ImageBackground, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { C, R, FONT } from './theme';
 import { kf, tr, KF, EASE } from './anim';
+import { KitButton, KIT } from './kit';
 
 const WEB = Platform.OS === 'web';
 
@@ -86,25 +87,27 @@ export function SectionHead({ title, right, style }) {
   );
 }
 
-/* ---------- card (parchment cell) ---------- */
+/* ---------- card (real kit parchment texture) ---------- */
 export function Card({ style, children, warm, ...rest }) {
   return (
-    <Gradient
-      colors={warm ? [C.paperWarm, C.paperWarm] : [C.paperCell, C.paperLight]}
-      angle={180}
+    <ImageBackground
+      source={KIT.parchment}
+      resizeMode="stretch"
+      imageStyle={{ borderRadius: R.card }}
       style={[
         {
           borderRadius: R.card,
+          overflow: 'hidden',
           borderWidth: 2.5,
           borderColor: C.paperDeep,
-          boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.7), 0px 3px 8px rgba(80,52,18,0.18)',
+          boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.5), 0px 3px 8px rgba(80,52,18,0.18)',
         },
         style,
       ]}
       {...rest}
     >
       {children}
-    </Gradient>
+    </ImageBackground>
   );
 }
 
@@ -178,6 +181,14 @@ export function Btn({ variant = 'primary', onPress, children, style, textStyle, 
       >
         <Text style={[{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: C.jadeDeep }, textStyle]}>{children}</Text>
       </Pressable>
+    );
+  }
+  // real RPG-kit pill assets for the candy variants
+  if (variant === 'primary' || variant === 'gold' || variant === 'blue' || variant === 'danger') {
+    return (
+      <KitButton variant={variant} onPress={onPress} block={block} style={style} textStyle={textStyle} disabled={disabled}>
+        {children}
+      </KitButton>
     );
   }
   const v = BTN_VARIANTS[variant] || BTN_VARIANTS.primary;

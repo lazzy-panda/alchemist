@@ -6,6 +6,7 @@ import { C, FONT, clamp } from './theme';
 import { STAT } from './data';
 import { Gradient, Gloss, Han, ts, angleToStartEnd } from './ui';
 import { kf, tr, KF, EASE } from './anim';
+import { KitPanel } from './kit';
 
 const WEB = Platform.OS === 'web';
 
@@ -202,35 +203,22 @@ export function StateChip({ state, text }) {
   );
 }
 
-/* ---------- avatar ---------- */
+/* ---------- avatar — real kit stone slot ---------- */
 export function Avatar({ flow, size = 96 }) {
-  const se = angleToStartEnd(150);
   return (
     <View style={{ width: size, height: size }}>
-      <LinearGradient
-        colors={['#fcf3da', '#e2cfa0']}
-        start={se.start}
-        end={se.end}
-        style={{
-          width: size,
-          height: size,
-          borderRadius: 18,
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderWidth: 3,
-          borderColor: C.stoneLine,
-          boxShadow: flow
-            ? `inset 0px 0px 0px 3px ${C.jadeLight}, inset 0px 3px 6px rgba(255,255,255,0.6), 0px 0px 16px rgba(94,200,150,0.6), 0px 4px 0px ${C.stoneLine}`
-            : `inset 0px 0px 0px 3px ${C.gold}, inset 0px 3px 6px rgba(255,255,255,0.6), 0px 4px 0px ${C.stoneLine}`,
-        }}
+      <KitPanel
+        slice={56}
+        border={Math.round(size * 0.2)}
+        style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}
       >
-        <Han style={{ fontSize: size * 0.42, color: C.jadeDeep, ...ts('rgba(255,255,255,0.5)', 0, 1) }}>修</Han>
-      </LinearGradient>
+        <Han style={{ fontSize: size * 0.4, color: C.jadeDeep, ...ts('rgba(255,255,255,0.5)', 0, 1) }}>修</Han>
+      </KitPanel>
       {flow ? (
         <View
           pointerEvents="none"
           style={[
-            { position: 'absolute', left: -8, top: -8, right: -8, bottom: -8, borderRadius: 22, borderWidth: 3, borderColor: 'rgba(111,191,146,0.45)', borderTopColor: C.jadeLight },
+            { position: 'absolute', left: -6, top: -6, right: -6, bottom: -6, borderRadius: 18, borderWidth: 3, borderColor: 'rgba(111,191,146,0.5)', borderTopColor: C.jadeLight },
             kf(KF.spin, 7, { ease: EASE.linear, iter: 'infinite' }),
           ]}
         />

@@ -7,6 +7,7 @@ import { Card, Btn, IconBtn, Gradient, Gloss, Han, T, SectionHead, Seal, Stepper
 import { RewardMedal, QiTag, StateChip, MedalPill } from './badges';
 import { CircularTimer } from './svg';
 import { PracticeCard } from './PracticeCard';
+import { KitPanel, KitClose } from './kit';
 
 const SHEET_UP = { '0%': { transform: [{ translateY: 820 }] }, '100%': { transform: [{ translateY: 0 }] } };
 const SHEET_DOWN = { '0%': { transform: [{ translateY: 0 }] }, '100%': { transform: [{ translateY: 820 }] } };
@@ -51,8 +52,9 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
       <ScrollViewSafe>
         <View style={[{ paddingHorizontal: 18, paddingTop: 20, paddingBottom: 30, minHeight: '100%' }, wide && { maxWidth: 720, width: '100%', alignSelf: 'center', paddingHorizontal: 40 }]}>
           {/* header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
             <Btn variant="ghost" onPress={onClose} style={{ paddingVertical: 8, paddingHorizontal: 10, marginLeft: -8 }}>‹ Назад</Btn>
+            <KitClose onPress={onClose} size={34} />
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 22 }}>
             <Gradient colors={[cat.color, shade(cat.color, -18)]} angle={150} style={{ width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2.5, borderColor: C.stoneLine, overflow: 'hidden', boxShadow: 'inset 0px 3px 0px rgba(255,255,255,0.5), inset 0px -4px 8px rgba(0,0,0,0.25), 0px 3px 0px rgba(0,0,0,0.18)' }}>
@@ -144,12 +146,13 @@ function Sheet({ children, onClose, maxHeightPct = 90 }) {
   return (
     <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 150, justifyContent: 'flex-end' }}>
       <Pressable onPress={close} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: 'rgba(35,25,12,0.45)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out, dir: closing ? 'reverse' : 'normal' })]} />
-      <View style={[{ backgroundColor: C.paperLight, borderTopLeftRadius: 26, borderTopRightRadius: 26, borderWidth: 5, borderBottomWidth: 0, borderColor: C.stoneDark, maxHeight: maxHeightPct + '%', boxShadow: `inset 0px 0px 0px 3px ${C.stoneEdge}, 0px -12px 40px rgba(0,0,0,0.42)` }, kf(closing ? SHEET_DOWN : SHEET_UP, closing ? 0.28 : 0.38, { ease: EASE.out, fill: 'forwards' })]}>
-        <View style={{ width: 48, height: 5, borderRadius: 3, backgroundColor: 'rgba(70,67,58,0.5)', alignSelf: 'center', marginTop: 12, marginBottom: 2 }} />
-        <View style={{ height: 13, borderRadius: 999, marginHorizontal: 14, marginVertical: 8, borderWidth: 2.5, borderColor: C.stoneLine, overflow: 'hidden' }}>
-          <Gradient colors={[C.stoneLight, C.stoneMid, C.stoneDark]} angle={180} style={{ flex: 1 }} />
-        </View>
-        {typeof children === 'function' ? children(close) : children}
+      <View style={[{ maxHeight: maxHeightPct + '%' }, kf(closing ? SHEET_DOWN : SHEET_UP, closing ? 0.28 : 0.38, { ease: EASE.out, fill: 'forwards' })]}>
+        <KitPanel slice={[58, 58, 30, 58]} border={{ top: 26, right: 24, bottom: 6, left: 24 }} style={{ width: '100%' }} contentStyle={{ position: 'relative' }}>
+          <View style={{ position: 'absolute', right: 6, top: -6, zIndex: 6 }}>
+            <KitClose onPress={close} size={34} />
+          </View>
+          {typeof children === 'function' ? children(close) : children}
+        </KitPanel>
       </View>
     </View>
   );

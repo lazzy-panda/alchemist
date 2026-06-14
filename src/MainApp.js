@@ -12,6 +12,7 @@ import { LibraryScreen } from './screens/Library';
 import { DiaryScreen } from './screens/Diary';
 import { JournalScreen } from './screens/Journal';
 import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil } from './overlays';
+import { KitPanel } from './kit';
 
 const WEB = Platform.OS === 'web';
 const SCREENS = {
@@ -77,13 +78,13 @@ export function MainApp() {
     return (
       <View style={{ flex: 1, backgroundColor: '#2b4640' }}>
         <View style={{ flex: 1, backgroundColor: 'transparent', padding: 28, alignItems: 'center', ...(WEB ? { backgroundImage: 'radial-gradient(900px 500px at 70% -8%, #4a6e63 0%, rgba(74,110,99,0) 60%), linear-gradient(165deg, #36504a 0%, #243733 100%)' } : null) }}>
-          <View style={{ flex: 1, width: '100%', maxWidth: 1240, flexDirection: 'row', backgroundColor: C.paper, borderRadius: 30, overflow: 'hidden', borderWidth: 5, borderColor: C.stoneDark, boxShadow: `inset 0px 0px 0px 3px ${C.stoneEdge}, inset 0px 0px 0px 5px ${C.stoneLine}, 0px 14px 34px rgba(0,0,0,0.42)` }}>
+          <KitPanel slice={60} border={24} style={{ flex: 1, width: '100%', maxWidth: 1240 }} contentStyle={{ flex: 1, flexDirection: 'row', overflow: 'hidden', borderRadius: 6 }}>
             <SideRail route={route} setRoute={setRoute} stage={game.stage} onSignOut={auth?.signOut} userName={auth?.user?.name} />
             <View style={{ flex: 1, position: 'relative' }}>
               {screen}
               {overlays}
             </View>
-          </View>
+          </KitPanel>
         </View>
       </View>
     );
