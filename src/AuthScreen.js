@@ -30,29 +30,28 @@ export function AuthScreen() {
             <View style={[{ width: '100%', maxWidth: 380 }, kf(KF.popIn, 0.5, { ease: EASE.overshoot })]}>
               {/* brand */}
               <View style={{ alignItems: 'center', marginBottom: 22 }}>
-                <Gradient colors={['#e0654a', '#a93a24']} angle={160} style={{ width: 74, height: 74, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.redLine, boxShadow: `inset 0px 2px 0px rgba(255,255,255,0.3), 0px 5px 0px ${C.redLine}, 0px 10px 22px rgba(120,30,16,0.45)`, transform: [{ rotate: '-3deg' }], marginBottom: 14 }}>
-                  <Han style={{ fontSize: 38, color: '#fff', fontWeight: '700' }}>修</Han>
+                <Gradient colors={['#e0654a', '#a93a24']} angle={160} style={{ width: 68, height: 68, borderRadius: 12, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.redLine, marginBottom: 14 }}>
+                  <Text style={{ fontSize: 32 }}>⚗️</Text>
                 </Gradient>
-                <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 38, color: '#F6D685' }}>Alchemist</Text>
-                <Han style={{ fontSize: 16, color: '#cdbf9a', marginTop: 2, letterSpacing: 4 }}>修真之路</Han>
-                <Text style={{ fontFamily: FONT.ui, fontSize: 13, color: '#b8c4bd', marginTop: 6, textAlign: 'center' }}>RPG-трекер практик: медитация, цигун, Чжан Чжуан</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 22, color: '#F6D685' }}>Alchemist</Text>
+                <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: '#b8c4bd', marginTop: 12, textAlign: 'center', lineHeight: 14 }}>RPG tracker for meditation, qigong & Zhan Zhuang</Text>
               </View>
 
               {/* card */}
               <Gradient colors={[C.paperCell, C.paperLight]} angle={180} style={{ borderRadius: 26, borderWidth: 5, borderColor: C.stoneDark, padding: 22, boxShadow: `inset 0px 0px 0px 3px ${C.stoneEdge}, 0px 14px 34px rgba(20,12,4,0.45)` }}>
                 {/* tabs */}
                 <View style={{ flexDirection: 'row', gap: 8, marginBottom: 18, backgroundColor: 'rgba(120,80,40,0.12)', borderRadius: 999, padding: 4 }}>
-                  {[['login', 'Вход'], ['register', 'Регистрация']].map(([m, lbl]) => {
+                  {[['login', 'Sign in'], ['register', 'Sign up']].map(([m, lbl]) => {
                     const on = mode === m;
                     return (
                       <Pressable key={m} onPress={() => { setMode(m); setError(''); }} accessibilityRole="button" accessibilityLabel={lbl} accessibilityState={{ selected: on }} style={{ flex: 1, borderRadius: 999, overflow: 'hidden' }}>
                         {on ? (
                           <Gradient colors={[C.jadeLight, C.jade]} angle={180} style={{ paddingVertical: 9, alignItems: 'center', borderRadius: 999, boxShadow: `0px 2px 0px ${C.jadeLine}` }}>
-                            <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 14, color: '#fff' }}>{lbl}</Text>
+                            <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 9, color: '#fff' }}>{lbl}</Text>
                           </Gradient>
                         ) : (
                           <View style={{ paddingVertical: 9, alignItems: 'center' }}>
-                            <Text style={{ fontFamily: FONT.display, fontWeight: '600', fontSize: 14, color: C.inkMuted }}>{lbl}</Text>
+                            <Text style={{ fontFamily: FONT.display, fontWeight: '600', fontSize: 9, color: C.inkMuted }}>{lbl}</Text>
                           </View>
                         )}
                       </Pressable>
@@ -61,14 +60,14 @@ export function AuthScreen() {
                 </View>
 
                 {mode === 'register' ? (
-                  <Field label="Имя">
-                    <Input value={name} onChangeText={setName} placeholder="Как тебя звать, странник" autoCapitalize="words" />
+                  <Field label="Name">
+                    <Input value={name} onChangeText={setName} placeholder="Your name" autoCapitalize="words" />
                   </Field>
                 ) : null}
                 <Field label="Email">
                   <Input value={email} onChangeText={setEmail} placeholder="you@example.com" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
                 </Field>
-                <Field label="Пароль">
+                <Field label="Password">
                   <Input value={password} onChangeText={setPassword} placeholder="••••••" secureTextEntry onSubmitEditing={submit} />
                 </Field>
 
@@ -79,15 +78,15 @@ export function AuthScreen() {
                 ) : null}
 
                 <Btn variant="primary" block onPress={submit} disabled={busy} style={{ marginTop: 4 }}>
-                  {busy ? '…' : mode === 'login' ? 'Войти на Путь' : 'Начать Путь'}
+                  {busy ? '…' : mode === 'login' ? 'Enter the Path' : 'Begin the Path'}
                 </Btn>
 
-                <Pressable onPress={async () => { setBusy(true); await guest(); setBusy(false); }} accessibilityRole="button" accessibilityLabel="Продолжить как гость" style={{ marginTop: 14, alignItems: 'center' }}>
-                  <Text style={{ fontFamily: FONT.ui, fontWeight: '700', fontSize: 13, color: C.inkMuted }}>Продолжить как гость →</Text>
+                <Pressable onPress={async () => { setBusy(true); await guest(); setBusy(false); }} accessibilityRole="button" accessibilityLabel="Continue as guest" style={{ marginTop: 14, alignItems: 'center' }}>
+                  <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkMuted }}>Continue as guest →</Text>
                 </Pressable>
               </Gradient>
 
-              <Text style={{ textAlign: 'center', color: '#8fa39a', fontSize: 11, marginTop: 18, fontFamily: FONT.ui }}>道法自然 — Путь следует естественности</Text>
+              <Text style={{ textAlign: 'center', color: '#8fa39a', fontSize: 8, marginTop: 18, fontFamily: FONT.ui }}>The Way follows nature</Text>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>

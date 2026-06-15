@@ -10,7 +10,7 @@ import { KIT } from '../kit';
 
 // heat levels — solid glossy green tiles matching the kit's green progress segments
 const HEAT_STYLES = {
-  0: { colors: ['#e7d6ab', '#dcc896'], border: 'rgba(118,80,43,0.4)', text: C.inkFaint },
+  0: { colors: ['#4a443a', '#3a352d'], border: 'rgba(120,108,80,0.5)', text: '#8c8169' },
   1: { colors: ['#a9d6bd', '#8cc4a4'], border: 'rgba(35,92,62,0.45)', text: C.jadeDeep },
   2: { colors: ['#63b88f', '#3f9468'], border: C.jadeDeep, text: '#fff' },
   3: { colors: ['#3e8c60', '#235c3e'], border: C.jadeLine, text: '#fff' },
@@ -42,8 +42,8 @@ function LegendSwatch({ v }) {
 function SummaryCard({ big, label, sub, color }) {
   return (
     <Card style={{ flexGrow: 1, flexBasis: '47%', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14 }}>
-      <Text style={[T.numXl, { fontSize: 34, color }]}>{big}</Text>
-      <Text style={{ fontFamily: FONT.ui, fontWeight: '700', fontSize: 13, marginTop: 2, color: C.ink }}>{label}</Text>
+      <Text style={[T.numXl, { fontSize: 20, color }]}>{big}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 8, marginTop: 4, color: C.ink }}>{label}</Text>
       <Text style={T.caption}>{sub}</Text>
     </Card>
   );
@@ -53,15 +53,15 @@ export function JournalScreen({ ctx }) {
   const { wide, onOpenDay } = ctx;
   let todayIdx = 26;
   try { todayIdx = Math.min(HEAT.length - 1, Math.max(0, new Date().getDate() - 1)); } catch (e) {}
-  const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  const weekdays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
   const rows = [];
   for (let i = 0; i < HEAT.length; i += 7) rows.push(HEAT.slice(i, i + 7));
 
   return (
     <ScreenScroll>
       <PadView wide={wide}>
-        <Text style={T.eyebrow}>Летопись пути</Text>
-        <Text accessibilityRole="header" style={[T.displayM, { marginBottom: 16 }]}>Журнал · Июнь</Text>
+        <Text style={T.eyebrow}>Chronicle of the Path</Text>
+        <Text accessibilityRole="header" style={[T.displayM, { marginBottom: 16 }]}>Journal · June</Text>
 
         {/* heatmap */}
         <Card style={{ padding: 16, marginBottom: 18 }}>
@@ -81,34 +81,34 @@ export function JournalScreen({ ctx }) {
             ))}
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12 }}>
-            <Text style={[T.caption, { flex: 1 }]}>Нажми на день — детали</Text>
-            <Text style={T.caption}>меньше</Text>
+            <Text style={[T.caption, { flex: 1 }]}>Tap a day for details</Text>
+            <Text style={T.caption}>less</Text>
             {[0, 1, 2, 3].map((l) => <LegendSwatch key={l} v={l} />)}
-            <Text style={T.caption}>больше</Text>
+            <Text style={T.caption}>more</Text>
           </View>
         </Card>
 
         {/* growth chart */}
-        <SectionHead title="Рост характеристик" style={{ marginTop: 4 }} />
+        <SectionHead title="Stat growth" style={{ marginTop: 4 }} />
         <Card style={{ padding: 16, marginBottom: 18 }}>
           <GrowthChart series={GROWTH} />
           <View style={{ flexDirection: 'row', gap: 14, marginTop: 12, flexWrap: 'wrap' }}>
-            {[['energy', 'Энергия'], ['focus', 'Концентрация'], ['flex', 'Гибкость']].map(([k, n]) => (
+            {[['energy', 'Energy'], ['focus', 'Focus'], ['flex', 'Flexibility']].map(([k, n]) => (
               <View key={k} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <View style={{ width: 14, height: 3, borderRadius: 2, backgroundColor: STAT[k].color }} />
-                <Text style={{ fontSize: 12, fontWeight: '600', color: C.inkMuted, fontFamily: FONT.ui }}>{n}</Text>
+                <Text style={{ fontSize: 8, color: C.inkMuted, fontFamily: FONT.display }}>{n}</Text>
               </View>
             ))}
           </View>
         </Card>
 
         {/* period summary */}
-        <SectionHead title="Сводка периода" style={{ marginTop: 4 }} />
+        <SectionHead title="Period summary" style={{ marginTop: 4 }} />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-          <SummaryCard big="412" label="минут практик" sub="за 28 дней" color={C.jade} />
-          <SummaryCard big="14" label="лучший стрик" sub="🔥 подряд" color={C.cEnergy} />
-          <SummaryCard big="2" label="реликвии" sub="открыто" color={C.gold} />
-          <SummaryCard big="6" label="характеристик" sub="растут" color={C.cKind} />
+          <SummaryCard big="412" label="practice minutes" sub="in 28 days" color={C.jade} />
+          <SummaryCard big="14" label="best streak" sub="🔥 in a row" color={C.cEnergy} />
+          <SummaryCard big="2" label="relics" sub="unlocked" color={C.gold} />
+          <SummaryCard big="6" label="stats" sub="growing" color={C.cKind} />
         </View>
       </PadView>
     </ScreenScroll>

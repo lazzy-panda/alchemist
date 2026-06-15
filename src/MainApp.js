@@ -62,7 +62,7 @@ export function MainApp() {
   const onOpenDay = useCallback((d) => setDaySheet(d), []);
   const onArchive = useCallback((id) => {
     game.archivePractice(id);
-    setToast({ message: 'Практика убрана в архив', actionLabel: 'Вернуть', action: 'undo' });
+    setToast({ message: 'Practice archived', actionLabel: 'Undo', action: 'undo' });
   }, [game.archivePractice]);
 
   const ctx = {
@@ -102,15 +102,11 @@ export function MainApp() {
 
   if (wide) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#2b4640' }}>
-        <View style={{ flex: 1, backgroundColor: 'transparent', padding: 28, alignItems: 'center', ...(WEB ? { backgroundImage: 'radial-gradient(900px 500px at 70% -8%, #4a6e63 0%, rgba(74,110,99,0) 60%), linear-gradient(165deg, #36504a 0%, #243733 100%)' } : null) }}>
-          <KitPanel slice={60} border={24} style={{ flex: 1, width: '100%', maxWidth: 1240 }} contentStyle={{ flex: 1, flexDirection: 'row', overflow: 'hidden', borderRadius: 6 }}>
-            <SideRail route={route} setRoute={setRoute} stage={game.stage} onSignOut={auth?.signOut} userName={auth?.user?.name} />
-            <View style={{ flex: 1, position: 'relative' }}>
-              {screen}
-              {overlays}
-            </View>
-          </KitPanel>
+      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: C.paper }}>
+        <SideRail route={route} setRoute={setRoute} stage={game.stage} onSignOut={auth?.signOut} userName={auth?.user?.name} />
+        <View style={{ flex: 1, position: 'relative' }}>
+          {screen}
+          {overlays}
         </View>
       </View>
     );

@@ -54,57 +54,57 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
         <View style={[{ paddingHorizontal: 18, paddingTop: 20, paddingBottom: 30, minHeight: '100%' }, wide && { maxWidth: 720, width: '100%', alignSelf: 'center', paddingHorizontal: 40 }]}>
           {/* header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-            <Btn variant="ghost" onPress={onClose} style={{ paddingVertical: 8, paddingHorizontal: 10, marginLeft: -8 }}>‹ Назад</Btn>
+            <Btn variant="ghost" onPress={onClose} style={{ paddingVertical: 8, paddingHorizontal: 10, marginLeft: -8 }}>‹ Back</Btn>
             <KitClose onPress={onClose} size={34} />
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 22 }}>
-            <KitGem size={54} color={cat.color} han={cat.han} fontSize={26} />
-            <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
-              <Text style={[T.displayM, { fontSize: 22, lineHeight: 24 }]}>{practice.name}</Text>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 11, fontWeight: '700', color: cat.color }}>{cat.name}{practice.mult ? ' · ×' + practice.mult : ''}</Text>
+            <KitGem size={48} icon={cat.icon} color={cat.color} />
+            <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
+              <Text style={[T.displayM, { fontSize: 13, lineHeight: 18 }]}>{practice.name}</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: cat.color }}>{cat.name}{practice.mult ? ' · x' + practice.mult : ''}</Text>
             </View>
           </View>
 
           {/* timer */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 10, marginBottom: 6 }}>
-            <TStep label="−5м" onPress={() => adjust(-5)} disabled={running} />
+            <TStep label="−5m" onPress={() => adjust(-5)} disabled={running} />
             <CircularTimer remaining={remaining} total={total} running={running} size={234} />
-            <TStep label="+5м" onPress={() => adjust(5)} disabled={running} />
+            <TStep label="+5m" onPress={() => adjust(5)} disabled={running} />
           </View>
 
           {/* controls */}
           <View style={{ flexDirection: 'row', gap: 10, marginTop: 14, marginBottom: 8 }}>
-            {!running && remaining > 0 && remaining === total ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Старт</Btn> : null}
-            {running ? <Btn variant="secondary" block onPress={() => setRunning(false)} style={{ flex: 1 }}>⏸ Пауза</Btn> : null}
-            {!running && remaining < total && remaining > 0 ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Продолжить</Btn> : null}
-            {remaining === 0 ? <Btn variant="gold" block onPress={() => onComplete(practice)} style={{ flex: 1 }}>✦ Завершить</Btn> : null}
-            {remaining < total && remaining > 0 ? <Btn variant="ghost" onPress={() => { setRemaining(total); setRunning(false); }}>Сброс</Btn> : null}
+            {!running && remaining > 0 && remaining === total ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Start</Btn> : null}
+            {running ? <Btn variant="secondary" block onPress={() => setRunning(false)} style={{ flex: 1 }}>⏸ Pause</Btn> : null}
+            {!running && remaining < total && remaining > 0 ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Resume</Btn> : null}
+            {remaining === 0 ? <Btn variant="gold" block onPress={() => onComplete(practice)} style={{ flex: 1 }}>✦ Finish</Btn> : null}
+            {remaining < total && remaining > 0 ? <Btn variant="ghost" onPress={() => { setRemaining(total); setRunning(false); }}>Reset</Btn> : null}
           </View>
-          <Btn variant="ghost" block onPress={() => onComplete(practice)} textStyle={{ color: C.jadeDeep }}>Отметить выполненной</Btn>
+          <Btn variant="ghost" block onPress={() => onComplete(practice)}>Mark complete</Btn>
 
           {/* instruction */}
           <Pressable onPress={() => setShowInstr(!showInstr)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20 }}>
-            <Text style={{ color: C.inkMuted, fontSize: 16, transform: showInstr ? [{ rotate: '90deg' }] : [] }}>›</Text>
-            <Text style={{ fontFamily: FONT.ui, fontWeight: '700', fontSize: 14, color: C.inkMuted }}>Руководство</Text>
+            <Text style={{ color: C.inkMuted, fontSize: 14, transform: showInstr ? [{ rotate: '90deg' }] : [] }}>›</Text>
+            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.inkMuted }}>Guide</Text>
           </Pressable>
           {showInstr ? (
-            <Text style={[T.body, { color: C.inkMuted, paddingHorizontal: 4, paddingTop: 8, lineHeight: 24 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
-              Сядь удобно, спина прямая. Дыши животом, медленно и ровно. Сосредоточь внимание на потоке Ци по меридианам. Не торопись — ритм спокойного дыхания важнее длительности.
+            <Text style={[T.body, { color: C.inkMuted, paddingHorizontal: 4, paddingTop: 8, lineHeight: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
+              Sit comfortably, spine straight. Breathe into the belly, slow and even. Rest attention on the flow of Qi through the meridians. Don't rush — a calm rhythm matters more than length.
             </Text>
           ) : null}
 
           {/* rewards */}
-          <SectionHead title="Награды" />
-          <Card style={{ padding: 16, flexDirection: 'row', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+          <SectionHead title="Rewards" />
+          <Card style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
             {rewards.map(([k, v]) => <RewardMedal key={k} stat={k} value={practice.mult ? Math.round(v * practice.mult) : v} />)}
             <QiTag qi={practice.qi} />
             {practice.mult ? (
               <MedalPill>
-                <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 12.5, color: C.gold }}>Чжан Чжуан ×{practice.mult}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.gold }}>Zhan Zhuang x{practice.mult}</Text>
               </MedalPill>
             ) : null}
           </Card>
-          <Text style={[T.caption, { marginTop: 8, paddingHorizontal: 2, lineHeight: 16 }]}>+N — очки в характеристику · 氣 — изменение запаса Ци{practice.mult ? ' · ×' + practice.mult + ' — бонус Чжан Чжуан' : ''}</Text>
+          <Text style={[T.caption, { marginTop: 8, paddingHorizontal: 2, lineHeight: 13 }]}>+N — stat points · QI — change to your Qi pool{practice.mult ? ' · x' + practice.mult + ' — Zhan Zhuang bonus' : ''}</Text>
         </View>
       </ScrollViewSafe>
     </View>
@@ -183,40 +183,40 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
       {(close) => (
         <ScrollViewSafe>
           <View style={{ paddingHorizontal: 22, paddingTop: 8, paddingBottom: 24 }}>
-            <Text style={[T.displayM, { marginTop: 6, marginBottom: 18 }]}>{isNew ? 'Новая практика' : 'Изменить практику'}</Text>
+            <Text style={[T.displayM, { marginTop: 6, marginBottom: 18 }]}>{isNew ? 'New practice' : 'Edit practice'}</Text>
 
-            <Field label="Название">
-              <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(''); }} placeholder="Напр. Утренний цигун" />
+            <Field label="Name">
+              <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(''); }} placeholder="e.g. Morning qigong" />
             </Field>
-            {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.redDeep, fontFamily: FONT.ui, fontSize: 12, fontWeight: '700' }}>{nameError}</Text> : null}
+            {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.red, fontFamily: FONT.ui, fontSize: 9 }}>{nameError}</Text> : null}
 
-            <Field label="Категория">
+            <Field label="Category">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {Object.keys(CATS).map((ck) => (
-                  <SelChip key={ck} on={cat === ck} color={CATS[ck].color} hanColor={CATS[ck].color} han={CATS[ck].han} label={CATS[ck].name} onPress={() => setCat(ck)} />
+                  <SelChip key={ck} on={cat === ck} color={CATS[ck].color} icon={CATS[ck].icon} label={CATS[ck].name} onPress={() => setCat(ck)} />
                 ))}
               </View>
             </Field>
 
-            <Field label="Длительность">
+            <Field label="Duration">
               <Stepper value={dur} onDec={() => setDur(Math.max(1, dur - 5))} onInc={() => setDur(Math.min(180, dur + 5))} />
             </Field>
 
-            <Field label="Привязка характеристик">
+            <Field label="Reward stats">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {STATS.map((s) => (
-                  <SelChip key={s.key} on={!!rewards[s.key]} color={s.color} hanColor={s.color} han={s.han} label={s.name + (rewards[s.key] ? ' +' + rewards[s.key] : '')} onPress={() => toggleReward(s.key)} />
+                  <SelChip key={s.key} on={!!rewards[s.key]} color={s.color} icon={s.icon} label={s.name + (rewards[s.key] ? ' +' + rewards[s.key] : '')} onPress={() => toggleReward(s.key)} />
                 ))}
               </View>
             </Field>
-            {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 12, lineHeight: 16 }}>Совет: привяжи хотя бы одну характеристику, чтобы практика давала очки.</Text> : null}
+            {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 9, lineHeight: 14 }}>Tip: bind at least one stat so the practice grants points.</Text> : null}
 
             {confirmArchive ? (
               <View style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
-                <Text style={{ fontFamily: FONT.ui, fontSize: 13, fontWeight: '700', color: C.redDeep, marginBottom: 12, lineHeight: 18 }}>Убрать «{name || practice?.name}» в архив? Практику можно вернуть в Библиотеке.</Text>
+                <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.red, marginBottom: 12, lineHeight: 14 }}>Archive “{name || practice?.name}”? You can restore it from the Library.</Text>
                 <View style={{ flexDirection: 'row', gap: 10 }}>
-                  <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirmArchive(false)}>Отмена</Btn>
-                  <Btn variant="danger" style={{ flex: 1 }} onPress={() => { close(); setTimeout(() => onArchive && onArchive(practice.id), 290); }}>Архивировать</Btn>
+                  <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirmArchive(false)}>Cancel</Btn>
+                  <Btn variant="danger" style={{ flex: 1 }} onPress={() => { close(); setTimeout(() => onArchive && onArchive(practice.id), 290); }}>Archive</Btn>
                 </View>
               </View>
             ) : (
@@ -226,16 +226,16 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
                   style={{ flex: 1 }}
                   onPress={() => {
                     const trimmed = name.trim();
-                    if (!trimmed) { setNameError('Введите название практики'); return; }
+                    if (!trimmed) { setNameError('Enter a practice name'); return; }
                     const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
-                    if (dup) { setNameError('Практика с таким названием уже есть'); return; }
+                    if (dup) { setNameError('A practice with this name already exists'); return; }
                     close();
                     setTimeout(() => onSave({ id: practice?.id, name: trimmed, cat, dur, r: rewards, qi: practice?.qi ?? 2, today: practice?.today, done: practice?.done }), 290);
                   }}
                 >
-                  Сохранить
+                  Save
                 </Btn>
-                {!isNew ? <Btn variant="danger" onPress={() => setConfirmArchive(true)}>Архивировать</Btn> : null}
+                {!isNew ? <Btn variant="danger" onPress={() => setConfirmArchive(true)}>Archive</Btn> : null}
               </View>
             )}
           </View>
@@ -255,15 +255,15 @@ export function DayDetailSheet({ day, onClose }) {
       <ScrollViewSafe>
         <View style={{ paddingHorizontal: 22, paddingTop: 8, paddingBottom: 24 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, marginBottom: 14 }}>
-            <Text style={T.displayM}>{day + 1} июня</Text>
+            <Text style={T.displayM}>Day {day + 1}</Text>
             <StateChip state="flow" />
           </View>
           <View style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
-            <MedalPill><Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 12.5, color: C.gold }}>+18 XP</Text></MedalPill>
-            <MedalPill><Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 12.5, color: C.red }}>生 92%</Text></MedalPill>
-            <MedalPill><Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 12.5, color: C.cEnergy }}>氣 78%</Text></MedalPill>
+            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.gold }}>+18 XP</Text></MedalPill>
+            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.red }}>HP 92%</Text></MedalPill>
+            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.cEnergy }}>QI 78%</Text></MedalPill>
           </View>
-          <Text style={[T.label, { marginBottom: 8 }]}>Выполнено</Text>
+          <Text style={[T.label, { marginBottom: 8 }]}>Completed</Text>
           <View style={{ gap: 10 }}>
             {sample.map((p) => <PracticeCard key={p.id} p={{ ...p, done: true }} compact />)}
           </View>
@@ -302,9 +302,8 @@ export function LevelUpOverlay({ stage, onClose }) {
           <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 40, color: '#5a3d10', ...ts('rgba(255,255,255,0.5)', 0, 1) }}>{stage}</Text>
           <Gloss radius={41} />
         </Gradient>
-        <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: C.titleDeep, marginBottom: 6 }}>Ступень {stage}</Text>
-        <Text style={[T.body, { color: C.inkMuted, marginBottom: 6, textAlign: 'center' }]}>{asc.ru}</Text>
-        <Han style={{ fontSize: 14, color: C.inkFaint, letterSpacing: 3, marginTop: 2 }}>{asc.han}</Han>
+        <Text style={{ fontFamily: FONT.display, fontSize: 12, color: C.title, marginBottom: 8 }}>Stage {stage}</Text>
+        <Text style={[T.body, { color: C.inkMuted, textAlign: 'center' }]}>{asc}</Text>
       </View>
     </Pressable>
   );
@@ -335,9 +334,9 @@ export function FogVeil() {
    ONBOARDING (first run) — teaches the core loop by doing
    ============================================================ */
 const ONBOARD_STEPS = [
-  { han: '日', color: C.jade, title: 'Выполняй практики', body: 'Нажми на практику, чтобы открыть таймер, и отметь её галочкой, когда закончишь.' },
-  { han: '氣', color: C.cEnergy, title: 'Расти', body: 'Каждая практика даёт очки характеристикам, опыт ступени и меняет запас Ци.' },
-  { han: '生', color: C.red, title: 'Следи за состоянием', body: 'Полосы Жизни и Ци показывают твою форму. Держи Ци в потоке — и путь будет ровным.' },
+  { icon: 'magic-slot', color: C.jade, title: 'Do your practices', body: 'Tap a practice to open the timer, then check it off when done.' },
+  { icon: 'potion-blue', color: C.cEnergy, title: 'Grow', body: 'Each practice grants stat points, stage XP, and shifts your Qi.' },
+  { icon: 'potion-red', color: C.red, title: 'Watch your state', body: 'Health and Qi bars show your form. Keep Qi flowing for a steady path.' },
 ];
 
 export function Onboarding({ onDone }) {
@@ -347,16 +346,16 @@ export function Onboarding({ onDone }) {
   return (
     <View style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 280, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 26, backgroundColor: 'rgba(35,25,12,0.55)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
       <View key={step} style={[{ width: '100%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 30, paddingBottom: 22, borderRadius: 26, borderWidth: 4, borderColor: C.stoneDark, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(0,0,0,0.4)` }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}>
-        <KitGem size={70} color={s.color} han={s.han} fontSize={34} />
-        <Text style={[T.displayM, { marginTop: 14, marginBottom: 8, textAlign: 'center' }]}>{s.title}</Text>
+        <KitGem size={64} icon={s.icon} color={s.color} />
+        <Text style={[T.displayM, { marginTop: 14, marginBottom: 10, textAlign: 'center' }]}>{s.title}</Text>
         <Text style={[T.body, { color: C.inkMuted, textAlign: 'center', marginBottom: 18 }]}>{s.body}</Text>
         <View style={{ flexDirection: 'row', gap: 7, marginBottom: 18 }}>
           {ONBOARD_STEPS.map((_, i) => (
-            <View key={i} style={{ width: i === step ? 18 : 7, height: 7, borderRadius: 4, backgroundColor: i === step ? C.jade : C.paperDeep }} />
+            <View key={i} style={{ width: i === step ? 18 : 7, height: 7, borderRadius: 4, backgroundColor: i === step ? C.gold : C.paperDeep }} />
           ))}
         </View>
-        <Btn variant="primary" block onPress={() => (last ? onDone() : setStep(step + 1))}>{last ? 'Начать путь' : 'Дальше'}</Btn>
-        {!last ? <Btn variant="ghost" onPress={onDone} style={{ marginTop: 2 }}>Пропустить</Btn> : null}
+        <Btn variant="primary" block onPress={() => (last ? onDone() : setStep(step + 1))}>{last ? 'Begin' : 'Next'}</Btn>
+        {!last ? <Btn variant="ghost" onPress={onDone} style={{ marginTop: 2 }}>Skip</Btn> : null}
       </View>
     </View>
   );
@@ -373,10 +372,10 @@ export function Toast({ message, actionLabel, onAction, onClose }) {
   return (
     <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, bottom: 92, alignItems: 'center', paddingHorizontal: 18, zIndex: 260 }}>
       <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 14, width: '100%', maxWidth: 420, paddingVertical: 12, paddingLeft: 16, paddingRight: 12, borderRadius: 16, borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: C.paperLight, boxShadow: '0px 8px 22px rgba(40,28,12,0.4)' }, kf(KF.fadeUp, 0.4, { ease: EASE.out })]}>
-        <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 13.5, fontWeight: '600', color: C.ink }}>{message}</Text>
+        <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 9, lineHeight: 14, color: C.ink }}>{message}</Text>
         {actionLabel ? (
           <Pressable onPress={onAction} hitSlop={8} accessibilityRole="button" accessibilityLabel={actionLabel}>
-            <Text style={{ fontFamily: FONT.display, fontSize: 14, fontWeight: '800', color: C.jadeDeep }}>{actionLabel}</Text>
+            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>{actionLabel}</Text>
           </Pressable>
         ) : null}
       </View>

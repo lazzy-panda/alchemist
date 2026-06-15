@@ -4,7 +4,6 @@ import { View, Text, Image } from 'react-native';
 import Svg, { Polygon, Line, Circle, Path, G, Defs, LinearGradient as SvgGrad, Stop } from 'react-native-svg';
 import { C, FONT } from './theme';
 import { STATS } from './data';
-import { Han } from './ui';
 import { kf, KF, EASE } from './anim';
 import { KIT } from './kit';
 
@@ -66,8 +65,8 @@ export function RadarMandala({ values, size = 230, animate = true, tick = 0 }) {
       {STATS.map((s, i) => {
         const [x, y] = pt(i, 1.26);
         return (
-          <View key={s.key} style={{ position: 'absolute', left: x - 12, top: y - 10, width: 24, alignItems: 'center' }} pointerEvents="none">
-            <Han style={{ color: s.color, fontSize: 17, fontWeight: '700', lineHeight: 18 }}>{s.han}</Han>
+          <View key={s.key} style={{ position: 'absolute', left: x - 14, top: y - 8, width: 28, alignItems: 'center' }} pointerEvents="none">
+            <Text style={{ color: s.color, fontSize: 8, fontFamily: FONT.display }}>{s.short}</Text>
           </View>
         );
       })}

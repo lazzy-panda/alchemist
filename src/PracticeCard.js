@@ -1,19 +1,18 @@
-/* Alchemist — practice card (ported 1:1 from components.jsx) */
+/* Alchemist — practice card (RPGUI-framed). */
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, Pressable, ImageBackground, Platform, Animated, PanResponder } from 'react-native';
+import { View, Text, Pressable, Platform, Animated, PanResponder } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { C, FONT, shade } from './theme';
+import { C, FONT } from './theme';
 import { CATS, STAT } from './data';
-import { Gradient, Gloss, Han } from './ui';
-import { KIT, KitCheck, KitGem } from './kit';
+import { KitCheck, KitGem, KitPanel } from './kit';
 import { QiTag } from './badges';
 import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
 
 const WEB = Platform.OS === 'web';
 const USE_NATIVE = !WEB;
-const SWIPE_MAX = 96; // how far the card travels
-const SWIPE_TRIG = 64; // distance past which a release completes
+const SWIPE_MAX = 96;
+const SWIPE_TRIG = 64;
 
 function useDrawTween(active, dur = 340) {
   const [v, setV] = useState(active ? 1 : 0);
@@ -32,8 +31,8 @@ function useDrawTween(active, dur = 340) {
   return v;
 }
 
-function CheckMark({ done }) {
-  const v = useDrawTween(done);
+function CheckMark() {
+  const v = useDrawTween(false);
   return (
     <Svg width={21} height={21} viewBox="0 0 24 24">
       <Path d="M4 13 L 10 18 L 20 6" fill="none" stroke="#fff" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={28} strokeDashoffset={28 * (1 - v)} />
@@ -42,17 +41,10 @@ function CheckMark({ done }) {
 }
 
 function CardBase({ done, style, children }) {
-  if (done) {
-    return (
-      <Gradient colors={['#d8efdd', '#c2e6cd']} angle={180} style={style}>
-        {children}
-      </Gradient>
-    );
-  }
   return (
-    <ImageBackground source={KIT.parchment} resizeMode="stretch" imageStyle={{ borderRadius: 20 }} style={style}>
+    <KitPanel frame={done ? 'golden' : 'grey'} contentStyle={style}>
       {children}
-    </ImageBackground>
+    </KitPanel>
   );
 }
 
@@ -64,7 +56,6 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
   const fx = useEffects();
   const rewards = Object.entries(p.r || {});
 
-  // swipe-to-complete (pending, unlocked, full cards only)
   const swipeable = !locked && !p.done && !compact && !!onToggle;
   const swipeableRef = useRef(swipeable);
   swipeableRef.current = swipeable;
@@ -74,22 +65,14 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
   const fireComplete = () => {
     if (!p.done) {
       const cols = rewards.map(([k]) => STAT[k]?.color).filter(Boolean);
-      if (checkRef.current && checkRef.current.measureInWindow) {
-        checkRef.current.measureInWindow((x, y, w, h) => fx.burst(x + w / 2, y + h / 2, cols));
-      }
-      if (cardRef.current && cardRef.current.measureInWindow) {
-        cardRef.current.measureInWindow((x, y, w) => fx.floatXp(x + w / 2, y + 12, p.r || {}));
-      }
+      if (checkRef.current && checkRef.current.measureInWindow) checkRef.current.measureInWindow((x, y, w, hh) => fx.burst(x + w / 2, y + hh / 2, cols));
+      if (cardRef.current && cardRef.current.measureInWindow) cardRef.current.measureInWindow((x, y, w) => fx.floatXp(x + w / 2, y + 12, p.r || {}));
     }
     onToggle && onToggle(p);
   };
 
   const handleCheck = () => {
-    if (locked) {
-      setShake(true);
-      setTimeout(() => setShake(false), 450);
-      return;
-    }
+    if (locked) { setShake(true); setTimeout(() => setShake(false), 450); return; }
     fireComplete();
   };
 
@@ -101,11 +84,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
       onPanResponderMove: (e, g) => tx.setValue(Math.max(-SWIPE_MAX, Math.min(0, g.dx))),
       onPanResponderRelease: (e, g) => {
         if (g.dx < -SWIPE_TRIG) {
-          Animated.timing(tx, { toValue: -SWIPE_MAX, duration: 110, useNativeDriver: USE_NATIVE }).start(() => {
-            tx.setValue(0);
-            setSwiping(false);
-            fireComplete();
-          });
+          Animated.timing(tx, { toValue: -SWIPE_MAX, duration: 110, useNativeDriver: USE_NATIVE }).start(() => { tx.setValue(0); setSwiping(false); fireComplete(); });
         } else {
           Animated.spring(tx, { toValue: 0, bounciness: 0, speed: 18, useNativeDriver: USE_NATIVE }).start(() => setSwiping(false));
         }
@@ -115,72 +94,38 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
   ).current;
 
   const inner = (
-    <View
-      ref={cardRef}
-      style={[
-        { position: 'relative', borderRadius: 20 },
-        active ? kf(KF.breathe, 3.2, { ease: EASE.soft, iter: 'infinite' }) : null,
-        shake ? kf(KF.shakeNo, 0.42, { ease: EASE.soft }) : null,
-      ]}
-    >
-      <Pressable onPress={() => onOpen && onOpen(p)} disabled={locked} accessibilityRole="button" accessibilityLabel={p.name + (locked ? ', недоступно' : '')}>
-        {({ pressed }) => (
-          <CardBase
-            done={p.done}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 14,
-              paddingVertical: 14,
-              paddingLeft: 15,
-              paddingRight: 64,
-              borderRadius: 20,
-              backgroundColor: p.done ? 'transparent' : C.paperCell,
-              borderWidth: 2.5,
-              borderColor: p.done ? '#8fc9a6' : active ? C.jade : C.paperDeep,
-              opacity: locked ? 0.6 : 1,
-              overflow: 'hidden',
-              boxShadow: pressed && !locked ? 'inset 0px 2px 0px rgba(255,255,255,0.5), 0px 6px 16px rgba(80,52,18,0.22)' : 'inset 0px 2px 0px rgba(255,255,255,0.5), 0px 3px 8px rgba(80,52,18,0.18)',
-              transform: pressed && !locked ? [{ translateY: -3 }] : [],
-            }}
-          >
-            {/* category gem — real kit stone slot */}
-            <KitGem size={54} color={cat.color} han={cat.han} fontSize={26} />
-
-            {/* body */}
-            <View style={{ flex: 1, minWidth: 0 }}>
-              <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontWeight: '600', fontSize: 16, color: p.done ? C.jadeDeep : C.ink, marginBottom: 4, lineHeight: 18 }}>{p.name}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <Text style={{ fontFamily: FONT.ui, fontSize: 11, fontWeight: '700', color: cat.color }}>{cat.name}</Text>
-                <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: C.inkFaint }} />
-                <Text style={{ fontFamily: FONT.ui, fontSize: 11, fontWeight: '600', color: C.inkFaint }}>{p.dur} мин</Text>
-                {p.mult ? (
-                  <>
-                    <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: C.inkFaint }} />
-                    <Text style={{ fontFamily: FONT.ui, fontSize: 11, fontWeight: '700', color: C.gold }}>×{p.mult}</Text>
-                  </>
-                ) : null}
-                {compact ? <QiTag qi={p.qi} /> : null}
-              </View>
+    <View ref={cardRef} style={[{ position: 'relative' }, active ? kf(KF.breathe, 3.2, { ease: EASE.soft, iter: 'infinite' }) : null, shake ? kf(KF.shakeNo, 0.42, { ease: EASE.soft }) : null]}>
+      <Pressable onPress={() => onOpen && onOpen(p)} disabled={locked} accessibilityRole="button" accessibilityLabel={p.name + (locked ? ', locked' : '')}>
+        <CardBase
+          done={p.done}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingRight: 56, opacity: locked ? 0.6 : 1 }}
+        >
+          <KitGem size={44} icon={cat.icon} color={cat.color} />
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontSize: 10, color: p.done ? C.jadeLight : C.ink, marginBottom: 5, lineHeight: 14 }}>{p.name}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: cat.color }}>{cat.name}</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint }}>{p.dur} min</Text>
+              {p.mult ? <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.gold }}>x{p.mult}</Text> : null}
+              {compact ? <QiTag qi={p.qi} /> : null}
             </View>
-          </CardBase>
-        )}
+          </View>
+        </CardBase>
       </Pressable>
 
-      {/* check / locked — sibling overlay so taps don't open the card */}
       {locked ? (
-        <View style={{ position: 'absolute', right: 14, top: 0, bottom: 0, justifyContent: 'center', maxWidth: 94 }} pointerEvents="none">
-          <Text style={{ fontSize: 10.5, fontWeight: '700', color: C.inkFaint, textAlign: 'right', lineHeight: 13 }}>Мало Ци{'\n'}нужно {Math.abs(p.qi)} 氣</Text>
+        <View style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center', maxWidth: 84 }} pointerEvents="none">
+          <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint, textAlign: 'right', lineHeight: 12 }}>Low Qi{'\n'}need {Math.abs(p.qi)} QI</Text>
         </View>
       ) : (
-        <View ref={checkRef} style={{ position: 'absolute', right: 15, top: 0, bottom: 0, justifyContent: 'center' }}>
-          <Pressable onPress={handleCheck} hitSlop={8} accessibilityRole="button" accessibilityState={{ checked: !!p.done }} accessibilityLabel={(p.done ? 'Отменить: ' : 'Выполнить: ') + p.name}>
+        <View ref={checkRef} style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
+          <Pressable onPress={handleCheck} hitSlop={8} accessibilityRole="button" accessibilityState={{ checked: !!p.done }} accessibilityLabel={(p.done ? 'Undo: ' : 'Do: ') + p.name}>
             {({ pressed }) =>
               p.done ? (
-                <KitCheck size={40} style={{ transform: pressed ? [{ scale: 1.07 }] : [] }} />
+                <KitCheck size={36} style={{ transform: pressed ? [{ scale: 1.07 }] : [] }} />
               ) : (
-                <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.stoneMid, backgroundColor: C.paperWarm, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.7), 0px 3px 0px rgba(120,80,40,0.25)', transform: pressed ? [{ scale: 1.07 }] : [] }}>
-                  <CheckMark done={false} />
+                <View style={{ width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.stoneMid, backgroundColor: C.paperWarm, transform: pressed ? [{ scale: 1.07 }] : [] }}>
+                  <CheckMark />
                 </View>
               )
             }
@@ -194,13 +139,9 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
 
   return (
     <View style={{ position: 'relative' }}>
-      {/* green "complete" reveal — rendered only while actively swiping */}
       {swiping ? (
-        <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderRadius: 20, backgroundColor: C.jade, borderWidth: 2.5, borderColor: C.jadeLine, alignItems: 'flex-end', justifyContent: 'center', overflow: 'hidden' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingRight: 22 }}>
-            <Text style={{ color: '#fff', fontFamily: FONT.ui, fontWeight: '800', fontSize: 13 }}>Готово</Text>
-            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>✓</Text>
-          </View>
+        <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderRadius: 8, backgroundColor: C.jade, alignItems: 'flex-end', justifyContent: 'center', overflow: 'hidden' }}>
+          <Text style={{ color: '#fff', fontFamily: FONT.display, fontSize: 9, paddingRight: 22 }}>DONE ✓</Text>
         </View>
       ) : null}
       <Animated.View {...pan.panHandlers} style={{ width: '100%', transform: [{ translateX: tx }] }}>

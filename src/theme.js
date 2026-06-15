@@ -4,17 +4,17 @@ import { Platform } from 'react-native';
 const WEB = Platform.OS === 'web';
 
 export const C = {
-  // parchment
-  paper: '#EFE6CB',
-  paperLight: '#F7F0D9',
-  paperCell: '#FBF5E2',
-  paperWarm: '#EADFBE',
-  paperDeep: '#D7C599',
+  // dark RPGUI surfaces (frames carry their own pixel art; these back/border them)
+  paper: '#211d17',
+  paperLight: '#322c24',
+  paperCell: '#2c2620',
+  paperWarm: '#272219',
+  paperDeep: '#6b5b3a',
 
-  // ink (warm brown on parchment) — muted/faint darkened to meet WCAG AA (4.5:1)
-  ink: '#553A1E',
-  inkMuted: '#6E5230',
-  inkFaint: '#74592F',
+  // light text for dark RPGUI frames
+  ink: '#f1e7cf',
+  inkMuted: '#cdbfa0',
+  inkFaint: '#a99c80',
 
   // wood frame — light honey planks
   wood1: '#DDB375',
@@ -23,9 +23,9 @@ export const C = {
   woodLine: '#6E4A22',
   woodEdge: '#EDD199',
 
-  // title purple
-  title: '#6A4C93',
-  titleDeep: '#4F3675',
+  // gold titles (RPGUI)
+  title: '#ffe1a0',
+  titleDeep: '#ffd27a',
 
   // jade (primary / growth)
   jade: '#3E8C60',
@@ -94,10 +94,10 @@ export const R = {
 };
 
 export const FONT = {
-  display: 'Fredoka',
-  ui: 'Manrope',
-  // CJK serif: a real web font on web; system CJK fallback on native
-  han: WEB ? 'Noto Serif SC' : undefined,
+  // RPGUI pixel font everywhere on web (content is English so it renders); native keeps system default
+  display: WEB ? 'Press Start 2P' : undefined,
+  ui: WEB ? 'Press Start 2P' : undefined,
+  han: WEB ? 'Press Start 2P' : undefined,
 };
 
 // box-shadow strings (RN 0.85 + react-native-web both support boxShadow)

@@ -1,24 +1,24 @@
-/* Alchemist — game data & constants (ported 1:1 from prototype data.js) */
+/* Alchemist — game data & constants (English; RPGUI icon names per category/stat). */
 
-// ---- characteristics ----
+// ---- characteristics ----  (icon = RPGUI icon class; short = radar axis label)
 export const STATS = [
-  { key: 'energy', han: '氣', name: 'Энергия', color: '#3E9C8A' },
-  { key: 'strength', han: '力', name: 'Сила', color: '#C06B3E' },
-  { key: 'flex', han: '柔', name: 'Гибкость', color: '#7BA84E' },
-  { key: 'focus', han: '定', name: 'Концентрация', color: '#4A6FA5' },
-  { key: 'kind', han: '仁', name: 'Доброта', color: '#C77BA0' },
-  { key: 'sex', han: '精', name: 'Сексуальность', color: '#8E5AA8' },
+  { key: 'energy', icon: 'potion-blue', short: 'EN', name: 'Energy', color: '#3E9C8A' },
+  { key: 'strength', icon: 'sword', short: 'ST', name: 'Strength', color: '#C06B3E' },
+  { key: 'flex', icon: 'shoes-slot', short: 'FL', name: 'Flexibility', color: '#7BA84E' },
+  { key: 'focus', icon: 'magic-slot', short: 'FO', name: 'Focus', color: '#4A6FA5' },
+  { key: 'kind', icon: 'potion-green', short: 'KI', name: 'Kindness', color: '#C77BA0' },
+  { key: 'sex', icon: 'ring-slot', short: 'VI', name: 'Vitality', color: '#8E5AA8' },
 ];
 export const STAT = Object.fromEntries(STATS.map((s) => [s.key, s]));
 
 // ---- categories ----
 export const CATS = {
-  med: { name: 'Медитация', han: '禅', color: '#4A6FA5' },
-  qi: { name: 'Цигун', han: '氣', color: '#3E9C8A' },
-  zhan: { name: 'Чжан Чжуан', han: '樁', color: '#7BA84E' },
-  body: { name: 'Тело', han: '體', color: '#C06B3E' },
-  know: { name: 'Знание', han: '智', color: '#8E5AA8' },
-  heart: { name: 'Сердце', han: '心', color: '#C77BA0' },
+  med: { name: 'Meditation', icon: 'magic-slot', color: '#4A6FA5' },
+  qi: { name: 'Qigong', icon: 'potion-blue', color: '#3E9C8A' },
+  zhan: { name: 'Standing', icon: 'shoes-slot', color: '#7BA84E' },
+  body: { name: 'Body', icon: 'armor-slot', color: '#C06B3E' },
+  know: { name: 'Knowledge', icon: 'helmet-slot', color: '#8E5AA8' },
+  heart: { name: 'Heart', icon: 'potion-red', color: '#C77BA0' },
 };
 
 // ---- practices ----
@@ -26,22 +26,22 @@ export const CATS = {
 let _id = 0;
 const P = (o) => ({ id: 'p' + ++_id, ...o });
 export const PRACTICES = [
-  P({ name: 'Самомассаж в душе', cat: 'body', dur: 5, r: { strength: 2, energy: 1 }, qi: 2, today: true, done: true }),
-  P({ name: 'Суставная гимнастика', cat: 'body', dur: 10, r: { flex: 3 }, qi: 1 }),
-  P({ name: 'Даосская медитация', cat: 'med', dur: 20, r: { focus: 3, energy: 2 }, qi: 4, today: true }),
-  P({ name: '6 целительных звуков', cat: 'qi', dur: 12, r: { energy: 2, kind: 2 }, qi: 3, today: true }),
-  P({ name: 'Цигун', cat: 'qi', dur: 15, r: { energy: 3, flex: 1 }, qi: 3, today: true }),
-  P({ name: 'Самомассаж', cat: 'body', dur: 8, r: { strength: 2, energy: 1 }, qi: 1, today: true }),
-  P({ name: 'Чай', cat: 'heart', dur: 10, r: { kind: 1 }, qi: 1 }),
-  P({ name: 'Дыхание Минмэнь (16 раз)', cat: 'qi', dur: 5, r: { energy: 2, sex: 2 }, qi: 3, today: true, done: true }),
-  P({ name: 'Прохладный ветерок', cat: 'qi', dur: 7, r: { energy: 2 }, qi: 2 }),
-  P({ name: 'Сильный ветер', cat: 'qi', dur: 10, r: { strength: 3, energy: 1 }, qi: -4 }),
-  P({ name: 'Изучение Буддизма, Даосизма и Индуизма', cat: 'know', dur: 30, r: { focus: 2, kind: 3 }, qi: 2 }),
-  P({ name: 'Тайцзицюань', cat: 'zhan', dur: 25, r: { flex: 3, focus: 2 }, qi: 3, mult: 1.5 }),
-  P({ name: 'Шаматха', cat: 'med', dur: 25, r: { focus: 4 }, qi: 4 }),
-  P({ name: 'Четыре безмерных', cat: 'heart', dur: 20, r: { kind: 4 }, qi: 3 }),
-  P({ name: 'Растяжка', cat: 'body', dur: 12, r: { flex: 3 }, qi: 1 }),
-  P({ name: 'Чтение', cat: 'know', dur: 20, r: { focus: 2, kind: 1 }, qi: 2 }),
+  P({ name: 'Shower self-massage', cat: 'body', dur: 5, r: { strength: 2, energy: 1 }, qi: 2, today: true, done: true }),
+  P({ name: 'Joint mobility', cat: 'body', dur: 10, r: { flex: 3 }, qi: 1 }),
+  P({ name: 'Taoist meditation', cat: 'med', dur: 20, r: { focus: 3, energy: 2 }, qi: 4, today: true }),
+  P({ name: 'Six Healing Sounds', cat: 'qi', dur: 12, r: { energy: 2, kind: 2 }, qi: 3, today: true }),
+  P({ name: 'Qigong', cat: 'qi', dur: 15, r: { energy: 3, flex: 1 }, qi: 3, today: true }),
+  P({ name: 'Self-massage', cat: 'body', dur: 8, r: { strength: 2, energy: 1 }, qi: 1, today: true }),
+  P({ name: 'Tea ritual', cat: 'heart', dur: 10, r: { kind: 1 }, qi: 1 }),
+  P({ name: 'Mingmen breathing x16', cat: 'qi', dur: 5, r: { energy: 2, sex: 2 }, qi: 3, today: true, done: true }),
+  P({ name: 'Cool breeze', cat: 'qi', dur: 7, r: { energy: 2 }, qi: 2 }),
+  P({ name: 'Strong wind', cat: 'qi', dur: 10, r: { strength: 3, energy: 1 }, qi: -4 }),
+  P({ name: 'Study the teachings', cat: 'know', dur: 30, r: { focus: 2, kind: 3 }, qi: 2 }),
+  P({ name: 'Tai Chi', cat: 'zhan', dur: 25, r: { flex: 3, focus: 2 }, qi: 3, mult: 1.5 }),
+  P({ name: 'Shamatha', cat: 'med', dur: 25, r: { focus: 4 }, qi: 4 }),
+  P({ name: 'Four Immeasurables', cat: 'heart', dur: 20, r: { kind: 4 }, qi: 3 }),
+  P({ name: 'Stretching', cat: 'body', dur: 12, r: { flex: 3 }, qi: 1 }),
+  P({ name: 'Reading', cat: 'know', dur: 20, r: { focus: 2, kind: 1 }, qi: 2 }),
 ];
 
 // ---- starting characteristic levels (level, xp toward next) ----
@@ -56,18 +56,18 @@ export const STAT_LEVELS = {
 
 // ---- perks ----
 export const PERKS = [
-  { han: '氣', name: 'Поток ци', color: '#3E9C8A', open: true },
-  { han: '定', name: 'Ясный ум', color: '#4A6FA5', open: true },
-  { han: '柔', name: 'Гибкое тело', color: '#7BA84E', open: true },
-  { han: '力', name: 'Железная рубашка', color: '#C06B3E', open: false, req: 'Сила 6' },
-  { han: '仁', name: 'Открытое сердце', color: '#C77BA0', open: false, req: 'Доброта 8' },
-  { han: '精', name: 'Внутренний эликсир', color: '#8E5AA8', open: false, req: 'Ступень 12' },
+  { icon: 'potion-blue', name: 'Qi Flow', color: '#3E9C8A', open: true },
+  { icon: 'magic-slot', name: 'Clear Mind', color: '#4A6FA5', open: true },
+  { icon: 'shoes-slot', name: 'Supple Body', color: '#7BA84E', open: true },
+  { icon: 'armor-slot', name: 'Iron Shirt', color: '#C06B3E', open: false, req: 'Strength 6' },
+  { icon: 'potion-red', name: 'Open Heart', color: '#C77BA0', open: false, req: 'Kindness 8' },
+  { icon: 'ring-slot', name: 'Inner Elixir', color: '#8E5AA8', open: false, req: 'Stage 12' },
 ];
 
 // ---- relics ----
 export const RELICS = [
-  { icon: '🪷', got: true, name: 'Лотос покоя' },
-  { icon: '🫖', got: true, name: 'Чаша рассвета' },
+  { icon: '🪷', got: true, name: 'Lotus of Calm' },
+  { icon: '🫖', got: true, name: 'Dawn Bowl' },
   { icon: '🪈', got: false },
   { icon: '🐉', got: false },
 ];
@@ -86,68 +86,68 @@ export const GROWTH = {
 export const DIARY_TIMES = ['08:00', '10:30', '12:00', '15:00', '17:00', '19:00'];
 export const DIARY_SETS = {
   ten: {
-    name: 'Десятка',
-    han: '十',
+    name: 'The Ten',
+    icon: 'exclamation',
     color: '#3E8C60',
     vows: [
-      { t: 'Защита жизни', q: 'Защитили ли вы жизнь сегодня — хотя бы в мелочи? Убрали препятствие, помогли уставшему, заварили чай простуженному.' },
-      { t: 'Чужая собственность', q: 'Уважали ли вы чужую собственность и покой? Не шумели, не брали лишнего, оставили после себя порядок.' },
-      { t: 'Чистота', q: 'Сохраняли ли вы здоровую, честную чистоту в отношениях — без одержимости и без вреда другим?' },
-      { t: 'Правдивость', q: 'Были ли вы правдивы весь день? Промолчать или сменить тему лучше, чем ранить.' },
-      { t: 'Сближающая речь', q: 'Сближали ли вы людей своими словами, а не сеяли раздор?' },
-      { t: 'Мягкая речь', q: 'Говорили ли вы мягко и вдумчиво, без резкости и ругательств?' },
-      { t: 'Речь по существу', q: 'Говорили ли вы осмысленно — то, что важно для собеседника, а не пустую болтовню?' },
-      { t: 'Сорадование', q: 'Радовались ли вы чужим успехам, без зависти и ревности?' },
-      { t: 'Сострадание', q: 'Сочувствовали ли вы тем, кто в беде, вместо тайного любования чужими проблемами?' },
-      { t: 'Верный взгляд', q: 'Помнили ли вы: всё благое приходит из заботы о других, а беды — из себялюбия?' },
+      { t: 'Protect life', q: 'Did you protect life today, even in a small way — helped someone tired, removed a hazard?' },
+      { t: 'Others property', q: "Did you respect others' property and peace — took nothing extra, left things in order?" },
+      { t: 'Purity', q: 'Did you keep healthy, honest conduct in relationships — without obsession or harm to others?' },
+      { t: 'Truthfulness', q: 'Were you truthful all day? Staying silent beats wounding with words.' },
+      { t: 'Uniting speech', q: 'Did your words bring people together rather than sow discord?' },
+      { t: 'Gentle speech', q: 'Did you speak gently and thoughtfully, without harshness?' },
+      { t: 'Meaningful speech', q: 'Did you speak with purpose — what matters to the listener, not idle chatter?' },
+      { t: 'Rejoicing', q: "Did you rejoice in others' success, without envy?" },
+      { t: 'Compassion', q: 'Did you feel for those in trouble, instead of quietly enjoying their problems?' },
+      { t: 'Right view', q: 'Did you remember: all good comes from caring for others, all harm from self-concern?' },
     ],
   },
   refuge: {
-    name: 'Прибежище',
-    han: '皈',
+    name: 'Refuge',
+    icon: 'shield',
     color: '#B27C24',
     vows: [
-      { t: 'Прибежище в Будде', q: 'Не искали ли вы прибежища в мирских объектах и божествах?' },
-      { t: 'Прибежище в Дхарме', q: 'Не нанесли ли вы вреда живым существам?' },
-      { t: 'Прибежище в Сангхе', q: 'Не сближались ли вы тесно с теми, кто отвергает Путь?' },
-      { t: 'Почитание образа', q: 'Почитали ли вы изображение Будды как самого Будду?' },
-      { t: 'Почитание текста', q: 'Почитали ли вы написанный текст, даже одну букву, как Дхарму?' },
-      { t: 'Почитание Сангхи', q: 'Почитали ли вы даже нить шафранной накидки как саму Сангху?' },
-      { t: 'Памятование качеств', q: 'Принимали ли вы прибежище снова, вспоминая благие качества Трёх Драгоценностей?' },
-      { t: 'Первая часть еды', q: 'Предложили ли вы первую часть еды и питья объектам прибежища?' },
-      { t: 'Поощрение других', q: 'Поощряли ли вы других принять прибежище?' },
-      { t: 'Трижды в день', q: 'Приняли ли вы прибежище три раза днём и три раза ночью?' },
-      { t: 'Опора во всём', q: 'Полностью ли вы полагались на объекты прибежища в делах?' },
-      { t: 'Не отрекаться', q: 'Не отреклись ли вы от Трёх Драгоценностей даже в мыслях?' },
+      { t: 'Refuge in Buddha', q: 'Did you avoid seeking refuge in worldly objects and gods?' },
+      { t: 'Refuge in Dharma', q: 'Did you avoid harming living beings?' },
+      { t: 'Refuge in Sangha', q: 'Did you avoid close ties with those who reject the Path?' },
+      { t: 'Honor the image', q: 'Did you honor an image of the Buddha as the Buddha himself?' },
+      { t: 'Honor the text', q: 'Did you honor the written word, even one letter, as the Dharma?' },
+      { t: 'Honor the Sangha', q: 'Did you honor even a thread of the saffron robe as the Sangha?' },
+      { t: 'Recall the qualities', q: 'Did you take refuge again, recalling the qualities of the Three Jewels?' },
+      { t: 'First of the meal', q: 'Did you offer the first of food and drink to the objects of refuge?' },
+      { t: 'Encourage others', q: 'Did you encourage others to take refuge?' },
+      { t: 'Three times a day', q: 'Did you take refuge three times by day and three by night?' },
+      { t: 'Rely fully', q: 'Did you rely fully on the objects of refuge in your affairs?' },
+      { t: 'Never forsake', q: 'Did you avoid forsaking the Three Jewels, even in thought?' },
     ],
   },
   freedom: {
-    name: 'Свобода',
-    han: '解',
+    name: 'Freedom',
+    icon: 'ring-slot',
     color: '#4574B5',
     vows: [
-      { t: 'Не убивать', q: 'Воздержались ли вы от убийства?' },
-      { t: 'Не красть', q: 'Воздержались ли вы от кражи?' },
-      { t: 'Чистота поведения', q: 'Воздержались ли вы от неправильного сексуального поведения?' },
-      { t: 'Не лгать', q: 'Воздержались ли вы от лжи?' },
-      { t: 'Не разделять', q: 'Воздержались ли вы от разделяющей речи?' },
-      { t: 'Не грубить', q: 'Воздержались ли вы от грубой речи?' },
-      { t: 'Не пустословить', q: 'Воздержались ли вы от бесполезной речи?' },
-      { t: 'Без жадности', q: 'Воздержались ли вы от страстного желания чужого?' },
-      { t: 'Без злобы', q: 'Воздержались ли вы от недоброжелательства?' },
-      { t: 'Верная картина мира', q: 'Воздержались ли вы от неправильной картины мира?' },
+      { t: 'No killing', q: 'Did you refrain from killing?' },
+      { t: 'No stealing', q: 'Did you refrain from stealing?' },
+      { t: 'Pure conduct', q: 'Did you refrain from wrong sexual conduct?' },
+      { t: 'No lying', q: 'Did you refrain from lying?' },
+      { t: 'No dividing', q: 'Did you refrain from divisive speech?' },
+      { t: 'No harshness', q: 'Did you refrain from harsh speech?' },
+      { t: 'No idle talk', q: 'Did you refrain from useless speech?' },
+      { t: 'No coveting', q: "Did you refrain from craving others' things?" },
+      { t: 'No ill will', q: 'Did you refrain from ill will?' },
+      { t: 'Right worldview', q: 'Did you refrain from a wrong view of the world?' },
     ],
   },
   worldly: {
-    name: 'Мирские',
-    han: '世',
+    name: 'Worldly',
+    icon: 'potion-red',
     color: '#C66A38',
     vows: [
-      { t: 'Жизнь человека', q: 'Не убивали ли вы человека или человеческий зародыш?' },
-      { t: 'Ценное чужое', q: 'Не крали ли вы ничего ценного?' },
-      { t: 'Достижения', q: 'Не лгали ли вы о своих духовных достижениях?' },
-      { t: 'Поведение', q: 'Не совершали ли вы неправильного сексуального поведения?' },
-      { t: 'Трезвость', q: 'Не употребляли ли вы алкоголь или интоксиканты?' },
+      { t: 'Human life', q: 'Did you avoid killing a human or unborn child?' },
+      { t: 'Valuables', q: 'Did you avoid stealing anything of value?' },
+      { t: 'Attainments', q: 'Did you avoid lying about spiritual attainments?' },
+      { t: 'Conduct', q: 'Did you avoid wrong sexual conduct?' },
+      { t: 'Sobriety', q: 'Did you avoid alcohol and intoxicants?' },
     ],
   },
 };

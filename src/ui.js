@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { C, R, FONT } from './theme';
 import { kf, tr, KF, EASE } from './anim';
-import { KitButton, KitPill, KitParchPill, KitGem, KIT } from './kit';
+import { KitButton, KitPill, KitParchPill, KitGem, KitPanel, KIT } from './kit';
 
 const WEB = Platform.OS === 'web';
 
@@ -50,14 +50,15 @@ export function Gloss({ radius = 50 }) {
 }
 
 /* ---------- typography ---------- */
+// pixel font (Press Start 2P) is large & monospaced → smaller sizes, generous line-height, dark shadow
 export const T = {
-  displayL: { fontFamily: FONT.display, fontWeight: '700', fontSize: 34, lineHeight: 36, color: C.title, ...ts('rgba(255,255,255,0.55)', 0, 2) },
-  displayM: { fontFamily: FONT.display, fontWeight: '700', fontSize: 24, lineHeight: 27, color: C.titleDeep, ...ts('rgba(255,255,255,0.55)', 0, 1) },
-  body: { fontFamily: FONT.ui, fontSize: 15, lineHeight: 23, color: C.ink },
-  label: { fontFamily: FONT.ui, fontSize: 12, fontWeight: '700', letterSpacing: 0.3, color: C.inkMuted },
-  caption: { fontFamily: FONT.ui, fontSize: 11, fontWeight: '600', color: C.inkFaint },
-  eyebrow: { fontFamily: FONT.ui, fontSize: 11, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', color: C.inkFaint },
-  numXl: { fontFamily: FONT.display, fontWeight: '700', fontVariant: ['tabular-nums'] },
+  displayL: { fontFamily: FONT.display, fontSize: 16, lineHeight: 24, color: C.title, ...ts('rgba(0,0,0,0.55)', 0, 2) },
+  displayM: { fontFamily: FONT.display, fontSize: 12, lineHeight: 20, color: C.title, ...ts('rgba(0,0,0,0.5)', 0, 1) },
+  body: { fontFamily: FONT.ui, fontSize: 10, lineHeight: 18, color: C.ink },
+  label: { fontFamily: FONT.ui, fontSize: 9, letterSpacing: 0.3, color: C.inkMuted },
+  caption: { fontFamily: FONT.ui, fontSize: 8, lineHeight: 13, color: C.inkFaint },
+  eyebrow: { fontFamily: FONT.ui, fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: C.inkFaint },
+  numXl: { fontFamily: FONT.display, fontVariant: ['tabular-nums'] },
 };
 
 export function Txt({ style, children, ...rest }) {
@@ -79,8 +80,8 @@ export function SectionHead({ title, right, style }) {
   return (
     <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 26, marginBottom: 13, marginHorizontal: 2 }, style]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Text style={{ fontSize: 9, color: C.stoneMid }}>◆</Text>
-        <Text accessibilityRole="header" style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.6, color: C.title, ...ts('rgba(255,255,255,0.6)', 0, 1) }}>{title}</Text>
+        <Text style={{ fontSize: 8, color: C.gold }}>◆</Text>
+        <Text accessibilityRole="header" style={{ fontFamily: FONT.display, fontSize: 11, textTransform: 'uppercase', color: C.title }}>{title}</Text>
       </View>
       {right != null ? (typeof right === 'string' ? <Text style={T.caption}>{right}</Text> : right) : null}
     </View>
@@ -88,27 +89,8 @@ export function SectionHead({ title, right, style }) {
 }
 
 /* ---------- card (real kit parchment texture) ---------- */
-export function Card({ style, children, warm, ...rest }) {
-  return (
-    <ImageBackground
-      source={KIT.parchment}
-      resizeMode="stretch"
-      imageStyle={{ borderRadius: R.card }}
-      style={[
-        {
-          borderRadius: R.card,
-          overflow: 'hidden',
-          borderWidth: 2.5,
-          borderColor: C.paperDeep,
-          boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.5), 0px 3px 8px rgba(80,52,18,0.18)',
-        },
-        style,
-      ]}
-      {...rest}
-    >
-      {children}
-    </ImageBackground>
-  );
+export function Card({ style, children, warm, frame = 'grey', ...rest }) {
+  return <KitPanel frame={frame} style={style}>{children}</KitPanel>;
 }
 
 /* ---------- buttons — glossy candy ---------- */
@@ -152,7 +134,7 @@ export function Btn({ variant = 'primary', onPress, children, style, textStyle, 
           style,
         ]}
       >
-        <Text style={[{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: C.jadeDeep }, textStyle]}>{children}</Text>
+        <Text style={[{ fontFamily: FONT.display, fontSize: 10, color: C.gold }, textStyle]}>{children}</Text>
       </Pressable>
     );
   }
@@ -220,26 +202,26 @@ export function IconBtn({ onPress, children, style }) {
 }
 
 /* ---------- stepper — real kit pills ---------- */
-export function Stepper({ value, onDec, onInc, suffix = ' мин' }) {
+export function Stepper({ value, onDec, onInc, suffix = ' min' }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 10 }}>
-      <KitPill color="primary" onPress={onDec} accessibilityLabel="Уменьшить" style={{ minHeight: 44, paddingHorizontal: 18 }}>
-        <Text style={{ fontSize: 22, color: '#fff', fontWeight: '800', ...ts('rgba(0,0,0,0.3)', 0, 1) }}>−</Text>
+      <KitPill color="primary" onPress={onDec} accessibilityLabel="Decrease">
+        <Text style={{ fontSize: 14, color: '#fff' }}>−</Text>
       </KitPill>
-      <Text style={{ minWidth: 84, textAlign: 'center', fontFamily: FONT.display, fontWeight: '700', fontSize: 16, fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
-      <KitPill color="primary" onPress={onInc} accessibilityLabel="Увеличить" style={{ minHeight: 44, paddingHorizontal: 18 }}>
-        <Text style={{ fontSize: 22, color: '#fff', fontWeight: '800', ...ts('rgba(0,0,0,0.3)', 0, 1) }}>+</Text>
+      <Text style={{ minWidth: 70, textAlign: 'center', fontFamily: FONT.display, fontSize: 11, fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
+      <KitPill color="primary" onPress={onInc} accessibilityLabel="Increase">
+        <Text style={{ fontSize: 14, color: '#fff' }}>+</Text>
       </KitPill>
     </View>
   );
 }
 
 /* ---------- selectable chip — real kit parchment chip + kit gem ---------- */
-export function SelChip({ on, color, han, hanColor, label, onPress }) {
+export function SelChip({ on, color, icon, label, onPress }) {
   return (
-    <KitParchPill onPress={onPress} accessibilityLabel={label} selected={on} style={{ paddingLeft: 5, paddingRight: 13, gap: 7, minHeight: 34, opacity: on ? 1 : 0.72, borderColor: on ? color || C.ink : '#b9a06f' }}>
-      <KitGem size={24} color={on ? hanColor || color : C.inkFaint} han={han} fontSize={12} />
-      <Text style={{ fontFamily: FONT.display, fontSize: 13, fontWeight: '600', color: on ? C.ink : C.inkMuted }}>{label}</Text>
+    <KitParchPill onPress={onPress} accessibilityLabel={label} selected={on} style={{ gap: 6, opacity: on ? 1 : 0.55 }}>
+      {icon ? <KitGem size={20} icon={icon} color={color} /> : null}
+      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: on ? C.ink : C.inkMuted }}>{label}</Text>
     </KitParchPill>
   );
 }
@@ -338,7 +320,7 @@ export function Seal({ size = 48, fontSize = 26, stamp = true, style }) {
           stamp && kf(KF.sealStamp, 0.5, { ease: EASE.overshoot, fill: 'forwards' }),
         ]}
       >
-        <Han style={{ color: '#fff', fontSize, fontWeight: '700', ...ts('rgba(0,0,0,0.4)', 0, 1, 2) }}>印</Han>
+        <Text style={{ fontFamily: FONT.display, color: '#fff', fontSize: Math.round(fontSize * 0.7), ...ts('rgba(0,0,0,0.4)', 0, 1, 2) }}>✓</Text>
         <View pointerEvents="none" style={{ position: 'absolute', left: 4, right: 4, top: 4, bottom: 4, borderWidth: 2, borderColor: 'rgba(255,255,255,0.4)', borderRadius: 5 }} />
       </LinearGradient>
     </View>

@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from './src/auth';
 import { EffectsProvider } from './src/effects';
 import { AuthScreen } from './src/AuthScreen';
 import { MainApp } from './src/MainApp';
+import { RpguiRoot } from './src/RpguiRoot';
 
 function Gate() {
   const fontsReady = useAppFonts();
@@ -23,14 +24,16 @@ function Gate() {
 export default function App() {
   useEffect(() => {
     if (Platform.OS === 'web' && typeof console !== 'undefined') {
-      console.log('%c修真之路 · Alchemist', 'font-size:15px;font-weight:700;color:#3E8C60');
-      console.log('%c「大道至简」— великий Путь предельно прост.  Код открыт: github.com/lazzy-panda/alchemist', 'color:#B27C24');
+      console.log('%c⚗ Alchemist', 'font-size:15px;font-weight:700;color:#7BD0A0');
+      console.log('%cThe great Way is simple.  Open source: github.com/lazzy-panda/alchemist', 'color:#E0A93C');
     }
   }, []);
   return (
     <AuthProvider>
-      <Gate />
-      <StatusBar style="dark" />
+      <RpguiRoot>
+        <Gate />
+        <StatusBar style="dark" />
+      </RpguiRoot>
     </AuthProvider>
   );
 }
