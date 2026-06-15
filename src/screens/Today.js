@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from '../theme';
-import { ScreenScroll, PadView } from '../layout';
+import { ScreenScroll, PadView, WIDE_MAX } from '../layout';
 import { Gradient, Card, Btn, Han, T, Seal, kf, KF, EASE } from '../ui';
 import { Avatar, ResourceBar, StateChip, Mist } from '../badges';
 import { PracticeCard } from '../PracticeCard';
@@ -69,13 +69,9 @@ export function TodayScreen({ ctx }) {
       {/* hero */}
       <Gradient colors={['#FBEFC9', '#F2E3B6']} angle={180} style={{ paddingHorizontal: 20, paddingTop: 26, paddingBottom: 22, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.stoneLine, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.6), 0px 4px 12px rgba(40,28,12,0.18)' }}>
         <Mist count={3} />
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 16, zIndex: 2 }}>
-          <Avatar flow={dayState === 'flow'} size={84} stage={stage.lvl} />
-          <View style={{ flex: 1, paddingTop: 4 }}>
-            <Text style={[T.eyebrow, { marginBottom: 4 }]}>Ступень {stage.lvl}</Text>
-            <Text accessibilityRole="header" style={T.displayM}>{greeting()},{'\n'}{name}</Text>
-          </View>
-          <View style={{ alignItems: 'flex-end', gap: 8 }}>
+        <View style={[{ position: 'relative' }, wide ? { width: '100%', maxWidth: WIDE_MAX, alignSelf: 'center' } : null]}>
+          {/* day-state + help, pinned to the column's top-right so the greeting gets the full width */}
+          <View style={{ position: 'absolute', right: 0, top: 2, alignItems: 'flex-end', gap: 8, zIndex: 3 }}>
             <DayStateChip dayState={dayState} />
             {onShowHelp ? (
               <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
@@ -83,22 +79,31 @@ export function TodayScreen({ ctx }) {
               </Pressable>
             ) : null}
           </View>
-        </View>
-        <View style={{ gap: 12, marginTop: 20, zIndex: 2 }}>
-          <ResourceBar kind="hp" han="生" label="Жизнь" value={resources.hp} max={resources.hpMax} />
-          <ResourceBar kind="qi" han="氣" label="Ци" value={resources.qi} max={resources.qiMax} glow={dayState === 'flow'} />
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 16, zIndex: 2 }}>
+            <Avatar flow={dayState === 'flow'} size={84} stage={stage.lvl} />
+            <View style={{ flex: 1, paddingTop: 4, paddingRight: 92 }}>
+              <Text style={[T.eyebrow, { marginBottom: 4 }]}>Ступень {stage.lvl}</Text>
+              <Text accessibilityRole="header" style={[T.displayM, { fontSize: 22, lineHeight: 26 }]}>{greeting()},{'\n'}{name}</Text>
+            </View>
+          </View>
+          <View style={{ gap: 12, marginTop: 20, zIndex: 2 }}>
+            <ResourceBar kind="hp" han="生" label="Жизнь" value={resources.hp} max={resources.hpMax} />
+            <ResourceBar kind="qi" han="氣" label="Ци" value={resources.qi} max={resources.qiMax} glow={dayState === 'flow'} />
+          </View>
         </View>
       </Gradient>
 
       {/* summary ribbon */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, paddingVertical: 14, backgroundColor: C.paperWarm }}>
-        <Text style={{ fontFamily: FONT.ui, fontWeight: '800', fontSize: 14, color: C.ink }}>
-          {done.length} <Text style={{ color: C.inkFaint, fontWeight: '600' }}>из {today.length}</Text>
-        </Text>
-        <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: C.inkFaint }} />
-        <Text style={{ fontFamily: FONT.ui, fontWeight: '800', fontSize: 14, color: C.gold }}>+{dayXp} XP</Text>
-        <View style={{ flex: 1 }} />
-        <StateChip state="streak" text={(streakMilestone ? '✦ ' : '') + streak + ' дней'} gold={streakMilestone} />
+      <View style={{ backgroundColor: C.paperWarm }}>
+        <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, paddingVertical: 14 }, wide ? { maxWidth: WIDE_MAX, width: '100%', alignSelf: 'center' } : null]}>
+          <Text style={{ fontFamily: FONT.ui, fontWeight: '800', fontSize: 14, color: C.ink }}>
+            {done.length} <Text style={{ color: C.inkFaint, fontWeight: '600' }}>из {today.length}</Text>
+          </Text>
+          <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: C.inkFaint }} />
+          <Text style={{ fontFamily: FONT.ui, fontWeight: '800', fontSize: 14, color: C.gold }}>+{dayXp} XP</Text>
+          <View style={{ flex: 1 }} />
+          <StateChip state="streak" text={(streakMilestone ? '✦ ' : '') + streak + ' дней'} gold={streakMilestone} />
+        </View>
       </View>
 
       {/* practices */}

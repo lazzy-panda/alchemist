@@ -51,7 +51,8 @@ function SummaryCard({ big, label, sub, color }) {
 
 export function JournalScreen({ ctx }) {
   const { wide, onOpenDay } = ctx;
-  const todayIdx = 26;
+  let todayIdx = 26;
+  try { todayIdx = Math.min(HEAT.length - 1, Math.max(0, new Date().getDate() - 1)); } catch (e) {}
   const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
   const rows = [];
   for (let i = 0; i < HEAT.length; i += 7) rows.push(HEAT.slice(i, i + 7));
