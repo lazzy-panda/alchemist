@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image } from 'react-native';
 import Svg, { Polygon, Line, Circle, Path, G, Defs, LinearGradient as SvgGrad, Stop } from 'react-native-svg';
 import { C, FONT } from './theme';
-import { STATS } from './data';
+import { STATS, STAT } from './data';
 import { kf, KF, EASE } from './anim';
 import { KIT } from './kit';
 
@@ -118,24 +118,24 @@ export function CircularTimer({ remaining, total, running, size = 230 }) {
   );
 }
 
-/* ---------- growth chart ---------- */
-export function GrowthChart({ series }) {
-  const W = 300,
-    H = 120,
-    pad = 8;
-  const max = 10;
+/* ---------- growth chart (area + lines + end dots, stat-coloured) ---------- */
+export function GrowthChart({ series, keys = ['energy', 'focus', 'flex'], max = 10 }) {
+  const W = 300, H = 132, padX = 10, padTop = 10, padBot = 14;
   const draw = useTween(true, 1100, []);
-  const keys = [
-    ['flex', '#7BA84E'],
-    ['focus', '#4A6FA5'],
-    ['energy', '#3E9C8A'],
-  ];
+  const n = (series[keys[0]] || []).length || 1;
+  const colOf = (k) => (STAT[k] && STAT[k].color) || '#9a8f76';
   const toXY = (arr, i) => {
-    const x = pad + (i / (arr.length - 1)) * (W - pad * 2);
-    const y = H - pad - (arr[i] / max) * (H - pad * 2);
+    const x = padX + (arr.length > 1 ? (i / (arr.length - 1)) * (W - padX * 2) : 0);
+    const y = padTop + (1 - arr[i] / max) * (H - padTop - padBot);
     return [x, y];
   };
-  const pathOf = (arr) => arr.map((v, i) => (i === 0 ? 'M' : 'L') + toXY(arr, i).map((n) => n.toFixed(1)).join(' ')).join(' ');
+  const linePath = (arr) => arr.map((v, i) => (i === 0 ? 'M' : 'L') + toXY(arr, i).map((t) => t.toFixed(1)).join(' ')).join(' ');
+  const areaPath = (arr) => {
+    const base = H - padBot;
+    const [x0] = toXY(arr, 0);
+    const [xN] = toXY(arr, arr.length - 1);
+    return `${linePath(arr)} L ${xN.toFixed(1)} ${base} L ${x0.toFixed(1)} ${base} Z`;
+  };
   const lenOf = (arr) => {
     let len = 0;
     for (let i = 1; i < arr.length; i++) {
@@ -145,28 +145,40 @@ export function GrowthChart({ series }) {
     }
     return len;
   };
+  const gy = (g) => padTop + g * (H - padTop - padBot);
 
   return (
     <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="xMidYMid meet">
-      {[0.25, 0.5, 0.75].map((g) => (
-        <Line key={g} x1={pad} y1={H * g} x2={W - pad} y2={H * g} stroke="rgba(120,92,48,0.1)" strokeWidth="1" />
+      {/* horizontal grid */}
+      {[0, 0.25, 0.5, 0.75, 1].map((g) => (
+        <Line key={'h' + g} x1={padX} y1={gy(g)} x2={W - padX} y2={gy(g)} stroke="rgba(255,250,235,0.08)" strokeWidth="1" />
       ))}
-      {keys.map(([k, col]) => {
+      {/* vertical grid (one per data point) */}
+      {Array.from({ length: n }).map((_, i) => {
+        const x = padX + (n > 1 ? (i / (n - 1)) * (W - padX * 2) : 0);
+        return <Line key={'v' + i} x1={x} y1={padTop} x2={x} y2={H - padBot} stroke="rgba(255,250,235,0.05)" strokeWidth="1" />;
+      })}
+      {/* areas behind lines, fade in */}
+      {keys.map((k) => {
         const arr = series[k];
+        if (!arr) return null;
+        return <Path key={'a' + k} d={areaPath(arr)} fill={colOf(k)} opacity={0.13 * draw} />;
+      })}
+      {/* lines reveal via dash offset */}
+      {keys.map((k) => {
+        const arr = series[k];
+        if (!arr) return null;
         const len = lenOf(arr);
         return (
-          <Path
-            key={k}
-            d={pathOf(arr)}
-            fill="none"
-            stroke={col}
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeDasharray={len}
-            strokeDashoffset={len * (1 - draw)}
-          />
+          <Path key={'l' + k} d={linePath(arr)} fill="none" stroke={colOf(k)} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={len} strokeDashoffset={len * (1 - draw)} />
         );
+      })}
+      {/* end dots */}
+      {keys.map((k) => {
+        const arr = series[k];
+        if (!arr) return null;
+        const [x, y] = toXY(arr, arr.length - 1);
+        return <Circle key={'d' + k} cx={x} cy={y} r={3.4} fill={colOf(k)} stroke="#191510" strokeWidth="1.5" opacity={draw} />;
       })}
     </Svg>
   );
