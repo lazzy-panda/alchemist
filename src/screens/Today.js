@@ -1,6 +1,6 @@
 /* Alchemist — Today screen (ported 1:1 from screens1.jsx) */
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from '../theme';
 import { ScreenScroll, PadView } from '../layout';
 import { Gradient, Card, Btn, Han, T, Seal, kf, KF, EASE } from '../ui';
@@ -42,13 +42,14 @@ function AllDoneState({ dayXp }) {
 }
 
 export function TodayScreen({ ctx }) {
-  const { practices, resources, dayState, streak, stage, onToggle, onOpen, onAdd, wide } = ctx;
+  const { practices, resources, dayState, streak, stage, onToggle, onOpen, onAdd, wide, onShowHelp } = ctx;
   const today = practices.filter((p) => p.today && !p.archived);
   const done = today.filter((p) => p.done);
   const pending = today.filter((p) => !p.done);
   const allDone = today.length > 0 && pending.length === 0;
   const dayXp = done.reduce((s, p) => s + Object.values(p.r || {}).reduce((a, b) => a + b, 0), 0);
   const ordered = [...pending, ...done];
+  const onCompleteAll = () => pending.forEach((pp) => onToggle(pp));
 
   return (
     <ScreenScroll>
@@ -61,7 +62,14 @@ export function TodayScreen({ ctx }) {
             <Text style={[T.eyebrow, { marginBottom: 4 }]}>Ступень {stage.lvl}</Text>
             <Text accessibilityRole="header" style={T.displayM}>Доброе утро,{'\n'}странник</Text>
           </View>
-          <DayStateChip dayState={dayState} />
+          <View style={{ alignItems: 'flex-end', gap: 8 }}>
+            <DayStateChip dayState={dayState} />
+            {onShowHelp ? (
+              <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: FONT.display, fontSize: 14, fontWeight: '800', color: C.inkMuted }}>?</Text>
+              </Pressable>
+            ) : null}
+          </View>
         </View>
         <View style={{ gap: 12, marginTop: 20, zIndex: 2 }}>
           <ResourceBar kind="hp" han="生" label="Жизнь" value={resources.hp} max={resources.hpMax} />
@@ -90,6 +98,10 @@ export function TodayScreen({ ctx }) {
         ) : null}
 
         {today.length === 0 ? <EmptyDay onAdd={onAdd} /> : allDone ? <AllDoneState dayXp={dayXp} /> : null}
+
+        {!allDone && pending.length > 0 && pending.length <= 2 ? (
+          <Btn variant="primary" block onPress={onCompleteAll} style={{ marginBottom: 12 }}>{`✦ Завершить всё (${pending.length})`}</Btn>
+        ) : null}
 
         <View style={{ gap: 12 }}>
           {ordered.map((p, i) => (

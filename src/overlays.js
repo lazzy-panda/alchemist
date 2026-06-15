@@ -159,13 +159,13 @@ function Sheet({ children, onClose, maxHeightPct = 90 }) {
 /* ============================================================
    EDITOR SHEET
    ============================================================ */
-export function EditorSheet({ practice, onSave, onClose, onArchive }) {
+export function EditorSheet({ practice, onSave, onClose, onArchive, existingNames }) {
   const isNew = !practice;
   const [name, setName] = useState(practice?.name || '');
   const [cat, setCat] = useState(practice?.cat || 'med');
   const [dur, setDur] = useState(practice?.dur || 15);
   const [rewards, setRewards] = useState(practice?.r ? { ...practice.r } : {});
-  const [nameError, setNameError] = useState(false);
+  const [nameError, setNameError] = useState('');
   const [confirmArchive, setConfirmArchive] = useState(false);
 
   const toggleReward = (k) => {
@@ -185,9 +185,9 @@ export function EditorSheet({ practice, onSave, onClose, onArchive }) {
             <Text style={[T.displayM, { marginTop: 6, marginBottom: 18 }]}>{isNew ? 'Новая практика' : 'Изменить практику'}</Text>
 
             <Field label="Название">
-              <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(false); }} placeholder="Напр. Утренний цигун" />
+              <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(''); }} placeholder="Напр. Утренний цигун" />
             </Field>
-            {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.redDeep, fontFamily: FONT.ui, fontSize: 12, fontWeight: '700' }}>Введите название практики</Text> : null}
+            {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.redDeep, fontFamily: FONT.ui, fontSize: 12, fontWeight: '700' }}>{nameError}</Text> : null}
 
             <Field label="Категория">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -198,7 +198,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive }) {
             </Field>
 
             <Field label="Длительность">
-              <Stepper value={dur} onDec={() => setDur(Math.max(1, dur - 5))} onInc={() => setDur(dur + 5)} />
+              <Stepper value={dur} onDec={() => setDur(Math.max(1, dur - 5))} onInc={() => setDur(Math.min(180, dur + 5))} />
             </Field>
 
             <Field label="Привязка характеристик">
@@ -208,6 +208,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive }) {
                 ))}
               </View>
             </Field>
+            {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 12, lineHeight: 16 }}>Совет: привяжи хотя бы одну характеристику, чтобы практика давала очки.</Text> : null}
 
             {confirmArchive ? (
               <View style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
@@ -223,9 +224,12 @@ export function EditorSheet({ practice, onSave, onClose, onArchive }) {
                   variant="primary"
                   style={{ flex: 1 }}
                   onPress={() => {
-                    if (!name.trim()) { setNameError(true); return; }
+                    const trimmed = name.trim();
+                    if (!trimmed) { setNameError('Введите название практики'); return; }
+                    const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
+                    if (dup) { setNameError('Практика с таким названием уже есть'); return; }
                     close();
-                    setTimeout(() => onSave({ id: practice?.id, name: name.trim(), cat, dur, r: rewards, qi: practice?.qi ?? 2, today: practice?.today, done: practice?.done }), 290);
+                    setTimeout(() => onSave({ id: practice?.id, name: trimmed, cat, dur, r: rewards, qi: practice?.qi ?? 2, today: practice?.today, done: practice?.done }), 290);
                   }}
                 >
                   Сохранить

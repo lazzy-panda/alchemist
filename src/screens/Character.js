@@ -77,7 +77,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
 }
 
 export function CharacterScreen({ ctx }) {
-  const { statLevels, resources, stage, route, wide } = ctx;
+  const { statLevels, resources, stage, route, wide, onShowHelp } = ctx;
   const [expanded, setExpanded] = useState(null);
   const radarValues = {};
   STATS.forEach((s) => {
@@ -96,6 +96,11 @@ export function CharacterScreen({ ctx }) {
           <Text accessibilityRole="header" style={[T.displayL, { marginBottom: 18 }]}>Ступень {stage.lvl}</Text>
           <RadarMandala values={radarValues} size={250} animate />
           <Text style={[T.caption, { textAlign: 'center', marginTop: 10, maxWidth: 290, lineHeight: 16 }]}>Грани мастера: чем дальше вершина от центра, тем выше характеристика</Text>
+          {onShowHelp ? (
+            <Pressable onPress={onShowHelp} hitSlop={8} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ marginTop: 8 }}>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 12, fontWeight: '800', color: C.jadeDeep }}>Как это работает?</Text>
+            </Pressable>
+          ) : null}
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 20, alignSelf: 'stretch' }}>
             <Card style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 16 }}>
               <ResourceBar kind="hp" han="生" label="Жизнь" value={resources.hp} max={resources.hpMax} />

@@ -52,6 +52,7 @@ export function MainApp() {
     setOnboard(false);
     AsyncStorage.setItem('alchemist_onboarded_v1', '1').catch(() => {});
   }, []);
+  const onShowHelp = useCallback(() => setOnboard(true), []);
 
   const onComplete = useCallback((p) => { game.setDone(p, true); setDetail(null); }, [game.setDone]);
   const onSave = useCallback((data) => { game.savePractice(data); setEditor(undefined); }, [game.savePractice]);
@@ -75,6 +76,7 @@ export function MainApp() {
     onEdit,
     onSave,
     onOpenDay,
+    onShowHelp,
     diaryKey: 'alchemist_diary_' + (auth?.user?.id || 'anon'),
   };
 
@@ -88,7 +90,7 @@ export function MainApp() {
   const overlays = (
     <>
       {detail ? <PracticeDetail practice={detail} wide={wide} onComplete={onComplete} onClose={() => setDetail(null)} /> : null}
-      {editor !== undefined ? <EditorSheet practice={editor} onSave={onSave} onClose={() => setEditor(undefined)} onArchive={onArchive} /> : null}
+      {editor !== undefined ? <EditorSheet practice={editor} onSave={onSave} onClose={() => setEditor(undefined)} onArchive={onArchive} existingNames={game.practices.filter((x) => !x.archived).map((x) => x.name)} /> : null}
       {daySheet !== null ? <DayDetailSheet day={daySheet} onClose={() => setDaySheet(null)} /> : null}
       {game.levelUp ? <LevelUpOverlay stage={game.levelUp} onClose={game.clearLevelUp} /> : null}
       {toast ? <Toast message={toast.message} actionLabel={toast.actionLabel} onAction={() => { if (toast.action === 'undo') game.undoArchive(); setToast(null); }} onClose={() => setToast(null)} /> : null}

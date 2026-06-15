@@ -1,6 +1,6 @@
 /* Alchemist — practice card (ported 1:1 from components.jsx) */
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, Pressable, ImageBackground, Platform } from 'react-native';
+import { View, Text, Pressable, ImageBackground, Platform, Animated, PanResponder } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { C, FONT, shade } from './theme';
 import { CATS, STAT } from './data';
@@ -11,6 +11,9 @@ import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
 
 const WEB = Platform.OS === 'web';
+const USE_NATIVE = !WEB;
+const SWIPE_MAX = 96; // how far the card travels
+const SWIPE_TRIG = 64; // distance past which a release completes
 
 function useDrawTween(active, dur = 340) {
   const [v, setV] = useState(active ? 1 : 0);
@@ -61,12 +64,14 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
   const fx = useEffects();
   const rewards = Object.entries(p.r || {});
 
-  const handleCheck = () => {
-    if (locked) {
-      setShake(true);
-      setTimeout(() => setShake(false), 450);
-      return;
-    }
+  // swipe-to-complete (pending, unlocked, full cards only)
+  const swipeable = !locked && !p.done && !compact && !!onToggle;
+  const swipeableRef = useRef(swipeable);
+  swipeableRef.current = swipeable;
+  const tx = useRef(new Animated.Value(0)).current;
+  const [swiping, setSwiping] = useState(false);
+
+  const fireComplete = () => {
     if (!p.done) {
       const cols = rewards.map(([k]) => STAT[k]?.color).filter(Boolean);
       if (checkRef.current && checkRef.current.measureInWindow) {
@@ -79,7 +84,37 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
     onToggle && onToggle(p);
   };
 
-  return (
+  const handleCheck = () => {
+    if (locked) {
+      setShake(true);
+      setTimeout(() => setShake(false), 450);
+      return;
+    }
+    fireComplete();
+  };
+
+  const pan = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (e, g) => swipeableRef.current && g.dx < -8 && Math.abs(g.dx) > Math.abs(g.dy) * 1.4,
+      onPanResponderGrant: () => setSwiping(true),
+      onPanResponderMove: (e, g) => tx.setValue(Math.max(-SWIPE_MAX, Math.min(0, g.dx))),
+      onPanResponderRelease: (e, g) => {
+        if (g.dx < -SWIPE_TRIG) {
+          Animated.timing(tx, { toValue: -SWIPE_MAX, duration: 110, useNativeDriver: USE_NATIVE }).start(() => {
+            tx.setValue(0);
+            setSwiping(false);
+            fireComplete();
+          });
+        } else {
+          Animated.spring(tx, { toValue: 0, bounciness: 0, speed: 18, useNativeDriver: USE_NATIVE }).start(() => setSwiping(false));
+        }
+      },
+      onPanResponderTerminate: () => Animated.spring(tx, { toValue: 0, bounciness: 0, speed: 18, useNativeDriver: USE_NATIVE }).start(() => setSwiping(false)),
+    })
+  ).current;
+
+  const inner = (
     <View
       ref={cardRef}
       style={[
@@ -100,6 +135,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
               paddingLeft: 15,
               paddingRight: 64,
               borderRadius: 20,
+              backgroundColor: p.done ? 'transparent' : C.paperCell,
               borderWidth: 2.5,
               borderColor: p.done ? '#8fc9a6' : active ? C.jade : C.paperDeep,
               opacity: locked ? 0.6 : 1,
@@ -151,6 +187,25 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
           </Pressable>
         </View>
       )}
+    </View>
+  );
+
+  if (!swipeable) return inner;
+
+  return (
+    <View style={{ position: 'relative' }}>
+      {/* green "complete" reveal — rendered only while actively swiping */}
+      {swiping ? (
+        <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderRadius: 20, backgroundColor: C.jade, borderWidth: 2.5, borderColor: C.jadeLine, alignItems: 'flex-end', justifyContent: 'center', overflow: 'hidden' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingRight: 22 }}>
+            <Text style={{ color: '#fff', fontFamily: FONT.ui, fontWeight: '800', fontSize: 13 }}>Готово</Text>
+            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>✓</Text>
+          </View>
+        </View>
+      ) : null}
+      <Animated.View {...pan.panHandlers} style={{ width: '100%', transform: [{ translateX: tx }] }}>
+        {inner}
+      </Animated.View>
     </View>
   );
 }
