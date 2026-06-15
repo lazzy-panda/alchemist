@@ -78,7 +78,7 @@ function norm(v, d = 0) {
 }
 
 /* ---------- 9-slice from a kit asset ---------- */
-export function NineSlice({ source, slice = 12, border, style, children, ...rest }) {
+export function NineSlice({ source, slice = 12, border, style, children, webFilter, ...rest }) {
   const ref = useRef(null);
   const uri = useMemo(() => uriOf(source), [source]);
   const b = norm(border, typeof slice === 'number' ? slice : 12);
@@ -93,7 +93,8 @@ export function NineSlice({ source, slice = 12, border, style, children, ...rest
     el.style.borderImageSlice = `${sliceArr.join(' ')} fill`;
     el.style.borderImageRepeat = 'stretch';
     el.style.borderImageWidth = `${b.top}px ${b.right}px ${b.bottom}px ${b.left}px`;
-  }, [uri, sliceArr.join(','), b.top, b.right, b.bottom, b.left]);
+    el.style.filter = webFilter || '';
+  }, [uri, sliceArr.join(','), b.top, b.right, b.bottom, b.left, webFilter]);
 
   const borderStyle = {
     borderStyle: 'solid',
@@ -120,6 +121,8 @@ export function NineSlice({ source, slice = 12, border, style, children, ...rest
 
 /* ---------- candy button (real kit pill, 9-slice horizontally) ---------- */
 const BTN_ASSET = { primary: KIT.btnGreen, gold: KIT.btnGold, blue: KIT.btnBlue, danger: KIT.btnRed };
+// web-only brightness trim so the white label clears WCAG AA (4.5:1) on the bright green/blue kit pills
+const BTN_FILTER = { primary: 'brightness(0.85) saturate(1.06)', blue: 'brightness(0.9) saturate(1.04)' };
 
 export function KitButton({ variant = 'primary', onPress, children, block, style, textStyle, disabled, accessibilityLabel }) {
   const asset = BTN_ASSET[variant] || KIT.btnGreen;
@@ -139,6 +142,7 @@ export function KitButton({ variant = 'primary', onPress, children, block, style
           source={asset}
           slice={[7, 22, 9, 22]}
           border={{ top: 7, right: 17, bottom: 9, left: 17 }}
+          webFilter={BTN_FILTER[variant]}
           style={[
             { minHeight: 44, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 9, paddingHorizontal: 14 },
             pressed && { transform: [{ translateY: 2 }], opacity: 0.93 },
@@ -221,7 +225,7 @@ export function KitGem({ size = 54, color = '#888', han, fontSize, glyphStyle })
 export function KitPill({ color = 'primary', children, style, onPress, accessibilityLabel, selected }) {
   const asset = BTN_ASSET[color] || KIT.btnGreen;
   const body = (
-    <NineSlice source={asset} slice={[7, 22, 9, 22]} border={{ top: 6, right: 15, bottom: 8, left: 15 }} style={[{ minHeight: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: 10 }, style]}>
+    <NineSlice source={asset} slice={[7, 22, 9, 22]} border={{ top: 6, right: 15, bottom: 8, left: 15 }} webFilter={BTN_FILTER[color]} style={[{ minHeight: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: 10 }, style]}>
       {children}
     </NineSlice>
   );

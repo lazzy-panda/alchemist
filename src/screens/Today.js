@@ -43,7 +43,7 @@ function AllDoneState({ dayXp }) {
 
 export function TodayScreen({ ctx }) {
   const { practices, resources, dayState, streak, stage, onToggle, onOpen, onAdd, wide } = ctx;
-  const today = practices.filter((p) => p.today);
+  const today = practices.filter((p) => p.today && !p.archived);
   const done = today.filter((p) => p.done);
   const pending = today.filter((p) => !p.done);
   const allDone = today.length > 0 && pending.length === 0;
@@ -56,7 +56,7 @@ export function TodayScreen({ ctx }) {
       <Gradient colors={['#FBEFC9', '#F2E3B6']} angle={180} style={{ paddingHorizontal: 20, paddingTop: 26, paddingBottom: 22, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.stoneLine, boxShadow: 'inset 0px 2px 0px rgba(255,255,255,0.6), 0px 4px 12px rgba(40,28,12,0.18)' }}>
         <Mist count={3} />
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 16, zIndex: 2 }}>
-          <Avatar flow={dayState === 'flow'} size={84} />
+          <Avatar flow={dayState === 'flow'} size={84} stage={stage.lvl} />
           <View style={{ flex: 1, paddingTop: 4 }}>
             <Text style={[T.eyebrow, { marginBottom: 4 }]}>Ступень {stage.lvl}</Text>
             <Text accessibilityRole="header" style={T.displayM}>Доброе утро,{'\n'}странник</Text>
@@ -82,12 +82,19 @@ export function TodayScreen({ ctx }) {
 
       {/* practices */}
       <PadView wide={wide}>
+        {dayState === 'spent' ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.paperWarm, borderRadius: 14, borderWidth: 2, borderColor: C.paperDeep, paddingVertical: 12, paddingHorizontal: 14, marginBottom: 14 }}>
+            <Text style={{ fontSize: 20 }}>🌙</Text>
+            <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 12.5, lineHeight: 17, color: C.inkMuted }}>Ци на исходе — это сигнал восстановиться, а не провал. Выбери лёгкую практику или дай себе отдых.</Text>
+          </View>
+        ) : null}
+
         {today.length === 0 ? <EmptyDay onAdd={onAdd} /> : allDone ? <AllDoneState dayXp={dayXp} /> : null}
 
         <View style={{ gap: 12 }}>
           {ordered.map((p, i) => (
             <View key={p.id} style={[{ position: 'relative' }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: i * 0.06 })]}>
-              <PracticeCard p={p} onToggle={onToggle} onOpen={onOpen} />
+              <PracticeCard p={p} onToggle={onToggle} onOpen={onOpen} locked={p.qi < 0 && resources.qi < Math.abs(p.qi)} />
               {p.done ? <DoneSeal /> : null}
             </View>
           ))}

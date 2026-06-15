@@ -79,7 +79,8 @@ export function JournalScreen({ ctx }) {
               </View>
             ))}
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, justifyContent: 'flex-end', marginTop: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12 }}>
+            <Text style={[T.caption, { flex: 1 }]}>Нажми на день — детали</Text>
             <Text style={T.caption}>меньше</Text>
             {[0, 1, 2, 3].map((l) => <LegendSwatch key={l} v={l} />)}
             <Text style={T.caption}>больше</Text>

@@ -9,11 +9,12 @@ import { Mh } from '../badges';
 import { PracticeCard } from '../PracticeCard';
 
 export function LibraryScreen({ ctx }) {
-  const { practices, onEdit, onAdd, onToggle, wide } = ctx;
+  const { practices, onEdit, onAdd, onToggle, wide, restorePractice } = ctx;
   const cats = Object.keys(CATS);
   const [collapsed, setCollapsed] = useState({});
   const [archiveOpen, setArchiveOpen] = useState(false);
   const active = practices.filter((p) => !p.archived);
+  const archived = practices.filter((p) => p.archived);
 
   return (
     <ScreenScroll>
@@ -59,10 +60,23 @@ export function LibraryScreen({ ctx }) {
         <Pressable onPress={() => setArchiveOpen(!archiveOpen)} accessibilityRole="button" accessibilityLabel="Архив" accessibilityState={{ expanded: archiveOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 18 }}>
           <Text style={{ color: C.inkFaint, fontSize: 16, transform: archiveOpen ? [{ rotate: '90deg' }] : [] }}>›</Text>
           <Text style={{ color: C.inkFaint, fontWeight: '700', fontSize: 13, fontFamily: FONT.ui }}>Архив</Text>
+          {archived.length ? <Text style={T.caption}>{archived.length}</Text> : null}
         </Pressable>
         {archiveOpen ? (
-          <Card style={[{ padding: 16, marginTop: 10, alignItems: 'center' }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
-            <Text style={{ color: C.inkFaint, fontFamily: FONT.ui, textAlign: 'center' }}>Архив пуст. Заархивированные практики можно восстановить отсюда.</Text>
+          <Card style={[{ padding: 16, marginTop: 10 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
+            {archived.length ? (
+              <View style={{ gap: 4 }}>
+                {archived.map((p) => (
+                  <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 }}>
+                    <Mh size={26} color={CATS[p.cat].color} han={CATS[p.cat].han} fontSize={14} />
+                    <Text style={{ flex: 1, fontFamily: FONT.display, fontWeight: '600', fontSize: 14, color: C.ink }} numberOfLines={1}>{p.name}</Text>
+                    <Btn variant="secondary" onPress={() => restorePractice && restorePractice(p.id)} style={{ paddingVertical: 8, paddingHorizontal: 14 }}>Вернуть</Btn>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <Text style={{ color: C.inkFaint, fontFamily: FONT.ui, textAlign: 'center' }}>Архив пуст. Заархивированные практики появятся здесь — их можно вернуть.</Text>
+            )}
           </Card>
         ) : null}
       </PadView>

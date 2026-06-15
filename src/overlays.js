@@ -103,6 +103,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
               </MedalPill>
             ) : null}
           </Card>
+          <Text style={[T.caption, { marginTop: 8, paddingHorizontal: 2, lineHeight: 16 }]}>+N — очки в характеристику · 氣 — изменение запаса Ци{practice.mult ? ' · ×' + practice.mult + ' — бонус Чжан Чжуан' : ''}</Text>
         </View>
       </ScrollViewSafe>
     </View>
@@ -158,12 +159,14 @@ function Sheet({ children, onClose, maxHeightPct = 90 }) {
 /* ============================================================
    EDITOR SHEET
    ============================================================ */
-export function EditorSheet({ practice, onSave, onClose }) {
+export function EditorSheet({ practice, onSave, onClose, onArchive }) {
   const isNew = !practice;
   const [name, setName] = useState(practice?.name || '');
   const [cat, setCat] = useState(practice?.cat || 'med');
   const [dur, setDur] = useState(practice?.dur || 15);
   const [rewards, setRewards] = useState(practice?.r ? { ...practice.r } : {});
+  const [nameError, setNameError] = useState(false);
+  const [confirmArchive, setConfirmArchive] = useState(false);
 
   const toggleReward = (k) => {
     setRewards((r) => {
@@ -182,8 +185,9 @@ export function EditorSheet({ practice, onSave, onClose }) {
             <Text style={[T.displayM, { marginTop: 6, marginBottom: 18 }]}>{isNew ? 'Новая практика' : 'Изменить практику'}</Text>
 
             <Field label="Название">
-              <Input value={name} onChangeText={setName} placeholder="Напр. Утренний цигун" />
+              <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(false); }} placeholder="Напр. Утренний цигун" />
             </Field>
+            {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.redDeep, fontFamily: FONT.ui, fontSize: 12, fontWeight: '700' }}>Введите название практики</Text> : null}
 
             <Field label="Категория">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -205,20 +209,30 @@ export function EditorSheet({ practice, onSave, onClose }) {
               </View>
             </Field>
 
-            <View style={{ flexDirection: 'row', gap: 10, marginTop: 22 }}>
-              <Btn
-                variant="primary"
-                style={{ flex: 1 }}
-                onPress={() => {
-                  if (!name.trim()) return;
-                  close();
-                  setTimeout(() => onSave({ id: practice?.id, name: name.trim(), cat, dur, r: rewards, qi: practice?.qi ?? 2, today: practice?.today, done: practice?.done }), 290);
-                }}
-              >
-                Сохранить
-              </Btn>
-              {!isNew ? <Btn variant="danger" onPress={close}>Архивировать</Btn> : null}
-            </View>
+            {confirmArchive ? (
+              <View style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
+                <Text style={{ fontFamily: FONT.ui, fontSize: 13, fontWeight: '700', color: C.redDeep, marginBottom: 12, lineHeight: 18 }}>Убрать «{name || practice?.name}» в архив? Практику можно вернуть в Библиотеке.</Text>
+                <View style={{ flexDirection: 'row', gap: 10 }}>
+                  <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirmArchive(false)}>Отмена</Btn>
+                  <Btn variant="danger" style={{ flex: 1 }} onPress={() => { close(); setTimeout(() => onArchive && onArchive(practice.id), 290); }}>Архивировать</Btn>
+                </View>
+              </View>
+            ) : (
+              <View style={{ flexDirection: 'row', gap: 10, marginTop: 22 }}>
+                <Btn
+                  variant="primary"
+                  style={{ flex: 1 }}
+                  onPress={() => {
+                    if (!name.trim()) { setNameError(true); return; }
+                    close();
+                    setTimeout(() => onSave({ id: practice?.id, name: name.trim(), cat, dur, r: rewards, qi: practice?.qi ?? 2, today: practice?.today, done: practice?.done }), 290);
+                  }}
+                >
+                  Сохранить
+                </Btn>
+                {!isNew ? <Btn variant="danger" onPress={() => setConfirmArchive(true)}>Архивировать</Btn> : null}
+              </View>
+            )}
           </View>
         </ScrollViewSafe>
       )}
@@ -308,5 +322,58 @@ export function FogVeil() {
         kf(KF.fogClear, 1.6, { ease: EASE.soft, fill: 'forwards' }),
       ]}
     />
+  );
+}
+
+/* ============================================================
+   ONBOARDING (first run) — teaches the core loop by doing
+   ============================================================ */
+const ONBOARD_STEPS = [
+  { han: '日', color: C.jade, title: 'Выполняй практики', body: 'Нажми на практику, чтобы открыть таймер, и отметь её галочкой, когда закончишь.' },
+  { han: '氣', color: C.cEnergy, title: 'Расти', body: 'Каждая практика даёт очки характеристикам, опыт ступени и меняет запас Ци.' },
+  { han: '生', color: C.red, title: 'Следи за состоянием', body: 'Полосы Жизни и Ци показывают твою форму. Держи Ци в потоке — и путь будет ровным.' },
+];
+
+export function Onboarding({ onDone }) {
+  const [step, setStep] = useState(0);
+  const last = step === ONBOARD_STEPS.length - 1;
+  const s = ONBOARD_STEPS[step];
+  return (
+    <View style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 280, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 26, backgroundColor: 'rgba(35,25,12,0.55)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
+      <View key={step} style={[{ width: '100%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 30, paddingBottom: 22, borderRadius: 26, borderWidth: 4, borderColor: C.stoneDark, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(0,0,0,0.4)` }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}>
+        <KitGem size={70} color={s.color} han={s.han} fontSize={34} />
+        <Text style={[T.displayM, { marginTop: 14, marginBottom: 8, textAlign: 'center' }]}>{s.title}</Text>
+        <Text style={[T.body, { color: C.inkMuted, textAlign: 'center', marginBottom: 18 }]}>{s.body}</Text>
+        <View style={{ flexDirection: 'row', gap: 7, marginBottom: 18 }}>
+          {ONBOARD_STEPS.map((_, i) => (
+            <View key={i} style={{ width: i === step ? 18 : 7, height: 7, borderRadius: 4, backgroundColor: i === step ? C.jade : C.paperDeep }} />
+          ))}
+        </View>
+        <Btn variant="primary" block onPress={() => (last ? onDone() : setStep(step + 1))}>{last ? 'Начать путь' : 'Дальше'}</Btn>
+        {!last ? <Btn variant="ghost" onPress={onDone} style={{ marginTop: 2 }}>Пропустить</Btn> : null}
+      </View>
+    </View>
+  );
+}
+
+/* ============================================================
+   TOAST — transient parchment pill with an optional action (undo)
+   ============================================================ */
+export function Toast({ message, actionLabel, onAction, onClose }) {
+  useEffect(() => {
+    const t = setTimeout(() => onClose && onClose(), 5000);
+    return () => clearTimeout(t);
+  }, [message]);
+  return (
+    <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, bottom: 92, alignItems: 'center', paddingHorizontal: 18, zIndex: 260 }}>
+      <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 14, width: '100%', maxWidth: 420, paddingVertical: 12, paddingLeft: 16, paddingRight: 12, borderRadius: 16, borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: C.paperLight, boxShadow: '0px 8px 22px rgba(40,28,12,0.4)' }, kf(KF.fadeUp, 0.4, { ease: EASE.out })]}>
+        <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 13.5, fontWeight: '600', color: C.ink }}>{message}</Text>
+        {actionLabel ? (
+          <Pressable onPress={onAction} hitSlop={8} accessibilityRole="button" accessibilityLabel={actionLabel}>
+            <Text style={{ fontFamily: FONT.display, fontSize: 14, fontWeight: '800', color: C.jadeDeep }}>{actionLabel}</Text>
+          </Pressable>
+        ) : null}
+      </View>
+    </View>
   );
 }

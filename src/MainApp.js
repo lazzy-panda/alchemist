@@ -1,6 +1,7 @@
 /* Alchemist — main shell: navigation, responsive layout, overlays */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, useWindowDimensions, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { C } from './theme';
 import { useGame } from './engine';
 import { useAuth } from './auth';
@@ -11,7 +12,7 @@ import { CharacterScreen } from './screens/Character';
 import { LibraryScreen } from './screens/Library';
 import { DiaryScreen } from './screens/Diary';
 import { JournalScreen } from './screens/Journal';
-import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil } from './overlays';
+import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast } from './overlays';
 import { KitPanel } from './kit';
 
 const WEB = Platform.OS === 'web';
@@ -33,6 +34,24 @@ export function MainApp() {
   const [detail, setDetail] = useState(null);
   const [editor, setEditor] = useState(undefined); // undefined=closed, null=new, obj=edit
   const [daySheet, setDaySheet] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [onboard, setOnboard] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const seen = await AsyncStorage.getItem('alchemist_onboarded_v1');
+        if (!seen && !cancelled) setOnboard(true);
+      } catch (e) {}
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const dismissOnboard = useCallback(() => {
+    setOnboard(false);
+    AsyncStorage.setItem('alchemist_onboarded_v1', '1').catch(() => {});
+  }, []);
 
   const onComplete = useCallback((p) => { game.setDone(p, true); setDetail(null); }, [game.setDone]);
   const onSave = useCallback((data) => { game.savePractice(data); setEditor(undefined); }, [game.savePractice]);
@@ -40,6 +59,10 @@ export function MainApp() {
   const onAdd = useCallback(() => setEditor(null), []);
   const onEdit = useCallback((p) => setEditor(p), []);
   const onOpenDay = useCallback((d) => setDaySheet(d), []);
+  const onArchive = useCallback((id) => {
+    game.archivePractice(id);
+    setToast({ message: 'Практика убрана в архив', actionLabel: 'Вернуть', action: 'undo' });
+  }, [game.archivePractice]);
 
   const ctx = {
     ...game,
@@ -65,9 +88,11 @@ export function MainApp() {
   const overlays = (
     <>
       {detail ? <PracticeDetail practice={detail} wide={wide} onComplete={onComplete} onClose={() => setDetail(null)} /> : null}
-      {editor !== undefined ? <EditorSheet practice={editor} onSave={onSave} onClose={() => setEditor(undefined)} /> : null}
+      {editor !== undefined ? <EditorSheet practice={editor} onSave={onSave} onClose={() => setEditor(undefined)} onArchive={onArchive} /> : null}
       {daySheet !== null ? <DayDetailSheet day={daySheet} onClose={() => setDaySheet(null)} /> : null}
       {game.levelUp ? <LevelUpOverlay stage={game.levelUp} onClose={game.clearLevelUp} /> : null}
+      {toast ? <Toast message={toast.message} actionLabel={toast.actionLabel} onAction={() => { if (toast.action === 'undo') game.undoArchive(); setToast(null); }} onClose={() => setToast(null)} /> : null}
+      {onboard ? <Onboarding onDone={dismissOnboard} /> : null}
       <FogVeil />
     </>
   );

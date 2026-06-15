@@ -96,8 +96,10 @@ export function StateChip({ state, text }) {
   );
 }
 
-/* ---------- avatar — real kit stone slot ---------- */
-export function Avatar({ flow, size = 96 }) {
+/* ---------- avatar — kit stone slot with a glowing jade cultivation core ---------- */
+export function Avatar({ flow, size = 96, stage }) {
+  const inner = Math.round(size * 0.58);
+  const innerR = Math.round(size * 0.12);
   return (
     <View style={{ width: size, height: size }}>
       <KitPanel
@@ -105,9 +107,14 @@ export function Avatar({ flow, size = 96 }) {
         border={Math.round(size * 0.17)}
         style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}
       >
-        <View style={{ width: size * 0.56, height: size * 0.56, borderRadius: Math.round(size * 0.1), backgroundColor: '#3b4654', alignItems: 'center', justifyContent: 'center', boxShadow: 'inset 0px 3px 8px rgba(0,0,0,0.6), inset 0px -2px 4px rgba(255,255,255,0.12)' }}>
+        <Gradient
+          colors={flow ? ['#4a7368', '#223834'] : ['#3f5f57', '#223834']}
+          angle={160}
+          style={{ width: inner, height: inner, borderRadius: innerR, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: 2, borderColor: flow ? C.jadeLight : 'rgba(143,224,176,0.4)', boxShadow: 'inset 0px 3px 8px rgba(0,0,0,0.5), inset 0px -2px 4px rgba(255,255,255,0.12)' }}
+        >
           <Han style={{ fontSize: size * 0.34, color: '#ECE0BA', ...ts('rgba(0,0,0,0.5)', 0, 1) }}>修</Han>
-        </View>
+          <Gloss radius={innerR} />
+        </Gradient>
       </KitPanel>
       {flow ? (
         <View
@@ -117,6 +124,11 @@ export function Avatar({ flow, size = 96 }) {
             kf(KF.spin, 7, { ease: EASE.linear, iter: 'infinite' }),
           ]}
         />
+      ) : null}
+      {stage != null ? (
+        <View pointerEvents="none" style={{ position: 'absolute', right: -3, bottom: -3, minWidth: 22, height: 22, paddingHorizontal: 5, borderRadius: 11, backgroundColor: C.gold, borderWidth: 2, borderColor: C.goldLine, alignItems: 'center', justifyContent: 'center', boxShadow: '0px 2px 5px rgba(120,80,20,0.45), inset 0px 1px 0px rgba(255,255,255,0.4)' }}>
+          <Text style={{ fontFamily: FONT.display, fontWeight: '800', fontSize: 11, fontVariant: ['tabular-nums'], color: '#4a3410', ...ts('rgba(255,255,255,0.45)', 0, 1) }}>{stage}</Text>
+        </View>
       ) : null}
     </View>
   );

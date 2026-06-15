@@ -6,7 +6,7 @@ import { C, FONT, shade } from './theme';
 import { CATS, STAT } from './data';
 import { Gradient, Gloss, Han } from './ui';
 import { KIT, KitCheck, KitGem } from './kit';
-import { RewardMedal, QiTag } from './badges';
+import { QiTag } from './badges';
 import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
 
@@ -124,7 +124,6 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
                     <Text style={{ fontFamily: FONT.ui, fontSize: 11, fontWeight: '700', color: C.gold }}>×{p.mult}</Text>
                   </>
                 ) : null}
-                {!compact && rewards.slice(0, 3).map(([k, v]) => <RewardMedal key={k} stat={k} value={v} />)}
                 {compact ? <QiTag qi={p.qi} /> : null}
               </View>
             </View>
@@ -134,8 +133,8 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
 
       {/* check / locked — sibling overlay so taps don't open the card */}
       {locked ? (
-        <View style={{ position: 'absolute', right: 14, top: 0, bottom: 0, justifyContent: 'center', maxWidth: 90 }} pointerEvents="none">
-          <Text style={{ fontSize: 11, fontWeight: '700', color: C.inkFaint, textAlign: 'right' }}>◌ нужно {Math.abs(p.qi)} 氣</Text>
+        <View style={{ position: 'absolute', right: 14, top: 0, bottom: 0, justifyContent: 'center', maxWidth: 94 }} pointerEvents="none">
+          <Text style={{ fontSize: 10.5, fontWeight: '700', color: C.inkFaint, textAlign: 'right', lineHeight: 13 }}>Мало Ци{'\n'}нужно {Math.abs(p.qi)} 氣</Text>
         </View>
       ) : (
         <View ref={checkRef} style={{ position: 'absolute', right: 15, top: 0, bottom: 0, justifyContent: 'center' }}>

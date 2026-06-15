@@ -10,6 +10,7 @@ export function useGame() {
   const [stage, setStage] = useState({ lvl: 8, xp: 60, next: 100 });
   const [streak] = useState(14);
   const [levelUp, setLevelUp] = useState(null);
+  const [lastArchived, setLastArchived] = useState(null);
 
   const setDone = useCallback((target, value) => {
     setPractices((curr) => {
@@ -77,6 +78,22 @@ export function useGame() {
     });
   }, []);
 
+  // archive (with undo) — keeps the practice in state but hidden from Today & Library
+  const archivePractice = useCallback((id) => {
+    setPractices((ps) => ps.map((x) => (x.id === id ? { ...x, archived: true } : x)));
+    setLastArchived(id);
+  }, []);
+  const restorePractice = useCallback((id) => {
+    setPractices((ps) => ps.map((x) => (x.id === id ? { ...x, archived: false } : x)));
+    setLastArchived((cur) => (cur === id ? null : cur));
+  }, []);
+  const undoArchive = useCallback(() => {
+    setLastArchived((id) => {
+      if (id) setPractices((ps) => ps.map((x) => (x.id === id ? { ...x, archived: false } : x)));
+      return null;
+    });
+  }, []);
+
   const qiPct = resources.qi / resources.qiMax;
   const doneCount = practices.filter((p) => p.today && p.done).length;
   const dayState = qiPct < 0.25 ? 'spent' : doneCount >= 1 ? 'flow' : 'calm';
@@ -93,5 +110,9 @@ export function useGame() {
     setDone,
     toggle,
     savePractice,
+    archivePractice,
+    restorePractice,
+    undoArchive,
+    lastArchived,
   };
 }

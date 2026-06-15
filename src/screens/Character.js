@@ -4,16 +4,49 @@ import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from '../theme';
 import { STATS, CATS, PRACTICES, PERKS, RELICS } from '../data';
 import { ScreenScroll, PadView } from '../layout';
-import { Card, Han, T, SectionHead, Gradient, Gloss, kf, KF, EASE } from '../ui';
+import { Card, Han, T, Gradient, Gloss, ts, kf, KF, EASE } from '../ui';
 import { ResourceBar, StatMedal, Bar, Mh } from '../badges';
 import { RadarMandala } from '../svg';
 import { KitPanel } from '../kit';
+
+/* collapsible section — tappable header reveals its content (progressive disclosure) */
+function Section({ title, right, defaultOpen = false, children }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <View>
+      <Pressable
+        onPress={() => setOpen((o) => !o)}
+        accessibilityRole="button"
+        accessibilityLabel={title}
+        accessibilityState={{ expanded: open }}
+        style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 24, marginBottom: 12, marginHorizontal: 2, opacity: pressed ? 0.6 : 1 }]}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Text style={{ fontSize: 9, color: C.stoneMid }}>◆</Text>
+          <Text accessibilityRole="header" style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, textTransform: 'uppercase', letterSpacing: 0.6, color: C.title, ...ts('rgba(255,255,255,0.6)', 0, 1) }}>{title}</Text>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
+          {right != null ? <Text style={T.caption}>{right}</Text> : null}
+          <Text style={{ color: C.inkFaint, fontSize: 18, transform: open ? [{ rotate: '90deg' }] : [] }}>›</Text>
+        </View>
+      </Pressable>
+      {open ? <View style={kf(KF.fadeUp, 0.4, { ease: EASE.out })}>{children}</View> : null}
+    </View>
+  );
+}
 
 function StatRow({ s, sl, open, onToggle, last }) {
   const feeders = PRACTICES.filter((p) => (p.r || {})[s.key]).slice(0, 4);
   return (
     <View style={{ borderBottomWidth: last ? 0 : 1, borderBottomColor: 'rgba(120,92,48,0.08)' }}>
-      <Pressable onPress={onToggle} accessibilityRole="button" accessibilityLabel={s.name} accessibilityState={{ expanded: open }} style={{ flexDirection: 'row', alignItems: 'center', gap: 13, paddingVertical: 14, paddingHorizontal: 16 }}>
+      <Pressable
+        onPress={onToggle}
+        accessibilityRole="button"
+        accessibilityLabel={s.name}
+        accessibilityHint="Показать практики, которые её развивают"
+        accessibilityState={{ expanded: open }}
+        style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', gap: 13, paddingVertical: 14, paddingHorizontal: 16 }, pressed && { backgroundColor: 'rgba(120,92,48,0.07)' }]}
+      >
         <StatMedal stat={s.key} size={40} />
         <View style={{ flex: 1, minWidth: 0 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
@@ -27,7 +60,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
       {open ? (
         <View style={[{ paddingLeft: 69, paddingRight: 16, paddingBottom: 16 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
           <Text style={[T.caption, { marginBottom: 8 }]}>
-            {sl.xp} / {sl.next} очков · питают практики:
+            {sl.xp} / {sl.next} очков до ур. {sl.lvl + 1} · растёт от практик:
           </Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {feeders.map((f) => (
@@ -52,16 +85,18 @@ export function CharacterScreen({ ctx }) {
     radarValues[s.key] = Math.min(1, (sl.lvl + sl.xp / sl.next) / 12);
   });
   const perksOpen = PERKS.filter((p) => p.open).length;
+  const relicsGot = RELICS.filter((r) => r.got).length;
 
   return (
     <ScreenScroll>
       <PadView wide={wide}>
-        {/* radar + stage */}
+        {/* radar + stage — the hero of this screen */}
         <View style={{ alignItems: 'center' }}>
           <Text style={[T.eyebrow, { marginBottom: 2 }]}>Свиток мастера</Text>
           <Text accessibilityRole="header" style={[T.displayL, { marginBottom: 18 }]}>Ступень {stage.lvl}</Text>
           <RadarMandala values={radarValues} size={250} animate />
-          <View style={{ flexDirection: 'row', gap: 12, marginTop: 24, alignSelf: 'stretch' }}>
+          <Text style={[T.caption, { textAlign: 'center', marginTop: 10, maxWidth: 290, lineHeight: 16 }]}>Грани мастера: чем дальше вершина от центра, тем выше характеристика</Text>
+          <View style={{ flexDirection: 'row', gap: 12, marginTop: 20, alignSelf: 'stretch' }}>
             <Card style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 16 }}>
               <ResourceBar kind="hp" han="生" label="Жизнь" value={resources.hp} max={resources.hpMax} />
             </Card>
@@ -71,29 +106,32 @@ export function CharacterScreen({ ctx }) {
           </View>
         </View>
 
-        {/* stat list */}
-        <SectionHead title="Характеристики" />
-        <Card style={{ overflow: 'hidden' }}>
-          {STATS.map((s, i) => (
-            <StatRow key={s.key} s={s} sl={statLevels[s.key]} open={expanded === s.key} onToggle={() => setExpanded(expanded === s.key ? null : s.key)} last={i === STATS.length - 1} />
-          ))}
-        </Card>
+        {/* characteristics — open by default; each row reveals its feeding practices */}
+        <Section title="Характеристики" defaultOpen>
+          <Card style={{ overflow: 'hidden' }}>
+            {STATS.map((s, i) => (
+              <StatRow key={s.key} s={s} sl={statLevels[s.key]} open={expanded === s.key} onToggle={() => setExpanded(expanded === s.key ? null : s.key)} last={i === STATS.length - 1} />
+            ))}
+          </Card>
+        </Section>
 
-        {/* perks */}
-        <SectionHead title="Перки" right={`${perksOpen} открыто`} />
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-          {PERKS.map((p, i) => (
-            <Perk key={i} p={p} wide={wide} />
-          ))}
-        </View>
+        {/* perks — collapsed by default to lower initial density */}
+        <Section title="Перки" right={`${perksOpen} / ${PERKS.length}`}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+            {PERKS.map((p, i) => (
+              <Perk key={i} p={p} wide={wide} />
+            ))}
+          </View>
+        </Section>
 
-        {/* relics */}
-        <SectionHead title="Реликвии" />
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-          {RELICS.map((r, i) => (
-            <Relic key={i} r={r} wide={wide} />
-          ))}
-        </View>
+        {/* relics — collapsed by default */}
+        <Section title="Реликвии" right={`${relicsGot} / ${RELICS.length}`}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+            {RELICS.map((r, i) => (
+              <Relic key={i} r={r} wide={wide} />
+            ))}
+          </View>
+        </Section>
       </PadView>
     </ScreenScroll>
   );

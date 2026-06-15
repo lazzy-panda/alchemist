@@ -115,6 +115,7 @@ export function DiaryScreen({ ctx }) {
   const [data, setData] = useState(() => fresh('ten'));
   const [open, setOpen] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const refs = useRef([]);
 
   useEffect(() => {
@@ -134,7 +135,7 @@ export function DiaryScreen({ ctx }) {
   }, [diaryKey]);
 
   useEffect(() => {
-    if (loaded) AsyncStorage.setItem(diaryKey, JSON.stringify(data)).catch(() => {});
+    if (loaded) AsyncStorage.setItem(diaryKey, JSON.stringify(data)).then(() => setSaveError((e) => (e ? false : e))).catch(() => setSaveError(true));
   }, [data, loaded, diaryKey]);
 
   const setKey = data.setKey;
@@ -168,6 +169,13 @@ export function DiaryScreen({ ctx }) {
         <Text style={[T.body, { color: C.inkMuted, marginBottom: 16 }]}>
           Шесть раз в день остановись, проверь один обет и запиши <Text style={{ color: C.jadeDeep, fontWeight: '700' }}>плюс</Text>, <Text style={{ color: C.redDeep, fontWeight: '700' }}>минус</Text> и <Text style={{ color: C.goldDeep, fontWeight: '700' }}>дело</Text>.
         </Text>
+
+        {saveError ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'rgba(217,84,59,0.1)', borderWidth: 2, borderColor: C.redLine, borderRadius: 12, paddingVertical: 9, paddingHorizontal: 12, marginBottom: 14 }}>
+            <Text style={{ fontSize: 15 }}>⚠️</Text>
+            <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 12, fontWeight: '700', color: C.redDeep, lineHeight: 16 }}>Не удалось сохранить дневник на устройстве — записи могут пропасть после закрытия.</Text>
+          </View>
+        ) : null}
 
         {/* set chooser */}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
