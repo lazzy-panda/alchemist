@@ -1,6 +1,6 @@
 /* Alchemist — overlays: PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil */
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Dimensions } from 'react-native';
 import { C, FONT, shade } from './theme';
 import { CATS, STATS, PRACTICES } from './data';
 import { ascension } from './quotes';
@@ -123,11 +123,11 @@ function TStep({ label, onPress, disabled }) {
   );
 }
 
-/* simple scroll wrapper to keep overlay scrollable */
+/* Scroll wrapper for sheets — flex:1 fills the sheet's now-definite pixel height (set in Sheet). */
 function ScrollViewSafe({ children }) {
   const { ScrollView } = require('react-native');
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: C.paper }} showsVerticalScrollIndicator={false} contentContainerStyle={{ minHeight: '100%' }}>
+    <ScrollView style={{ flex: 1, backgroundColor: C.paper }} showsVerticalScrollIndicator={false}>
       {children}
     </ScrollView>
   );
@@ -145,8 +145,8 @@ function Sheet({ children, onClose, maxHeightPct = 90 }) {
   return (
     <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 150, justifyContent: 'flex-end' }}>
       <Pressable onPress={close} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: 'rgba(35,25,12,0.45)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out, dir: closing ? 'reverse' : 'normal' })]} />
-      <View style={[{ maxHeight: maxHeightPct + '%' }, kf(closing ? SHEET_DOWN : SHEET_UP, closing ? 0.28 : 0.38, { ease: EASE.out, fill: 'forwards' })]}>
-        <KitPanel slice={[58, 58, 30, 58]} border={{ top: 26, right: 24, bottom: 6, left: 24 }} style={{ width: '100%' }} contentStyle={{ position: 'relative' }}>
+      <View style={[{ position: 'absolute', left: 0, right: 0, bottom: 0, height: Math.round((Dimensions.get('window').height || 800) * maxHeightPct / 100) }, kf(closing ? SHEET_DOWN : SHEET_UP, closing ? 0.28 : 0.38, { ease: EASE.out, fill: 'forwards' })]}>
+        <KitPanel slice={[58, 58, 30, 58]} border={{ top: 26, right: 24, bottom: 6, left: 24 }} style={{ width: '100%', flex: 1 }} contentStyle={{ position: 'relative', flex: 1 }}>
           <View style={{ position: 'absolute', right: 6, top: -6, zIndex: 6 }}>
             <KitClose onPress={close} size={34} />
           </View>
