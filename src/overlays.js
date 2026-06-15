@@ -61,7 +61,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
             <KitGem size={48} icon={cat.icon} color={cat.color} />
             <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
               <Text style={[T.displayM, { fontSize: 13, lineHeight: 18 }]}>{practice.name}</Text>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: cat.color }}>{cat.name}{practice.mult ? ' · x' + practice.mult : ''}</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: cat.color }}>{cat.name}{practice.mult ? ' · x' + practice.mult : ''}</Text>
             </View>
           </View>
 
@@ -100,7 +100,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
             <QiTag qi={practice.qi} />
             {practice.mult ? (
               <MedalPill>
-                <Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.gold }}>Zhan Zhuang x{practice.mult}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>Zhan Zhuang x{practice.mult}</Text>
               </MedalPill>
             ) : null}
           </Card>

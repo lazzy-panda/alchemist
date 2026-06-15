@@ -50,7 +50,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
             {feeders.map((f) => (
               <View key={f.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 5, paddingLeft: 5, paddingRight: 10, borderRadius: 6, borderWidth: 2, borderColor: s.color, backgroundColor: 'rgba(255,255,255,0.05)' }}>
                 <Mh size={18} icon={CATS[f.cat].icon} color={CATS[f.cat].color} />
-                <Text style={{ fontFamily: FONT.display, fontSize: 7, color: s.color }}>{f.name}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 8, color: s.color }}>{f.name}</Text>
               </View>
             ))}
           </View>
@@ -81,7 +81,7 @@ export function CharacterScreen({ ctx }) {
           <Text style={[T.caption, { textAlign: 'center', marginTop: 12, maxWidth: 280, lineHeight: 14 }]}>Facets of mastery — the farther the vertex, the higher the stat</Text>
           {onShowHelp ? (
             <Pressable onPress={onShowHelp} hitSlop={8} accessibilityRole="button" accessibilityLabel="How it works" style={{ marginTop: 10 }}>
-              <Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.gold }}>How it works?</Text>
+              <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>How it works?</Text>
             </Pressable>
           ) : null}
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 18, alignSelf: 'stretch' }}>
@@ -116,17 +116,17 @@ export function CharacterScreen({ ctx }) {
 
 function Perk({ p }) {
   return (
-    <View style={{ flexGrow: 1, flexBasis: '30%', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, paddingHorizontal: 6, minHeight: 96, borderRadius: 8, borderWidth: 2, borderColor: p.open ? C.goldLine : C.stoneLine, backgroundColor: p.open ? '#2f2613' : '#2c2620', opacity: p.open ? 1 : 0.7 }}>
+    <View style={{ flexGrow: 1, flexBasis: '30%', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, paddingHorizontal: 6, minHeight: 96, borderRadius: 8, borderWidth: 2, borderColor: p.open ? C.goldLine : C.stoneLine, backgroundColor: p.open ? C.frameGoldBg : C.frameDark, opacity: p.open ? 1 : 0.7 }}>
       {p.open ? <KitGem size={34} icon={p.icon} color={p.color} /> : <Text style={{ fontSize: 20 }}>🔒</Text>}
-      <Text style={{ fontFamily: FONT.display, fontSize: 7, lineHeight: 11, color: C.inkMuted, textAlign: 'center' }}>{p.name}</Text>
-      {!p.open ? <Text style={[T.caption, { fontSize: 6, textAlign: 'center' }]}>{p.req}</Text> : null}
+      <Text style={{ fontFamily: FONT.display, fontSize: 8, lineHeight: 12, color: C.inkMuted, textAlign: 'center' }}>{p.name}</Text>
+      {!p.open ? <Text style={[T.caption, { fontSize: 8, textAlign: 'center' }]}>{p.req}</Text> : null}
     </View>
   );
 }
 
 function Relic({ r }) {
   return (
-    <View style={{ flexGrow: 1, flexBasis: '22%', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, minHeight: 64, borderRadius: 8, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: '#2c2620', opacity: r.got ? 1 : 0.55 }}>
+    <View style={{ flexGrow: 1, flexBasis: '22%', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, minHeight: 64, borderRadius: 8, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: C.frameDark, opacity: r.got ? 1 : 0.55 }}>
       <Text style={{ fontSize: 24, opacity: r.got ? 1 : 0.5 }}>{r.got ? r.icon : '◌'}</Text>
     </View>
   );

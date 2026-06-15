@@ -67,13 +67,13 @@ export function TodayScreen({ ctx }) {
   return (
     <ScreenScroll>
       {/* hero */}
-      <Gradient colors={['#363025', '#2a251d']} angle={180} style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.paperDeep }}>
+      <Gradient colors={[C.heroBg, C.railBg]} angle={180} style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.paperDeep }}>
         <View style={[{ position: 'relative' }, wide ? { width: '100%', maxWidth: WIDE_MAX, alignSelf: 'center' } : null]}>
           <View style={{ position: 'absolute', right: 0, top: 2, alignItems: 'flex-end', gap: 8, zIndex: 3 }}>
             <DayStateChip dayState={dayState} />
             {onShowHelp ? (
-              <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="How it works" style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontFamily: FONT.display, fontSize: 11, color: C.inkMuted }}>?</Text>
+              <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="How it works" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: FONT.display, fontSize: 13, color: C.inkMuted }}>?</Text>
               </Pressable>
             ) : null}
           </View>
@@ -124,7 +124,7 @@ export function TodayScreen({ ctx }) {
           ))}
         </View>
 
-        <Btn variant="ghost" block onPress={onAdd} style={{ marginTop: 14 }}>+ Add practice</Btn>
+        <Btn variant="ghost" block onPress={onAdd} style={{ marginTop: 14, minHeight: 44 }}>+ Add practice</Btn>
       </PadView>
     </ScreenScroll>
   );

@@ -91,7 +91,7 @@ export function Avatar({ flow, size = 96, stage }) {
       <KitGem size={size} icon="helmet-slot" />
       {stage != null ? (
         <View pointerEvents="none" style={{ position: 'absolute', right: -3, bottom: -3, minWidth: 22, height: 20, paddingHorizontal: 5, backgroundColor: C.gold, borderWidth: 2, borderColor: C.goldLine, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontFamily: FONT.display, fontSize: 8, color: '#4a3410' }}>{stage}</Text>
+          <Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.kitGoldText }}>{stage}</Text>
         </View>
       ) : null}
     </View>

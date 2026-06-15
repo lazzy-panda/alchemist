@@ -75,6 +75,15 @@ export const C = {
   kitStoneLine: '#46433A',
   kitGoldText: '#4a3410', // AA-passing dark text on gold pills
 
+  // RPGUI dark surfaces — tokenized from literals repeated across kit/screens/nav
+  frameDark: '#2c2620',   // perk/relic tile, neutral framed surface
+  frameGoldBg: '#2f2613', // unlocked perk tile
+  chipBg: '#33302a',      // non-interactive chip background
+  chipGold: '#3a2c10',    // gold chip background
+  heroBg: '#363025',      // Today hero gradient (top)
+  railBg: '#2a251d',      // hero gradient bottom · bottom-nav · side-rail
+  doneBg: '#2e7d46',      // completed-check green
+
   // characteristic semantics (CSS --c-*)
   cEnergy: '#34A18C',
   cStrength: '#C66A38',

@@ -56,7 +56,7 @@ export const T = {
   displayM: { fontFamily: FONT.display, fontSize: 12, lineHeight: 21, color: C.title, ...ts('rgba(0,0,0,0.5)', 0, 1) },
   body: { fontFamily: FONT.ui, fontSize: 10, lineHeight: 21, color: C.ink },
   label: { fontFamily: FONT.ui, fontSize: 9, lineHeight: 14, letterSpacing: 0.3, color: C.inkMuted },
-  caption: { fontFamily: FONT.ui, fontSize: 8, lineHeight: 15, color: C.inkFaint },
+  caption: { fontFamily: FONT.ui, fontSize: 9, lineHeight: 16, color: C.inkFaint },
   eyebrow: { fontFamily: FONT.ui, fontSize: 8, lineHeight: 14, letterSpacing: 1, textTransform: 'uppercase', color: C.inkFaint },
   numXl: { fontFamily: FONT.display, fontVariant: ['tabular-nums'] },
 };
@@ -221,7 +221,7 @@ export function SelChip({ on, color, icon, label, onPress }) {
   return (
     <KitParchPill onPress={onPress} accessibilityLabel={label} selected={on} style={{ gap: 6, opacity: on ? 1 : 0.55 }}>
       {icon ? <KitGem size={20} icon={icon} color={color} /> : null}
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: on ? C.ink : C.inkMuted }}>{label}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 9, color: on ? C.ink : C.inkMuted }}>{label}</Text>
     </KitParchPill>
   );
 }

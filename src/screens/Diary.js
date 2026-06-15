@@ -12,7 +12,7 @@ import { useEffects } from '../effects';
 function GoldPill({ children, style }) {
   return (
     <KitPill color="gold" style={style}>
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: '#4a3410' }}>{children}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.kitGoldText }}>{children}</Text>
     </KitPill>
   );
 }

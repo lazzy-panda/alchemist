@@ -105,9 +105,9 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
           <View style={{ flex: 1, minWidth: 0 }}>
             <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontSize: 10, color: p.done ? C.jadeLight : C.ink, marginBottom: 5, lineHeight: 14 }}>{p.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: cat.color }}>{cat.name}</Text>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint }}>{p.dur} min</Text>
-              {p.mult ? <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.gold }}>x{p.mult}</Text> : null}
+              <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: cat.color }}>{cat.name}</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkFaint }}>{p.dur} min</Text>
+              {p.mult ? <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.gold }}>x{p.mult}</Text> : null}
               {compact ? <QiTag qi={p.qi} /> : null}
             </View>
           </View>

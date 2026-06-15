@@ -112,7 +112,7 @@ export function KitBar({ pct, color = 'green', height, style }) {
 export function KitCheck({ size = 40, style }) {
   return h(
     'div',
-    { style: [{ width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, borderWidth: 3, borderColor: C.goldLine, backgroundColor: '#2e7d46', boxSizing: 'border-box' }, style] },
+    { style: [{ width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.doneBg, boxSizing: 'border-box' }, style] },
     h('p', { style: { margin: 0, color: '#fff', fontSize: Math.round(size * 0.42) } }, '✔')
   );
 }
@@ -146,7 +146,7 @@ export function KitPill({ color = 'primary', children, style, onPress, accessibi
   }
   // non-interactive chips: lightweight bordered box (rpgui-container border-image outsets over siblings)
   const goldChip = color === 'gold';
-  return h('div', { style: [{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 5, paddingTop: 3, paddingBottom: 3, paddingLeft: 8, paddingRight: 8, borderRadius: 4, borderWidth: 2, borderColor: goldChip ? C.goldLine : C.stoneLine, backgroundColor: goldChip ? '#3a2c10' : '#33302a', flexShrink: 0 }, style] }, children);
+  return h('div', { style: [{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 5, paddingTop: 3, paddingBottom: 3, paddingLeft: 8, paddingRight: 8, borderRadius: 4, borderWidth: 2, borderColor: goldChip ? C.goldLine : C.stoneLine, backgroundColor: goldChip ? C.chipGold : C.chipBg, flexShrink: 0 }, style] }, children);
 }
 
 /* ---- neutral parchment chip → grey framed chip ---- */
@@ -155,7 +155,7 @@ export function KitParchPill({ children, style, onPress, accessibilityLabel, sel
   if (onPress) {
     return h('button', { className: 'rpgui-button', onClick: onPress, 'aria-label': accessibilityLabel, 'aria-pressed': selected != null ? !!selected : undefined, style: [{ margin: 0 }, style] }, inner);
   }
-  return h('div', { style: [{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 5, paddingTop: 3, paddingBottom: 3, paddingLeft: 8, paddingRight: 8, borderRadius: 4, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: '#33302a', flexShrink: 0 }, style] }, inner);
+  return h('div', { style: [{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 5, paddingTop: 3, paddingBottom: 3, paddingLeft: 8, paddingRight: 8, borderRadius: 4, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: C.chipBg, flexShrink: 0 }, style] }, inner);
 }
 
 /* ---- level-up banner → golden framed ribbon ---- */
