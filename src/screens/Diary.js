@@ -50,7 +50,7 @@ function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChan
       </Pressable>
       {isOpen ? (
         <View style={[{ paddingHorizontal: 14, paddingBottom: 14 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
-          <Text style={{ fontStyle: 'italic', color: C.inkMuted, fontSize: 10, lineHeight: 16, marginBottom: 14, fontFamily: FONT.ui }}>{v.q}</Text>
+          <Text style={{ fontStyle: 'italic', color: C.inkMuted, fontSize: 10, lineHeight: 20, marginBottom: 14, fontFamily: FONT.ui }}>{v.q}</Text>
           <PmtRow badge="＋" kind="plus" label="Plus — a good thing you did" value={c.plus} onChange={(val) => onChange('plus', val)} />
           <PmtRow badge="－" kind="minus" label="Minus — harm to self or others" value={c.minus} onChange={(val) => onChange('minus', val)} />
           <PmtRow badge="✓" kind="todo" label="To do — for the next hours" value={c.todo} onChange={(val) => onChange('todo', val)} />

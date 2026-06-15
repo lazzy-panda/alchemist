@@ -20,9 +20,10 @@ export function RewardMedal({ stat, value }) {
   const s = STAT[stat];
   if (!s) return null;
   return (
-    <KitParchPill style={{ paddingLeft: 4, paddingRight: 9, gap: 4 }}>
+    <KitParchPill style={{ paddingLeft: 5, paddingRight: 9, gap: 4 }}>
       <KitGem size={18} icon={s.icon} color={s.color} />
       <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>+{value}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: s.color }}>{s.short}</Text>
     </KitParchPill>
   );
 }

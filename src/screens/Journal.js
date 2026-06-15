@@ -42,9 +42,9 @@ function LegendSwatch({ v }) {
 function SummaryCard({ big, label, sub, color }) {
   return (
     <Card style={{ flexGrow: 1, flexBasis: '47%', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14 }}>
-      <Text style={[T.numXl, { fontSize: 20, color }]}>{big}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, marginTop: 4, color: C.ink }}>{label}</Text>
-      <Text style={T.caption}>{sub}</Text>
+      <Text style={[T.numXl, { fontSize: 20, lineHeight: 24, color }]}>{big}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 8, lineHeight: 13, marginTop: 6, color: C.ink }}>{label}</Text>
+      <Text style={[T.caption, { marginTop: 2 }]}>{sub}</Text>
     </Card>
   );
 }

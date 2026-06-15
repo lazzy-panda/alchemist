@@ -19,11 +19,16 @@ const mimeOf = (f) =>
   : f.endsWith('.jpg') || f.endsWith('.jpeg') ? 'image/jpeg'
   : 'application/octet-stream';
 
-let inlined = 0, missing = [];
+// widgets/icons the app never renders → replace with a 1x1 transparent gif to shrink the bundle
+const SKIP = /(slider|radio|scrollbar|select-|golden2|checkbox)|icons\/(weapon-slot|shield-slot|potion-slot)/;
+const BLANK = 'url("data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==")';
+
+let inlined = 0, skipped = 0, missing = [];
 css = css.replace(/url\(\s*(['"]?)([^'")]+)\1\s*\)/g, (m, _q, ref) => {
   if (ref.startsWith('data:') || /^https?:/i.test(ref)) return m;
   const clean = ref.split('?')[0].split('#')[0].trim();
   if (!clean) return m;
+  if (SKIP.test(clean)) { skipped++; return BLANK; }
   const fp = path.join(dir, clean);
   let st;
   try { st = fs.statSync(fp); } catch (e) { missing.push(clean); return m; }
@@ -47,5 +52,5 @@ const out =
   'export const RPGUI_CSS = ' + JSON.stringify(css) + ';\n';
 
 fs.writeFileSync(path.resolve('src/rpgui-css.js'), out);
-console.log(`wrote src/rpgui-css.js (${out.length} bytes, inlined ${inlined} images)`);
+console.log(`wrote src/rpgui-css.js (${out.length} bytes, inlined ${inlined}, skipped ${skipped})`);
 if (missing.length) console.warn('MISSING:', missing.join(', '));

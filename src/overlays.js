@@ -88,7 +88,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
             <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.inkMuted }}>Guide</Text>
           </Pressable>
           {showInstr ? (
-            <Text style={[T.body, { color: C.inkMuted, paddingHorizontal: 4, paddingTop: 8, lineHeight: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
+            <Text style={[T.body, { color: C.inkMuted, paddingHorizontal: 4, paddingTop: 8, lineHeight: 20 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
               Sit comfortably, spine straight. Breathe into the belly, slow and even. Rest attention on the flow of Qi through the meridians. Don't rush — a calm rhythm matters more than length.
             </Text>
           ) : null}

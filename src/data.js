@@ -1,24 +1,25 @@
 /* Alchemist — game data & constants (English; RPGUI icon names per category/stat). */
 
 // ---- characteristics ----  (icon = RPGUI icon class; short = radar axis label)
+// colors lightened so they read as text on the dark RPGUI frames (WCAG AA)
 export const STATS = [
-  { key: 'energy', icon: 'potion-blue', short: 'EN', name: 'Energy', color: '#3E9C8A' },
-  { key: 'strength', icon: 'sword', short: 'ST', name: 'Strength', color: '#C06B3E' },
-  { key: 'flex', icon: 'shoes-slot', short: 'FL', name: 'Flexibility', color: '#7BA84E' },
-  { key: 'focus', icon: 'magic-slot', short: 'FO', name: 'Focus', color: '#4A6FA5' },
-  { key: 'kind', icon: 'potion-green', short: 'KI', name: 'Kindness', color: '#C77BA0' },
-  { key: 'sex', icon: 'ring-slot', short: 'VI', name: 'Vitality', color: '#8E5AA8' },
+  { key: 'energy', icon: 'potion-blue', short: 'EN', name: 'Energy', color: '#5BC2AD' },
+  { key: 'strength', icon: 'sword', short: 'ST', name: 'Strength', color: '#E0905C' },
+  { key: 'flex', icon: 'shoes-slot', short: 'FL', name: 'Flexibility', color: '#A6D173' },
+  { key: 'focus', icon: 'magic-slot', short: 'FO', name: 'Focus', color: '#7AA6E0' },
+  { key: 'kind', icon: 'potion-green', short: 'KI', name: 'Kindness', color: '#E2A0C6' },
+  { key: 'sex', icon: 'ring-slot', short: 'VI', name: 'Vitality', color: '#BC8AD8' },
 ];
 export const STAT = Object.fromEntries(STATS.map((s) => [s.key, s]));
 
 // ---- categories ----
 export const CATS = {
-  med: { name: 'Meditation', icon: 'magic-slot', color: '#4A6FA5' },
-  qi: { name: 'Qigong', icon: 'potion-blue', color: '#3E9C8A' },
-  zhan: { name: 'Standing', icon: 'shoes-slot', color: '#7BA84E' },
-  body: { name: 'Body', icon: 'armor-slot', color: '#C06B3E' },
-  know: { name: 'Knowledge', icon: 'helmet-slot', color: '#8E5AA8' },
-  heart: { name: 'Heart', icon: 'potion-red', color: '#C77BA0' },
+  med: { name: 'Meditation', icon: 'magic-slot', color: '#7AA6E0' },
+  qi: { name: 'Qigong', icon: 'potion-blue', color: '#5BC2AD' },
+  zhan: { name: 'Standing', icon: 'shoes-slot', color: '#A6D173' },
+  body: { name: 'Body', icon: 'armor-slot', color: '#E0905C' },
+  know: { name: 'Knowledge', icon: 'helmet-slot', color: '#BC8AD8' },
+  heart: { name: 'Heart', icon: 'potion-red', color: '#E2A0C6' },
 };
 
 // ---- practices ----

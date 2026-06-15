@@ -52,12 +52,12 @@ export function Gloss({ radius = 50 }) {
 /* ---------- typography ---------- */
 // pixel font (Press Start 2P) is large & monospaced → smaller sizes, generous line-height, dark shadow
 export const T = {
-  displayL: { fontFamily: FONT.display, fontSize: 16, lineHeight: 24, color: C.title, ...ts('rgba(0,0,0,0.55)', 0, 2) },
-  displayM: { fontFamily: FONT.display, fontSize: 12, lineHeight: 20, color: C.title, ...ts('rgba(0,0,0,0.5)', 0, 1) },
-  body: { fontFamily: FONT.ui, fontSize: 10, lineHeight: 18, color: C.ink },
-  label: { fontFamily: FONT.ui, fontSize: 9, letterSpacing: 0.3, color: C.inkMuted },
-  caption: { fontFamily: FONT.ui, fontSize: 8, lineHeight: 13, color: C.inkFaint },
-  eyebrow: { fontFamily: FONT.ui, fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: C.inkFaint },
+  displayL: { fontFamily: FONT.display, fontSize: 16, lineHeight: 26, color: C.title, ...ts('rgba(0,0,0,0.55)', 0, 2) },
+  displayM: { fontFamily: FONT.display, fontSize: 12, lineHeight: 21, color: C.title, ...ts('rgba(0,0,0,0.5)', 0, 1) },
+  body: { fontFamily: FONT.ui, fontSize: 10, lineHeight: 21, color: C.ink },
+  label: { fontFamily: FONT.ui, fontSize: 9, lineHeight: 14, letterSpacing: 0.3, color: C.inkMuted },
+  caption: { fontFamily: FONT.ui, fontSize: 8, lineHeight: 15, color: C.inkFaint },
+  eyebrow: { fontFamily: FONT.ui, fontSize: 8, lineHeight: 14, letterSpacing: 1, textTransform: 'uppercase', color: C.inkFaint },
   numXl: { fontFamily: FONT.display, fontVariant: ['tabular-nums'] },
 };
 

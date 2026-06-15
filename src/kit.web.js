@@ -4,6 +4,7 @@
 import React from 'react';
 import { Image } from 'react-native';
 import { unstable_createElement } from 'react-native-web';
+import { C } from './theme';
 
 // unstable_createElement(type, props, options) — children go in props.children; auto-key arrays.
 const h = (type, props, ...kids) => {
@@ -139,8 +140,9 @@ export function KitPill({ color = 'primary', children, style, onPress, accessibi
       h('div', { style: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5 } }, children)
     );
   }
-  const frame = color === 'gold' ? 'framed-golden' : 'framed-grey';
-  return h('div', { className: 'rpgui-container ' + frame, style: [{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 5, padding: '2px 8px' }, style] }, children);
+  // non-interactive chips: lightweight bordered box (rpgui-container border-image outsets over siblings)
+  const goldChip = color === 'gold';
+  return h('div', { style: [{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 5, paddingTop: 3, paddingBottom: 3, paddingLeft: 8, paddingRight: 8, borderRadius: 4, borderWidth: 2, borderColor: goldChip ? C.goldLine : C.stoneLine, backgroundColor: goldChip ? '#3a2c10' : '#33302a', flexShrink: 0 }, style] }, children);
 }
 
 /* ---- neutral parchment chip → grey framed chip ---- */
@@ -149,7 +151,7 @@ export function KitParchPill({ children, style, onPress, accessibilityLabel, sel
   if (onPress) {
     return h('button', { className: 'rpgui-button', onClick: onPress, 'aria-label': accessibilityLabel, 'aria-pressed': selected != null ? !!selected : undefined, style: [{ margin: 0 }, style] }, inner);
   }
-  return h('div', { className: 'rpgui-container framed-grey', style: [{ display: 'inline-flex', padding: '2px 8px' }, style] }, inner);
+  return h('div', { style: [{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 5, paddingTop: 3, paddingBottom: 3, paddingLeft: 8, paddingRight: 8, borderRadius: 4, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: '#33302a', flexShrink: 0 }, style] }, inner);
 }
 
 /* ---- level-up banner → golden framed ribbon ---- */
