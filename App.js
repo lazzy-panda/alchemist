@@ -1,5 +1,5 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { C } from './src/theme';
 import { useAppFonts } from './src/fonts';
@@ -21,6 +21,12 @@ function Gate() {
 }
 
 export default function App() {
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof console !== 'undefined') {
+      console.log('%c修真之路 · Alchemist', 'font-size:15px;font-weight:700;color:#3E8C60');
+      console.log('%c「大道至简」— великий Путь предельно прост.  Код открыт: github.com/lazzy-panda/alchemist', 'color:#B27C24');
+    }
+  }, []);
   return (
     <AuthProvider>
       <Gate />

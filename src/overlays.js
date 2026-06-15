@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT, shade } from './theme';
 import { CATS, STATS, PRACTICES } from './data';
+import { ascension } from './quotes';
 import { Card, Btn, IconBtn, Gradient, Gloss, Han, T, SectionHead, Seal, Stepper, SelChip, Field, Input, ts, kf, KF, EASE } from './ui';
 import { RewardMedal, QiTag, StateChip, MedalPill } from './badges';
 import { CircularTimer } from './svg';
@@ -286,6 +287,7 @@ function LevelWing({ side }) {
 }
 
 export function LevelUpOverlay({ stage, onClose }) {
+  const asc = ascension(stage);
   useEffect(() => {
     const t = setTimeout(onClose, 3200);
     return () => clearTimeout(t);
@@ -301,8 +303,8 @@ export function LevelUpOverlay({ stage, onClose }) {
           <Gloss radius={41} />
         </Gradient>
         <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: C.titleDeep, marginBottom: 6 }}>Ступень {stage}</Text>
-        <Text style={[T.body, { color: C.inkMuted, marginBottom: 6, textAlign: 'center' }]}>Туман рассеялся ещё на один пик. Твоя культивация углубилась.</Text>
-        <Han style={{ fontSize: 14, color: C.inkFaint, letterSpacing: 3, marginTop: 2 }}>修真之路</Han>
+        <Text style={[T.body, { color: C.inkMuted, marginBottom: 6, textAlign: 'center' }]}>{asc.ru}</Text>
+        <Han style={{ fontSize: 14, color: C.inkFaint, letterSpacing: 3, marginTop: 2 }}>{asc.han}</Han>
       </View>
     </Pressable>
   );

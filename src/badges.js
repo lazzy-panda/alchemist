@@ -85,8 +85,9 @@ export const STATE_DEFS = {
   calm: { ico: '🌙', label: 'Покой', pill: 'blue' },
 };
 
-export function StateChip({ state, text }) {
-  const d = STATE_DEFS[state] || STATE_DEFS.flow;
+export function StateChip({ state, text, gold }) {
+  const base = STATE_DEFS[state] || STATE_DEFS.flow;
+  const d = gold ? { ...base, pill: 'gold' } : base;
   const dark = d.pill === 'gold';
   return (
     <KitPill color={d.pill} style={{ paddingHorizontal: 12 }} accessibilityLabel={text || d.label}>

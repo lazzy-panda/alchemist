@@ -77,6 +77,7 @@ export function MainApp() {
     onSave,
     onOpenDay,
     onShowHelp,
+    userName: auth?.user?.name,
     diaryKey: 'alchemist_diary_' + (auth?.user?.id || 'anon'),
   };
 
