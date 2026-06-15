@@ -1,11 +1,11 @@
 /* Alchemist — core UI primitives (ported 1:1 from styles.css) */
 import React from 'react';
-import { View, Text, Pressable, TextInput, ImageBackground, Platform } from 'react-native';
+import { View, Text, Pressable, TextInput, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { C, R, FONT } from './theme';
 import { kf, tr, KF, EASE } from './anim';
-import { KitButton, KitPill, KitParchPill, KitGem, KitPanel, KIT } from './kit';
+import { KitButton, KitPill, KitGem, KitPanel } from './kit';
 
 const WEB = Platform.OS === 'web';
 
@@ -216,13 +216,23 @@ export function Stepper({ value, onDec, onInc, suffix = ' min' }) {
   );
 }
 
-/* ---------- selectable chip — real kit parchment chip + kit gem ---------- */
+/* ---------- selectable chip — compact pixel chip (gem + label) ---------- */
 export function SelChip({ on, color, icon, label, onPress }) {
   return (
-    <KitParchPill onPress={onPress} accessibilityLabel={label} selected={on} style={{ gap: 6, opacity: on ? 1 : 0.55 }}>
-      {icon ? <KitGem size={20} icon={icon} color={color} /> : null}
-      <Text style={{ fontFamily: FONT.display, fontSize: 9, color: on ? C.ink : C.inkMuted }}>{label}</Text>
-    </KitParchPill>
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: on }}
+      style={({ pressed }) => [
+        { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 6, paddingLeft: 7, paddingRight: 10, borderWidth: 2, borderRadius: 3, borderColor: on ? C.goldLine : C.stoneLine, backgroundColor: on ? C.frameGoldBg : C.chipBg },
+        !on && { opacity: 0.72 },
+        pressed && { opacity: 0.55 },
+      ]}
+    >
+      {icon ? <KitGem size={18} icon={icon} color={color} /> : null}
+      <Text style={{ fontFamily: FONT.display, fontSize: 9, color: on ? C.title : C.inkMuted }}>{label}</Text>
+    </Pressable>
   );
 }
 
@@ -239,30 +249,26 @@ export function Field({ label, children, style }) {
     </View>
   );
 }
-function KitField({ props, radius, fontSize, fontWeight, padV, padH, borderW }) {
+// flat pixel field — a dark recessed "well" with a 2px border, to match the RPGUI pixel frames
+function KitField({ props, radius, fontSize, padV, padH, borderW }) {
   const [focus, setFocus] = React.useState(false);
   return (
-    <ImageBackground
-      source={KIT.parchment}
-      resizeMode="stretch"
-      imageStyle={{ borderRadius: radius }}
-      style={{ width: '100%', borderRadius: radius, overflow: 'hidden', borderWidth: borderW, borderColor: focus ? C.jade : C.stoneMid, boxShadow: focus ? 'inset 0px 2px 6px rgba(120,80,30,0.28), 0px 0px 0px 3px rgba(94,200,150,0.35)' : 'inset 0px 2px 6px rgba(120,80,30,0.3)' }}
-    >
+    <View style={{ width: '100%', borderRadius: radius, borderWidth: borderW, borderColor: focus ? C.jade : C.stoneLine, backgroundColor: C.paper, boxShadow: focus ? '0px 0px 0px 2px rgba(94,200,150,0.35), inset 0px 2px 4px rgba(0,0,0,0.45)' : 'inset 0px 2px 4px rgba(0,0,0,0.4)' }}>
       <TextInput
         {...props}
         onFocus={(e) => { setFocus(true); props.onFocus && props.onFocus(e); }}
         onBlur={(e) => { setFocus(false); props.onBlur && props.onBlur(e); }}
-        placeholderTextColor={C.inkMuted}
-        style={[{ width: '100%', fontFamily: FONT.ui, fontSize, fontWeight, color: C.ink, backgroundColor: 'transparent', paddingVertical: padV, paddingHorizontal: padH, ...(WEB ? { outlineStyle: 'none' } : null) }, props.style]}
+        placeholderTextColor={C.inkFaint}
+        style={[{ width: '100%', fontFamily: FONT.ui, fontSize, color: C.ink, backgroundColor: 'transparent', paddingVertical: padV, paddingHorizontal: padH, ...(WEB ? { outlineStyle: 'none' } : null) }, props.style]}
       />
-    </ImageBackground>
+    </View>
   );
 }
 export function Input(props) {
-  return <KitField props={props} radius={12} fontSize={15} fontWeight="600" padV={12} padH={14} borderW={2.5} />;
+  return <KitField props={props} radius={2} fontSize={11} padV={11} padH={12} borderW={2} />;
 }
 export function DiaryInput(props) {
-  return <KitField props={props} radius={10} fontSize={14} fontWeight="500" padV={9} padH={11} borderW={2} />;
+  return <KitField props={props} radius={2} fontSize={10} padV={10} padH={11} borderW={2} />;
 }
 
 /* ---------- wood plank surface ---------- */

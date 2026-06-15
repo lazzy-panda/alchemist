@@ -144,9 +144,16 @@ export function KitPill({ color = 'primary', children, style, onPress, accessibi
       h('div', { style: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5 } }, children)
     );
   }
-  // non-interactive chips: lightweight bordered box (rpgui-container border-image outsets over siblings)
-  const goldChip = color === 'gold';
-  return h('div', { style: [{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 5, paddingTop: 3, paddingBottom: 3, paddingLeft: 8, paddingRight: 8, borderRadius: 4, borderWidth: 2, borderColor: goldChip ? C.goldLine : C.stoneLine, backgroundColor: goldChip ? C.chipGold : C.chipBg, flexShrink: 0 }, style] }, children);
+  // non-interactive chips: lightweight bordered box (rpgui-container border-image outsets over siblings).
+  // honor the semantic colors (was: only gold special-cased → plus/minus/state chips all fell to grey)
+  const CHIP = {
+    gold: { bg: C.chipGold, border: C.goldLine },
+    primary: { bg: '#1e3a28', border: C.jadeLine },
+    danger: { bg: '#3a1e18', border: C.redLine },
+    blue: { bg: '#1c2f3f', border: C.blueLine },
+  };
+  const cfg = CHIP[color] || { bg: C.chipBg, border: C.stoneLine };
+  return h('div', { style: [{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center', gap: 5, paddingTop: 3, paddingBottom: 3, paddingLeft: 8, paddingRight: 8, borderRadius: 4, borderWidth: 2, borderColor: cfg.border, backgroundColor: cfg.bg, flexShrink: 0 }, style] }, children);
 }
 
 /* ---- neutral parchment chip → grey framed chip ---- */

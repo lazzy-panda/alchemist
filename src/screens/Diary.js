@@ -12,7 +12,7 @@ import { useEffects } from '../effects';
 function GoldPill({ children, style }) {
   return (
     <KitPill color="gold" style={style}>
-      <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.kitGoldText }}>{children}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.title }}>{children}</Text>
     </KitPill>
   );
 }
@@ -27,11 +27,11 @@ function PmtRow({ badge, kind, label, value, onChange, mini, placeholder }) {
   return (
     <View style={{ flexDirection: 'row', gap: 9, alignItems: 'flex-start', marginBottom: 9 }}>
       <KitPill color={PMT[kind]} style={{ marginTop: 2 }}>
-        <Text style={{ fontFamily: FONT.display, fontSize: 11, color: kind === 'todo' ? '#4a3410' : '#fff' }}>{badge}</Text>
+        <Text style={{ fontFamily: FONT.display, fontSize: 11, color: '#fff' }}>{badge}</Text>
       </KitPill>
       <View style={{ flex: 1, minWidth: 0 }}>
         {label && !mini ? <Text style={[T.caption, { marginBottom: 4 }]}>{label}</Text> : null}
-        <DiaryInput value={value} onChangeText={onChange} placeholder={placeholder || 'A concrete, real example…'} />
+        <DiaryInput value={value} onChangeText={onChange} placeholder={placeholder || 'A real example…'} />
       </View>
     </View>
   );
@@ -70,7 +70,7 @@ function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChan
 function DiaryCheck({ v, c, isOpen, onHeaderPress, onComplete, time, onChange, refSet }) {
   return (
     <View ref={refSet}>
-      <Card frame={c.done ? 'golden' : 'grey'}>
+      <Card frame="grey">
         <DiaryCheckInner v={v} c={c} isOpen={isOpen} onHeaderPress={onHeaderPress} onComplete={onComplete} time={time} onChange={onChange} />
       </Card>
     </View>
