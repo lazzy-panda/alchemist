@@ -44,6 +44,8 @@ const overrides = `
 /* neutralize RPGUI default margins so RN flex controls spacing */
 .rpgui-content .rpgui-container, .rpgui-content .rpgui-button, .rpgui-content .rpgui-progress, .rpgui-content .rpgui-icon { margin: 0 !important; box-sizing: border-box !important; }
 .rpgui-content .rpgui-button > p { margin: 0 !important; }
+/* RPGUI centers container text by default — leaks into our card content */
+.rpgui-content .rpgui-container { text-align: left !important; }
 `;
 css += overrides;
 

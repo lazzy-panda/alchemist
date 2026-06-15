@@ -44,7 +44,7 @@ export function LibraryScreen({ ctx }) {
               </Pressable>
               <BrushDivider />
               {!isCol ? (
-                <View style={{ gap: 10, marginTop: 10 }}>
+                <View style={{ gap: 12, marginTop: 10 }}>
                   {items.map((p, i) => (
                     <View key={p.id} style={kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: i * 0.04 })}>
                       <PracticeCard p={p} compact onToggle={onToggle} onOpen={() => onEdit(p)} />

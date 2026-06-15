@@ -41,8 +41,9 @@ function CheckMark() {
 }
 
 function CardBase({ done, style, children }) {
+  // always grey frame — framed-golden's border-image outsets and overlaps neighbours
   return (
-    <KitPanel frame={done ? 'golden' : 'grey'} contentStyle={style}>
+    <KitPanel frame="grey" contentStyle={[style, done ? { opacity: 0.82 } : null]}>
       {children}
     </KitPanel>
   );

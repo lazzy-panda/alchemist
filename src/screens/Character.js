@@ -7,7 +7,7 @@ import { ScreenScroll, PadView } from '../layout';
 import { Card, T, kf, KF, EASE } from '../ui';
 import { ResourceBar, StatMedal, Bar, Mh } from '../badges';
 import { RadarMandala } from '../svg';
-import { KitGem, KitPanel } from '../kit';
+import { KitGem } from '../kit';
 
 function Section({ title, right, defaultOpen = false, children }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -116,18 +116,18 @@ export function CharacterScreen({ ctx }) {
 
 function Perk({ p }) {
   return (
-    <KitPanel frame={p.open ? 'golden' : 'grey'} style={{ flexGrow: 1, flexBasis: '30%', alignItems: 'center', justifyContent: 'center', gap: 6, opacity: p.open ? 1 : 0.6 }}>
+    <View style={{ flexGrow: 1, flexBasis: '30%', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, paddingHorizontal: 6, minHeight: 96, borderRadius: 8, borderWidth: 2, borderColor: p.open ? C.goldLine : C.stoneLine, backgroundColor: p.open ? '#2f2613' : '#2c2620', opacity: p.open ? 1 : 0.7 }}>
       {p.open ? <KitGem size={34} icon={p.icon} color={p.color} /> : <Text style={{ fontSize: 20 }}>🔒</Text>}
       <Text style={{ fontFamily: FONT.display, fontSize: 7, lineHeight: 11, color: C.inkMuted, textAlign: 'center' }}>{p.name}</Text>
       {!p.open ? <Text style={[T.caption, { fontSize: 6, textAlign: 'center' }]}>{p.req}</Text> : null}
-    </KitPanel>
+    </View>
   );
 }
 
 function Relic({ r }) {
   return (
-    <KitPanel frame="grey" style={{ flexGrow: 1, flexBasis: '22%', alignItems: 'center', justifyContent: 'center', opacity: r.got ? 1 : 0.55 }}>
+    <View style={{ flexGrow: 1, flexBasis: '22%', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, minHeight: 64, borderRadius: 8, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: '#2c2620', opacity: r.got ? 1 : 0.55 }}>
       <Text style={{ fontSize: 24, opacity: r.got ? 1 : 0.5 }}>{r.got ? r.icon : '◌'}</Text>
-    </KitPanel>
+    </View>
   );
 }

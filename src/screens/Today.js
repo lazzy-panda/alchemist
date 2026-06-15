@@ -116,11 +116,10 @@ export function TodayScreen({ ctx }) {
           <Btn variant="primary" block onPress={onCompleteAll} style={{ marginBottom: 12 }}>{`✦ Complete all (${pending.length})`}</Btn>
         ) : null}
 
-        <View style={{ gap: 12 }}>
+        <View style={{ gap: 14 }}>
           {ordered.map((p, i) => (
             <View key={p.id} style={[{ position: 'relative' }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: i * 0.06 })]}>
               <PracticeCard p={p} onToggle={onToggle} onOpen={onOpen} locked={p.qi < 0 && resources.qi < Math.abs(p.qi)} />
-              {p.done ? <DoneSeal /> : null}
             </View>
           ))}
         </View>

@@ -53,15 +53,20 @@ function barColor(color) {
   }
 }
 
+// raw <div>s from unstable_createElement default to display:block (RN Views default to flex),
+// so flex layouts on them collapse. Give containers an RN-View-like base.
+const FLEX_COL = { display: 'flex', flexDirection: 'column' };
+
 /* ---- generic frame (covers NineSlice usage) ---- */
 export function NineSlice({ style, children, frame }) {
   const cls = 'rpgui-container ' + (frame === 'grey' ? 'framed-grey' : frame === 'golden' ? 'framed-golden' : 'framed');
-  return h('div', { className: cls, style }, children);
+  return h('div', { className: cls, style: [FLEX_COL, style] }, children);
 }
 
 /* ---- candy button → rpgui-button ---- */
 export function KitButton({ variant = 'primary', onPress, children, block, style, textStyle, disabled, accessibilityLabel }) {
-  const golden = variant === 'primary' || variant === 'gold';
+  // golden end-caps (:before/:after) bleed on small inline buttons → golden only for full-width CTAs
+  const golden = (variant === 'primary' || variant === 'gold') && block;
   return h(
     'button',
     {
@@ -78,7 +83,7 @@ export function KitButton({ variant = 'primary', onPress, children, block, style
 /* ---- framed container / panel ---- */
 export function KitPanel({ style, children, contentStyle, frame = 'golden' }) {
   const cls = 'rpgui-container ' + (frame === 'grey' ? 'framed-grey' : frame === 'plain' ? 'framed' : 'framed-golden');
-  return h('div', { className: cls, style }, contentStyle ? h('div', { style: contentStyle }, children) : children);
+  return h('div', { className: cls, style: [FLEX_COL, style] }, contentStyle ? h('div', { style: [FLEX_COL, contentStyle] }, children) : children);
 }
 
 /* ---- close button ---- */
@@ -107,8 +112,8 @@ export function KitBar({ pct, color = 'green', height, style }) {
 export function KitCheck({ size = 40, style }) {
   return h(
     'div',
-    { className: 'rpgui-container framed-golden', style: [{ width: size, height: size, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }, style] },
-    h('p', { style: { margin: 0, color: '#9fe6b6', fontSize: Math.round(size * 0.4) } }, '✔')
+    { style: [{ width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, borderWidth: 3, borderColor: C.goldLine, backgroundColor: '#2e7d46', boxSizing: 'border-box' }, style] },
+    h('p', { style: { margin: 0, color: '#fff', fontSize: Math.round(size * 0.42) } }, '✔')
   );
 }
 
@@ -133,10 +138,9 @@ export function KitGem({ size = 54, icon = 'empty-slot', color, style }) {
 /* ---- colored pill / chip ---- */
 export function KitPill({ color = 'primary', children, style, onPress, accessibilityLabel, selected }) {
   if (onPress) {
-    const golden = color === 'gold' || color === 'primary';
     return h(
       'button',
-      { className: 'rpgui-button' + (golden ? ' golden' : ''), onClick: onPress, 'aria-label': accessibilityLabel, 'aria-pressed': selected != null ? !!selected : undefined, style: [{ margin: 0 }, style] },
+      { className: 'rpgui-button', onClick: onPress, 'aria-label': accessibilityLabel, 'aria-pressed': selected != null ? !!selected : undefined, style: [{ margin: 0 }, style] },
       h('div', { style: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5 } }, children)
     );
   }
@@ -156,5 +160,5 @@ export function KitParchPill({ children, style, onPress, accessibilityLabel, sel
 
 /* ---- level-up banner → golden framed ribbon ---- */
 export function KitBanner({ width = 300, style }) {
-  return h('div', { className: 'rpgui-container framed-golden', style: [{ width, padding: '6px 12px', alignItems: 'center' }, style] }, h('p', { style: { margin: 0, color: '#ffe9a8' } }, 'LEVEL UP!'));
+  return h('div', { className: 'rpgui-container framed-golden', style: [FLEX_COL, { width, padding: '6px 12px', alignItems: 'center' }, style] }, h('p', { style: { margin: 0, color: '#ffe9a8' } }, 'LEVEL UP!'));
 }
