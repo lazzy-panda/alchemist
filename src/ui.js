@@ -122,47 +122,16 @@ const BTN_BASE = {
   justifyContent: 'center',
   gap: 9,
 };
-// candy buttons — palette transferred 1:1 from the RPG kit (NORMAL/PRESSED states)
+// candy variants (primary/gold/blue/danger) render via real kit image assets in KitButton;
+// only `secondary` uses this CSS fallback (stone), built from theme tokens.
 const BTN_VARIANTS = {
-  primary: {
-    colors: ['#8FCB63', '#4E9B3A'],
-    border: '#2E6B22',
-    text: '#fff',
-    shadow: `0px 5px 0px #2E6B22, 0px 9px 16px rgba(46,107,34,0.35), inset 0px 2px 0px rgba(255,255,255,0.55)`,
-    pressShadow: `0px 1px 0px #2E6B22, inset 0px 2px 0px rgba(255,255,255,0.55)`,
-    tshadow: ts('rgba(0,0,0,0.28)', 0, 1),
-  },
-  gold: {
-    colors: ['#F6C752', '#E0902A'],
-    border: '#9A6212',
-    text: '#fff',
-    shadow: `0px 5px 0px #9A6212, 0px 9px 16px rgba(154,98,18,0.35), inset 0px 2px 0px rgba(255,255,255,0.6)`,
-    pressShadow: `0px 1px 0px #9A6212, inset 0px 2px 0px rgba(255,255,255,0.6)`,
-    tshadow: ts('rgba(0,0,0,0.25)', 0, 1),
-  },
-  blue: {
-    colors: ['#6FBDE8', '#2F86C0'],
-    border: '#1C5478',
-    text: '#fff',
-    shadow: `0px 5px 0px #1C5478, 0px 9px 16px rgba(28,84,120,0.35), inset 0px 2px 0px rgba(255,255,255,0.55)`,
-    pressShadow: `0px 1px 0px #1C5478, inset 0px 2px 0px rgba(255,255,255,0.55)`,
-    tshadow: ts('rgba(0,0,0,0.28)', 0, 1),
-  },
   secondary: {
-    colors: ['#CFCABC', '#A29C8C'],
-    border: '#46433A',
+    colors: [C.kitStone, C.kitStoneMid],
+    border: C.kitStoneLine,
     text: '#3a362c',
-    shadow: `0px 5px 0px #46433A, 0px 8px 14px rgba(70,67,58,0.25), inset 0px 2px 0px rgba(255,255,255,0.6)`,
-    pressShadow: `0px 1px 0px #46433A, inset 0px 2px 0px rgba(255,255,255,0.6)`,
+    shadow: `0px 5px 0px ${C.kitStoneLine}, 0px 8px 14px rgba(70,67,58,0.25), inset 0px 2px 0px rgba(255,255,255,0.6)`,
+    pressShadow: `0px 1px 0px ${C.kitStoneLine}, inset 0px 2px 0px rgba(255,255,255,0.6)`,
     tshadow: ts('rgba(255,255,255,0.4)', 0, 1),
-  },
-  danger: {
-    colors: ['#EC7257', '#C23725'],
-    border: '#7C1E10',
-    text: '#fff',
-    shadow: `0px 5px 0px #7C1E10, 0px 8px 14px rgba(124,30,16,0.3), inset 0px 2px 0px rgba(255,255,255,0.5)`,
-    pressShadow: `0px 1px 0px #7C1E10, inset 0px 2px 0px rgba(255,255,255,0.5)`,
-    tshadow: ts('rgba(0,0,0,0.28)', 0, 1),
   },
 };
 
@@ -195,7 +164,7 @@ export function Btn({ variant = 'primary', onPress, children, style, textStyle, 
       </KitButton>
     );
   }
-  const v = BTN_VARIANTS[variant] || BTN_VARIANTS.primary;
+  const v = BTN_VARIANTS[variant] || BTN_VARIANTS.secondary;
   const se = angleToStartEnd(180);
   return (
     <Pressable onPress={disabled ? undefined : onPress} disabled={disabled} accessibilityRole="button" accessibilityLabel={a11yLabel} style={[block && { width: '100%' }, disabled && { opacity: 0.45 }, style]}>

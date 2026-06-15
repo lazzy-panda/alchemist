@@ -19,7 +19,7 @@ const HEAT_STYLES = {
 function HeatCell({ v, n, today, onPress, delay }) {
   const st = HEAT_STYLES[v];
   return (
-    <Pressable style={{ flex: 1 }} onPress={onPress}>
+    <Pressable style={{ flex: 1 }} onPress={onPress} accessibilityRole="button" accessibilityLabel={`День ${n}`}>
       <Gradient
         colors={st.colors}
         angle={180}
@@ -60,7 +60,7 @@ export function JournalScreen({ ctx }) {
     <ScreenScroll>
       <PadView wide={wide}>
         <Text style={T.eyebrow}>Летопись пути</Text>
-        <Text style={[T.displayM, { marginBottom: 16 }]}>Журнал · Июнь</Text>
+        <Text accessibilityRole="header" style={[T.displayM, { marginBottom: 16 }]}>Журнал · Июнь</Text>
 
         {/* heatmap */}
         <Card style={{ padding: 16, marginBottom: 18 }}>

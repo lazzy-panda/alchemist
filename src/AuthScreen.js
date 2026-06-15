@@ -45,7 +45,7 @@ export function AuthScreen() {
                   {[['login', 'Вход'], ['register', 'Регистрация']].map(([m, lbl]) => {
                     const on = mode === m;
                     return (
-                      <Pressable key={m} onPress={() => { setMode(m); setError(''); }} style={{ flex: 1, borderRadius: 999, overflow: 'hidden' }}>
+                      <Pressable key={m} onPress={() => { setMode(m); setError(''); }} accessibilityRole="button" accessibilityLabel={lbl} accessibilityState={{ selected: on }} style={{ flex: 1, borderRadius: 999, overflow: 'hidden' }}>
                         {on ? (
                           <Gradient colors={[C.jadeLight, C.jade]} angle={180} style={{ paddingVertical: 9, alignItems: 'center', borderRadius: 999, boxShadow: `0px 2px 0px ${C.jadeLine}` }}>
                             <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 14, color: '#fff' }}>{lbl}</Text>
@@ -82,7 +82,7 @@ export function AuthScreen() {
                   {busy ? '…' : mode === 'login' ? 'Войти на Путь' : 'Начать Путь'}
                 </Btn>
 
-                <Pressable onPress={async () => { setBusy(true); await guest(); setBusy(false); }} style={{ marginTop: 14, alignItems: 'center' }}>
+                <Pressable onPress={async () => { setBusy(true); await guest(); setBusy(false); }} accessibilityRole="button" accessibilityLabel="Продолжить как гость" style={{ marginTop: 14, alignItems: 'center' }}>
                   <Text style={{ fontFamily: FONT.ui, fontWeight: '700', fontSize: 13, color: C.inkMuted }}>Продолжить как гость →</Text>
                 </Pressable>
               </Gradient>

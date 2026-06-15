@@ -59,7 +59,7 @@ function DiaryCheck({ v, c, isOpen, onHeaderPress, onComplete, time, onChange, r
 function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChange }) {
   return (
     <>
-      <Pressable onPress={onHeaderPress} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, paddingHorizontal: 15 }}>
+      <Pressable onPress={onHeaderPress} accessibilityRole="button" accessibilityLabel={`${v.n}. ${v.t}`} accessibilityState={{ expanded: isOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, paddingHorizontal: 15 }}>
         <GoldPill>{time}</GoldPill>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Text style={{ fontFamily: FONT.display, fontWeight: '600', fontSize: 15.5, color: C.ink }}>{v.n}. {v.t}</Text>
@@ -77,7 +77,7 @@ function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChan
           <PmtRow badge="＋" kind="plus" label="Плюс — что хорошего сделал" value={c.plus} onChange={(val) => onChange('plus', val)} />
           <PmtRow badge="－" kind="minus" label="Минус — чем навредил себе/другим" value={c.minus} onChange={(val) => onChange('minus', val)} />
           <PmtRow badge="✓" kind="todo" label="Сделать — на ближайшие часы" value={c.todo} onChange={(val) => onChange('todo', val)} />
-          <Pressable onPress={onComplete}>
+          <Pressable onPress={onComplete} accessibilityRole="button" accessibilityLabel={c.done ? 'Обновить проверку' : 'Отметить проверку'}>
             {({ pressed }) => (
               <Gradient colors={c.done ? ['#CFCABC', '#A29C8C'] : [C.jadeLight, C.jade]} angle={180} style={{ marginTop: 12, paddingVertical: 12, borderRadius: 16, alignItems: 'center', borderWidth: 2.5, borderColor: c.done ? '#46433A' : C.jadeLine, boxShadow: c.done ? '0px 4px 0px #46433A' : `0px 4px 0px ${C.jadeLine}`, transform: pressed ? [{ translateY: 3 }] : [] }}>
                 <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: c.done ? '#3a362c' : '#fff' }}>{c.done ? '✓ Обновить проверку' : 'Отметить проверку'}</Text>
@@ -162,7 +162,7 @@ export function DiaryScreen({ ctx }) {
       <PadView wide={wide}>
         <Text style={T.eyebrow}>Шестиразовый этический дневник</Text>
         <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 6 }}>
-          <Text style={T.displayL}>Дневник</Text>
+          <Text accessibilityRole="header" style={T.displayL}>Дневник</Text>
           <GoldPill style={{ marginBottom: 4 }}>{todayStr}</GoldPill>
         </View>
         <Text style={[T.body, { color: C.inkMuted, marginBottom: 16 }]}>

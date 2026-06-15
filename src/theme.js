@@ -61,6 +61,18 @@ export const C = {
   kitGreen: '#8FCB63',
   kitGreenMid: '#4E9B3A',
   kitGreenLine: '#2E6B22',
+  kitGold: '#F6C752',
+  kitGoldMid: '#E0902A',
+  kitGoldLine: '#9A6212',
+  kitBlue: '#6FBDE8',
+  kitBlueMid: '#2F86C0',
+  kitBlueLine: '#1C5478',
+  kitRed: '#EC7257',
+  kitRedMid: '#C23725',
+  kitRedLine: '#7C1E10',
+  kitStone: '#CFCABC',
+  kitStoneMid: '#A29C8C',
+  kitStoneLine: '#46433A',
   kitGoldText: '#4a3410', // AA-passing dark text on gold pills
 
   // characteristic semantics (CSS --c-*)

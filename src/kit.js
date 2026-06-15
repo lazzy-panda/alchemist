@@ -145,7 +145,7 @@ export function KitButton({ variant = 'primary', onPress, children, block, style
           ]}
         >
           {typeof children === 'string' ? (
-            <Text style={[{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: txtColor, ...shadow }, textStyle]}>{children}</Text>
+            <Text style={[{ fontFamily: FONT.display, fontWeight: '800', fontSize: 16, color: txtColor, ...shadow }, textStyle]}>{children}</Text>
           ) : (
             children
           )}

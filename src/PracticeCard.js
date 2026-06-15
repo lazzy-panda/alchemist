@@ -53,7 +53,7 @@ function CardBase({ done, style, children }) {
   );
 }
 
-export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
+function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
   const cat = CATS[p.cat];
   const cardRef = useRef(null);
   const checkRef = useRef(null);
@@ -155,3 +155,5 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
     </View>
   );
 }
+
+export const PracticeCard = React.memo(PracticeCardImpl);

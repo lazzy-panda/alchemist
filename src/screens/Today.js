@@ -59,7 +59,7 @@ export function TodayScreen({ ctx }) {
           <Avatar flow={dayState === 'flow'} size={84} />
           <View style={{ flex: 1, paddingTop: 4 }}>
             <Text style={[T.eyebrow, { marginBottom: 4 }]}>Ступень {stage.lvl}</Text>
-            <Text style={T.displayM}>Доброе утро,{'\n'}странник</Text>
+            <Text accessibilityRole="header" style={T.displayM}>Доброе утро,{'\n'}странник</Text>
           </View>
           <DayStateChip dayState={dayState} />
         </View>

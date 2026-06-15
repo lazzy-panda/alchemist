@@ -13,7 +13,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
   const feeders = PRACTICES.filter((p) => (p.r || {})[s.key]).slice(0, 4);
   return (
     <View style={{ borderBottomWidth: last ? 0 : 1, borderBottomColor: 'rgba(120,92,48,0.08)' }}>
-      <Pressable onPress={onToggle} style={{ flexDirection: 'row', alignItems: 'center', gap: 13, paddingVertical: 14, paddingHorizontal: 16 }}>
+      <Pressable onPress={onToggle} accessibilityRole="button" accessibilityLabel={s.name} accessibilityState={{ expanded: open }} style={{ flexDirection: 'row', alignItems: 'center', gap: 13, paddingVertical: 14, paddingHorizontal: 16 }}>
         <StatMedal stat={s.key} size={40} />
         <View style={{ flex: 1, minWidth: 0 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
@@ -59,7 +59,7 @@ export function CharacterScreen({ ctx }) {
         {/* radar + stage */}
         <View style={{ alignItems: 'center' }}>
           <Text style={[T.eyebrow, { marginBottom: 2 }]}>Свиток мастера</Text>
-          <Text style={[T.displayL, { marginBottom: 18 }]}>Ступень {stage.lvl}</Text>
+          <Text accessibilityRole="header" style={[T.displayL, { marginBottom: 18 }]}>Ступень {stage.lvl}</Text>
           <RadarMandala values={radarValues} size={250} animate />
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 24, alignSelf: 'stretch' }}>
             <Card style={{ flex: 1, paddingVertical: 14, paddingHorizontal: 16 }}>

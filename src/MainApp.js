@@ -1,5 +1,5 @@
 /* Alchemist — main shell: navigation, responsive layout, overlays */
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, useWindowDimensions, Platform } from 'react-native';
 import { C } from './theme';
 import { useGame } from './engine';
@@ -34,26 +34,24 @@ export function MainApp() {
   const [editor, setEditor] = useState(undefined); // undefined=closed, null=new, obj=edit
   const [daySheet, setDaySheet] = useState(null);
 
-  const onComplete = (p) => {
-    game.setDone(p, true);
-    setDetail(null);
-  };
-  const onSave = (data) => {
-    game.savePractice(data);
-    setEditor(undefined);
-  };
+  const onComplete = useCallback((p) => { game.setDone(p, true); setDetail(null); }, [game.setDone]);
+  const onSave = useCallback((data) => { game.savePractice(data); setEditor(undefined); }, [game.savePractice]);
+  const onOpen = useCallback((p) => setDetail(p), []);
+  const onAdd = useCallback(() => setEditor(null), []);
+  const onEdit = useCallback((p) => setEditor(p), []);
+  const onOpenDay = useCallback((d) => setDaySheet(d), []);
 
   const ctx = {
     ...game,
     route,
     wide,
     onToggle: game.toggle,
-    onOpen: (p) => setDetail(p),
+    onOpen,
     onComplete,
-    onAdd: () => setEditor(null),
-    onEdit: (p) => setEditor(p),
+    onAdd,
+    onEdit,
     onSave,
-    onOpenDay: (d) => setDaySheet(d),
+    onOpenDay,
     diaryKey: 'alchemist_diary_' + (auth?.user?.id || 'anon'),
   };
 

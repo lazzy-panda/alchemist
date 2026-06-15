@@ -22,7 +22,7 @@ export function LibraryScreen({ ctx }) {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <View>
             <Text style={T.eyebrow}>Зал свитков</Text>
-            <Text style={T.displayM}>Библиотека практик</Text>
+            <Text accessibilityRole="header" style={T.displayM}>Библиотека практик</Text>
           </View>
           <Btn variant="gold" onPress={() => onAdd()}>+ Новая</Btn>
         </View>
@@ -34,7 +34,7 @@ export function LibraryScreen({ ctx }) {
           const isCol = collapsed[ck];
           return (
             <View key={ck} style={{ marginBottom: 8 }}>
-              <Pressable onPress={() => setCollapsed({ ...collapsed, [ck]: !isCol })} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingTop: 14, paddingBottom: 8, paddingHorizontal: 2 }}>
+              <Pressable onPress={() => setCollapsed({ ...collapsed, [ck]: !isCol })} accessibilityRole="button" accessibilityLabel={cat.name} accessibilityState={{ expanded: !isCol }} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingTop: 14, paddingBottom: 8, paddingHorizontal: 2 }}>
                 <Mh size={26} color={cat.color} han={cat.han} fontSize={15} square />
                 <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: C.title }}>{cat.name}</Text>
                 <Text style={T.caption}>{items.length}</Text>
@@ -56,7 +56,7 @@ export function LibraryScreen({ ctx }) {
         })}
 
         {/* archive */}
-        <Pressable onPress={() => setArchiveOpen(!archiveOpen)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 18 }}>
+        <Pressable onPress={() => setArchiveOpen(!archiveOpen)} accessibilityRole="button" accessibilityLabel="Архив" accessibilityState={{ expanded: archiveOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 18 }}>
           <Text style={{ color: C.inkFaint, fontSize: 16, transform: archiveOpen ? [{ rotate: '90deg' }] : [] }}>›</Text>
           <Text style={{ color: C.inkFaint, fontWeight: '700', fontSize: 13, fontFamily: FONT.ui }}>Архив</Text>
         </Pressable>
