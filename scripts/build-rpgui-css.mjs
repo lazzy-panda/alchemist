@@ -50,6 +50,29 @@ const overrides = `
 .rpgui-content .rpgui-container { text-align: left !important; }
 /* RPGUI applies image-rendering: pixelated globally; keep our vector art (radar/timer/charts) crisp */
 .rpgui-content svg, .rpgui-content svg * { image-rendering: auto !important; }
+/* ---- redesigned grey panel: a carved warm-dark "stone tablet" replaces the stock grey PNG frame ----
+   crisp dark pixel outline + warm gradient interior + top highlight / inner-depth bevel + a slight raised drop. */
+.rpgui-content .rpgui-container.framed-grey {
+  border-image: none !important;
+  border: 2px solid #15120d !important;
+  border-radius: 2px !important;
+  padding: 16px !important;
+  background: linear-gradient(180deg, #312b23 0%, #29241e 55%, #211d18 100%) !important;
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,234,188,0.13),
+    inset 0 0 0 1px rgba(126,108,76,0.22),
+    inset 0 -12px 16px -10px rgba(0,0,0,0.5),
+    0 3px 0 -1px rgba(0,0,0,0.5),
+    0 9px 18px -7px rgba(0,0,0,0.4) !important;
+}
+/* corner studs (RPG flavour) — small warm pixels pinned to the top corners */
+.rpgui-content .rpgui-container.framed-grey::before,
+.rpgui-content .rpgui-container.framed-grey::after {
+  content: ""; position: absolute; top: 3px; width: 3px; height: 3px;
+  background: rgba(190,168,118,0.55); pointer-events: none;
+}
+.rpgui-content .rpgui-container.framed-grey::before { left: 3px; }
+.rpgui-content .rpgui-container.framed-grey::after { right: 3px; }
 `;
 css += overrides;
 
