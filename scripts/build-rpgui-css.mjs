@@ -54,16 +54,17 @@ const overrides = `
    crisp dark pixel outline + warm gradient interior + top highlight / inner-depth bevel + a slight raised drop. */
 .rpgui-content .rpgui-container.framed-grey {
   border-image: none !important;
-  border: 2px solid #15120d !important;
+  border: 2px solid #1c1711 !important;
   border-radius: 2px !important;
   padding: 16px !important;
-  background: linear-gradient(180deg, #312b23 0%, #29241e 55%, #211d18 100%) !important;
+  /* lighter warm "stone" so cards lift off the dark page (was too dark) */
+  background: linear-gradient(180deg, #4b4030 0%, #41382a 55%, #362e22 100%) !important;
   box-shadow:
-    inset 0 1px 0 0 rgba(255,234,188,0.13),
-    inset 0 0 0 1px rgba(126,108,76,0.22),
-    inset 0 -12px 16px -10px rgba(0,0,0,0.5),
-    0 3px 0 -1px rgba(0,0,0,0.5),
-    0 9px 18px -7px rgba(0,0,0,0.4) !important;
+    inset 0 1px 0 0 rgba(255,240,202,0.20),
+    inset 0 0 0 1px rgba(168,144,102,0.32),
+    inset 0 -12px 16px -10px rgba(0,0,0,0.42),
+    0 3px 0 -1px rgba(0,0,0,0.45),
+    0 9px 18px -7px rgba(0,0,0,0.34) !important;
 }
 /* corner studs (RPG flavour) — small warm pixels pinned to the top corners */
 .rpgui-content .rpgui-container.framed-grey::before,
