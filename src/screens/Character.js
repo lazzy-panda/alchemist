@@ -61,7 +61,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
 }
 
 export function CharacterScreen({ ctx }) {
-  const { statLevels, resources, stage, wide, onShowHelp } = ctx;
+  const { statLevels, resources, stage, wide, onShowHelp, onSignOut, userName } = ctx;
   const [expanded, setExpanded] = useState(null);
   const radarValues = {};
   STATS.forEach((s) => {
@@ -109,6 +109,12 @@ export function CharacterScreen({ ctx }) {
             {RELICS.map((r, i) => (<Relic key={i} r={r} />))}
           </View>
         </Section>
+
+        {!wide && onSignOut ? (
+          <Pressable onPress={onSignOut} accessibilityRole="button" accessibilityLabel="Sign out" style={{ marginTop: 28, marginBottom: 4, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkMuted }}>↩ Sign out{userName ? ' · ' + userName : ''}</Text>
+          </Pressable>
+        ) : null}
       </PadView>
     </ScreenScroll>
   );

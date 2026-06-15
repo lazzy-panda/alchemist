@@ -25,8 +25,8 @@ const SCREENS = {
 };
 
 export function MainApp() {
-  const game = useGame();
   const auth = useAuth();
+  const game = useGame(auth?.user?.id);
   const { width } = useWindowDimensions();
   const wide = width >= 900;
 
@@ -77,6 +77,7 @@ export function MainApp() {
     onSave,
     onOpenDay,
     onShowHelp,
+    onSignOut: auth?.signOut,
     userName: auth?.user?.name,
     diaryKey: 'alchemist_diary_' + (auth?.user?.id || 'anon'),
   };

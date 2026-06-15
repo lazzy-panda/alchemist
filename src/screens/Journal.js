@@ -19,7 +19,7 @@ const HEAT_STYLES = {
 function HeatCell({ v, n, today, onPress, delay }) {
   const st = HEAT_STYLES[v];
   return (
-    <Pressable style={{ flex: 1 }} onPress={onPress} accessibilityRole="button" accessibilityLabel={`День ${n}`}>
+    <Pressable style={{ flex: 1 }} onPress={onPress} accessibilityRole="button" accessibilityLabel={`Day ${n}`}>
       <Gradient
         colors={st.colors}
         angle={180}

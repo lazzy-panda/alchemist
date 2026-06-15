@@ -1,9 +1,10 @@
 /* Alchemist — game state & mechanics (ported 1:1 from app.jsx) */
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PRACTICES, STAT_LEVELS } from './data';
 import { clamp } from './theme';
 
-export function useGame() {
+export function useGame(userId) {
   const [practices, setPractices] = useState(() => PRACTICES.map((p) => ({ ...p })));
   const [statLevels, setStatLevels] = useState(() => JSON.parse(JSON.stringify(STAT_LEVELS)));
   const [resources, setResources] = useState({ hp: 86, hpMax: 100, qi: 64, qiMax: 100 });
@@ -11,6 +12,33 @@ export function useGame() {
   const [streak] = useState(14);
   const [levelUp, setLevelUp] = useState(null);
   const [lastArchived, setLastArchived] = useState(null);
+
+  // persist game state per user — was in-memory only, so all progress (practices,
+  // completions, stats, stage) reset on every reload / tab close.
+  const KEY = 'alchemist_game_' + (userId || 'anon');
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    setLoaded(false);
+    (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(KEY);
+        if (raw && !cancelled) {
+          const s = JSON.parse(raw);
+          if (Array.isArray(s.practices)) setPractices(s.practices);
+          if (s.statLevels) setStatLevels(s.statLevels);
+          if (s.resources) setResources(s.resources);
+          if (s.stage) setStage(s.stage);
+        }
+      } catch (e) {}
+      if (!cancelled) setLoaded(true);
+    })();
+    return () => { cancelled = true; };
+  }, [KEY]);
+  useEffect(() => {
+    if (!loaded) return;
+    AsyncStorage.setItem(KEY, JSON.stringify({ practices, statLevels, resources, stage })).catch(() => {});
+  }, [loaded, practices, statLevels, resources, stage, KEY]);
 
   const setDone = useCallback((target, value) => {
     setPractices((curr) => {

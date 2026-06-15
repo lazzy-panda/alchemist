@@ -57,7 +57,7 @@ export function LibraryScreen({ ctx }) {
         })}
 
         {/* archive */}
-        <Pressable onPress={() => setArchiveOpen(!archiveOpen)} accessibilityRole="button" accessibilityLabel="Архив" accessibilityState={{ expanded: archiveOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 18 }}>
+        <Pressable onPress={() => setArchiveOpen(!archiveOpen)} accessibilityRole="button" accessibilityLabel="Archived practices" accessibilityState={{ expanded: archiveOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 18 }}>
           <Text style={{ color: C.inkFaint, fontSize: 16, transform: archiveOpen ? [{ rotate: '90deg' }] : [] }}>›</Text>
           <Text style={{ color: C.inkFaint, fontSize: 9, fontFamily: FONT.display }}>Archive</Text>
           {archived.length ? <Text style={T.caption}>{archived.length}</Text> : null}
