@@ -88,7 +88,7 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
         shake ? kf(KF.shakeNo, 0.42, { ease: EASE.soft }) : null,
       ]}
     >
-      <Pressable onPress={() => onOpen && onOpen(p)} disabled={locked}>
+      <Pressable onPress={() => onOpen && onOpen(p)} disabled={locked} accessibilityRole="button" accessibilityLabel={p.name + (locked ? ', недоступно' : '')}>
         {({ pressed }) => (
           <CardBase
             done={p.done}
@@ -139,7 +139,7 @@ export function PracticeCard({ p, onToggle, onOpen, locked, active, compact }) {
         </View>
       ) : (
         <View ref={checkRef} style={{ position: 'absolute', right: 15, top: 0, bottom: 0, justifyContent: 'center' }}>
-          <Pressable onPress={handleCheck} accessibilityLabel={p.done ? 'Отменить' : 'Выполнить'}>
+          <Pressable onPress={handleCheck} hitSlop={8} accessibilityRole="button" accessibilityState={{ checked: !!p.done }} accessibilityLabel={(p.done ? 'Отменить: ' : 'Выполнить: ') + p.name}>
             {({ pressed }) =>
               p.done ? (
                 <KitCheck size={40} style={{ transform: pressed ? [{ scale: 1.07 }] : [] }} />

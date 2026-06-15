@@ -29,9 +29,9 @@ export function BottomNav({ route, setRoute }) {
           </>
         );
         return (
-          <Pressable key={n.key} onPress={() => setRoute(n.key)} style={{ borderRadius: 16, overflow: 'hidden' }}>
+          <Pressable key={n.key} onPress={() => setRoute(n.key)} accessibilityRole="button" accessibilityLabel={n.label} accessibilityState={{ selected: on }} style={{ borderRadius: 16, overflow: 'hidden' }}>
             {on ? (
-              <Gradient colors={['#8FCB63', '#4E9B3A']} angle={180} style={{ alignItems: 'center', gap: 3, paddingVertical: 6, paddingHorizontal: 14, borderRadius: 16, borderWidth: 2, borderColor: '#2E6B22', boxShadow: '0px 3px 0px #2E6B22, inset 0px 1px 0px rgba(255,255,255,0.5)' }}>
+              <Gradient colors={[C.kitGreen, C.kitGreenMid]} angle={180} style={{ alignItems: 'center', gap: 3, paddingVertical: 6, paddingHorizontal: 14, borderRadius: 16, borderWidth: 2, borderColor: C.kitGreenLine, boxShadow: `0px 3px 0px ${C.kitGreenLine}, inset 0px 1px 0px rgba(255,255,255,0.5)` }}>
                 {inner}
               </Gradient>
             ) : (
@@ -64,10 +64,10 @@ export function SideRail({ route, setRoute, stage, onSignOut, userName }) {
           </>
         );
         return (
-          <Pressable key={n.key} onPress={() => setRoute(n.key)} style={{ marginBottom: 7, borderRadius: 14, overflow: 'hidden' }}>
+          <Pressable key={n.key} onPress={() => setRoute(n.key)} accessibilityRole="button" accessibilityLabel={n.label} accessibilityState={{ selected: on }} style={{ marginBottom: 7, borderRadius: 14, overflow: 'hidden' }}>
             {({ hovered }) =>
               on ? (
-                <Gradient colors={['#8FCB63', '#4E9B3A']} angle={180} style={{ flexDirection: 'row', alignItems: 'center', gap: 13, paddingVertical: 12, paddingHorizontal: 15, borderRadius: 14, borderWidth: 2.5, borderColor: '#2E6B22', boxShadow: '0px 3px 0px #2E6B22, inset 0px 1px 0px rgba(255,255,255,0.4)' }}>
+                <Gradient colors={[C.kitGreen, C.kitGreenMid]} angle={180} style={{ flexDirection: 'row', alignItems: 'center', gap: 13, paddingVertical: 12, paddingHorizontal: 15, borderRadius: 14, borderWidth: 2.5, borderColor: C.kitGreenLine, boxShadow: `0px 3px 0px ${C.kitGreenLine}, inset 0px 1px 0px rgba(255,255,255,0.4)` }}>
                   {content}
                 </Gradient>
               ) : (
@@ -92,7 +92,7 @@ export function SideRail({ route, setRoute, stage, onSignOut, userName }) {
       </View>
 
       {/* account / sign out */}
-      <Pressable onPress={onSignOut} style={{ marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, borderRadius: 12 }}>
+      <Pressable onPress={onSignOut} accessibilityRole="button" accessibilityLabel="Выйти из аккаунта" style={{ marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, borderRadius: 12 }}>
         <Text style={{ fontFamily: FONT.ui, fontWeight: '700', fontSize: 13, color: '#33302A' }}>↩ Выйти{userName ? ' · ' + userName : ''}</Text>
       </Pressable>
     </ImageBackground>

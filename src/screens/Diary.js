@@ -13,7 +13,7 @@ import { useEffects } from '../effects';
 function GoldPill({ children, style }) {
   return (
     <KitPill color="gold" style={[{ paddingHorizontal: 12, minHeight: 26 }, style]}>
-      <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 13, color: '#fff', textShadowColor: 'rgba(0,0,0,0.25)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 1 }}>{children}</Text>
+      <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 13, color: '#4a3410', textShadowColor: 'rgba(255,255,255,0.4)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 1 }}>{children}</Text>
     </KitPill>
   );
 }
@@ -30,7 +30,7 @@ function PmtRow({ badge, kind, label, value, onChange, mini, placeholder }) {
   return (
     <View style={{ flexDirection: 'row', gap: 9, alignItems: 'flex-start', marginBottom: 9 }}>
       <KitPill color={PMT[kind]} style={{ width: 34, minHeight: 34, paddingHorizontal: 0, marginTop: 2 }}>
-        <Text style={{ fontFamily: FONT.display, fontWeight: '800', fontSize: 16, color: '#fff', textShadowColor: 'rgba(0,0,0,0.3)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 1 }}>{badge}</Text>
+        <Text style={{ fontFamily: FONT.display, fontWeight: '800', fontSize: 16, color: kind === 'todo' ? '#4a3410' : '#fff', textShadowColor: kind === 'todo' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.3)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 1 }}>{badge}</Text>
       </KitPill>
       <View style={{ flex: 1, minWidth: 0 }}>
         {label && !mini ? <Text style={[T.caption, { marginBottom: 4 }]}>{label}</Text> : null}

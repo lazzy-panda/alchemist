@@ -121,10 +121,19 @@ export function NineSlice({ source, slice = 12, border, style, children, ...rest
 /* ---------- candy button (real kit pill, 9-slice horizontally) ---------- */
 const BTN_ASSET = { primary: KIT.btnGreen, gold: KIT.btnGold, blue: KIT.btnBlue, danger: KIT.btnRed };
 
-export function KitButton({ variant = 'primary', onPress, children, block, style, textStyle, disabled }) {
+export function KitButton({ variant = 'primary', onPress, children, block, style, textStyle, disabled, accessibilityLabel }) {
   const asset = BTN_ASSET[variant] || KIT.btnGreen;
+  const txtColor = variant === 'gold' ? '#4a3410' : '#fff'; // dark text on gold for WCAG AA
+  const shadow = variant === 'gold' ? ts('rgba(255,255,255,0.45)', 0, 1) : ts('rgba(0,0,0,0.3)', 0, 1);
   return (
-    <Pressable onPress={disabled ? undefined : onPress} style={[block && { width: '100%' }, disabled && { opacity: 0.5 }, style]}>
+    <Pressable
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel || (typeof children === 'string' ? children : undefined)}
+      accessibilityState={{ disabled: !!disabled }}
+      style={[block && { width: '100%' }, disabled && { opacity: 0.5 }, style]}
+    >
       {({ pressed }) => (
         <NineSlice
           source={asset}
@@ -136,7 +145,7 @@ export function KitButton({ variant = 'primary', onPress, children, block, style
           ]}
         >
           {typeof children === 'string' ? (
-            <Text style={[{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: '#fff', ...ts('rgba(0,0,0,0.3)', 0, 1) }, textStyle]}>{children}</Text>
+            <Text style={[{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: txtColor, ...shadow }, textStyle]}>{children}</Text>
           ) : (
             children
           )}
@@ -158,7 +167,7 @@ export function KitPanel({ style, children, contentStyle, slice = 56, border = 2
 /* ---------- close button (real kit ×) ---------- */
 export function KitClose({ onPress, size = 34, style }) {
   return (
-    <Pressable onPress={onPress} style={style}>
+    <Pressable onPress={onPress} hitSlop={8} accessibilityRole="button" accessibilityLabel="Закрыть" style={style}>
       {({ pressed }) => <Image source={KIT.close} style={{ width: size, height: size, transform: pressed ? [{ translateY: 2 }] : [] }} resizeMode="contain" />}
     </Pressable>
   );
@@ -209,24 +218,32 @@ export function KitGem({ size = 54, color = '#888', han, fontSize, glyphStyle })
 }
 
 /* ---------- colored candy pill (real kit) for chips / state ---------- */
-export function KitPill({ color = 'primary', children, style, onPress }) {
+export function KitPill({ color = 'primary', children, style, onPress, accessibilityLabel, selected }) {
   const asset = BTN_ASSET[color] || KIT.btnGreen;
   const body = (
     <NineSlice source={asset} slice={[7, 22, 9, 22]} border={{ top: 6, right: 15, bottom: 8, left: 15 }} style={[{ minHeight: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: 10 }, style]}>
       {children}
     </NineSlice>
   );
-  return onPress ? <Pressable onPress={onPress}>{body}</Pressable> : body;
+  return onPress ? (
+    <Pressable onPress={onPress} hitSlop={8} accessibilityRole="button" accessibilityLabel={accessibilityLabel} accessibilityState={selected != null ? { selected } : undefined}>
+      {body}
+    </Pressable>
+  ) : body;
 }
 
 /* ---------- neutral parchment chip (real kit parchment) ---------- */
-export function KitParchPill({ children, style, onPress }) {
+export function KitParchPill({ children, style, onPress, accessibilityLabel, selected }) {
   const body = (
     <ImageBackground source={KIT.parchment} resizeMode="stretch" imageStyle={{ borderRadius: 999 }} style={[{ minHeight: 26, borderRadius: 999, overflow: 'hidden', flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: '#b9a06f' }, style]}>
       {children}
     </ImageBackground>
   );
-  return onPress ? <Pressable onPress={onPress}>{body}</Pressable> : body;
+  return onPress ? (
+    <Pressable onPress={onPress} hitSlop={8} accessibilityRole="button" accessibilityLabel={accessibilityLabel} accessibilityState={selected != null ? { selected } : undefined}>
+      {body}
+    </Pressable>
+  ) : body;
 }
 
 /* ---------- level-up banner ribbon (real kit) ---------- */

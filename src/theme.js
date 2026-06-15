@@ -11,10 +11,10 @@ export const C = {
   paperWarm: '#EADFBE',
   paperDeep: '#D7C599',
 
-  // ink (warm brown on parchment)
+  // ink (warm brown on parchment) — muted/faint darkened to meet WCAG AA (4.5:1)
   ink: '#553A1E',
-  inkMuted: '#8A6B43',
-  inkFaint: '#AC8E62',
+  inkMuted: '#6E5230',
+  inkFaint: '#74592F',
 
   // wood frame — light honey planks
   wood1: '#DDB375',
@@ -56,6 +56,12 @@ export const C = {
   blueLight: '#6FBDE8',
   blueDark: '#2A6F9E',
   blueLine: '#1C5478',
+
+  // kit candy palette (extracted from RPG kit) — single source for pill colours
+  kitGreen: '#8FCB63',
+  kitGreenMid: '#4E9B3A',
+  kitGreenLine: '#2E6B22',
+  kitGoldText: '#4a3410', // AA-passing dark text on gold pills
 
   // characteristic semantics (CSS --c-*)
   cEnergy: '#34A18C',
