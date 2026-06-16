@@ -76,10 +76,11 @@ export const STATE_DEFS = {
 export function StateChip({ state, text, gold }) {
   const base = STATE_DEFS[state] || STATE_DEFS.flow;
   const d = gold ? { ...base, pill: 'gold' } : base;
+  const tc = { primary: C.jadeLight, gold: C.gold, danger: C.red, blue: C.blueLight }[d.pill] || C.ink;
   return (
     <KitPill color={d.pill} accessibilityLabel={text || d.label}>
       <Text style={{ fontSize: 11 }}>{d.ico}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: '#fff' }}>{text || d.label}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: tc }}>{text || d.label}</Text>
     </KitPill>
   );
 }

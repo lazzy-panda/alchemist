@@ -118,13 +118,9 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
 
 function TStep({ label, onPress, disabled }) {
   return (
-    <Pressable onPress={disabled ? undefined : onPress}>
-      {({ pressed }) => (
-        <Gradient colors={['#CFCABC', '#A29C8C']} angle={180} style={{ borderRadius: 999, borderWidth: 2.5, borderColor: '#46433A', paddingVertical: 9, paddingHorizontal: 12, opacity: disabled ? 0.35 : 1, boxShadow: disabled ? 'none' : '0px 3px 0px #46433A, inset 0px 2px 0px rgba(255,255,255,0.6)', transform: pressed && !disabled ? [{ translateY: 3 }] : [] }}>
-          <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 13, color: '#3a362c' }}>{label}</Text>
-        </Gradient>
-      )}
-    </Pressable>
+    <Btn variant="blue" onPress={disabled ? undefined : onPress} disabled={disabled} style={{ flex: 1 }}>
+      {label}
+    </Btn>
   );
 }
 

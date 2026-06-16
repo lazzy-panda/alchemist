@@ -21,12 +21,12 @@ function CheckDot({ on }) {
   return <KitCheckbox on={on} size={18} />;
 }
 
-const PMT = { plus: 'primary', minus: 'danger', todo: 'gold' };
+const PMT_COLOR = { plus: C.jadeLight, minus: C.red, todo: C.gold };
 function PmtRow({ badge, kind, label, value, onChange, mini, placeholder }) {
   return (
     <View style={{ flexDirection: 'row', gap: 9, alignItems: 'flex-start', marginBottom: 9 }}>
-      <KitPill color={PMT[kind]} style={{ marginTop: 2 }}>
-        <Text style={{ fontFamily: FONT.display, fontSize: 11, color: '#fff' }}>{badge}</Text>
+      <KitPill style={{ marginTop: 2 }}>
+        <Text style={{ fontFamily: FONT.display, fontSize: 14, color: PMT_COLOR[kind] || C.ink }}>{badge}</Text>
       </KitPill>
       <View style={{ flex: 1, minWidth: 0 }}>
         {label && !mini ? <Text style={[T.caption, { marginBottom: 4 }]}>{label}</Text> : null}

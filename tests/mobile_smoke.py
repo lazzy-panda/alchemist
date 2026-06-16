@@ -81,8 +81,8 @@ def main():
         check("Diary: set-chip compact (<44px)", 0 < chip_h < 44, f"height={chip_h}px")
         # 2b +/- badges color-coded (plus greenish, minus reddish, not both grey #33302a)
         badge = page.evaluate("""()=>{
-          const out={};const f=(g)=>{const el=[...document.querySelectorAll('div')].find(e=>e.children.length<=1&&(e.textContent||'').trim()===g&&e.getBoundingClientRect().width>14);return el?getComputedStyle(el).backgroundColor:null};
-          out.plus=f('＋');out.minus=f('－');return out;}""")
+          const f=(g)=>{const el=[...document.querySelectorAll('div,span,p')].find(e=>e.children.length===0&&(e.textContent||'').trim()===g);return el?getComputedStyle(el).color:null};
+          return {plus:f('＋'),minus:f('－')};}""")
         plus, minus = badge.get("plus"), badge.get("minus")
         check("Diary: +/- badges color-coded", bool(plus and minus and plus != minus), f"plus={plus} minus={minus}")
         # 2c input font not oversized (was 14px) + readable

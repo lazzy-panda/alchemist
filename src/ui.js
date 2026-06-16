@@ -138,37 +138,11 @@ export function Btn({ variant = 'primary', onPress, children, style, textStyle, 
       </Pressable>
     );
   }
-  // real RPG-kit pill assets for the candy variants
-  if (variant === 'primary' || variant === 'gold' || variant === 'blue' || variant === 'danger') {
-    return (
-      <KitButton variant={variant} onPress={onPress} block={block} style={style} textStyle={textStyle} disabled={disabled} accessibilityLabel={a11yLabel}>
-        {children}
-      </KitButton>
-    );
-  }
-  const v = BTN_VARIANTS[variant] || BTN_VARIANTS.secondary;
-  const se = angleToStartEnd(180);
+  // every non-ghost variant renders as a native rpgui-button (secondary = the grey stock button)
   return (
-    <Pressable onPress={disabled ? undefined : onPress} disabled={disabled} accessibilityRole="button" accessibilityLabel={a11yLabel} style={[block && { width: '100%' }, disabled && { opacity: 0.45 }, style]}>
-      {({ pressed }) => (
-        <LinearGradient
-          colors={v.colors}
-          start={se.start}
-          end={se.end}
-          style={[
-            BTN_BASE,
-            { borderColor: v.border, boxShadow: pressed ? v.pressShadow : v.shadow },
-            pressed && { transform: [{ translateY: 4 }] },
-          ]}
-        >
-          {typeof children === 'string' ? (
-            <Text style={[{ fontFamily: FONT.display, fontWeight: '700', fontSize: 16, color: v.text }, v.tshadow, textStyle]}>{children}</Text>
-          ) : (
-            children
-          )}
-        </LinearGradient>
-      )}
-    </Pressable>
+    <KitButton variant={variant} onPress={onPress} block={block} style={style} textStyle={textStyle} disabled={disabled} accessibilityLabel={a11yLabel}>
+      {children}
+    </KitButton>
   );
 }
 
