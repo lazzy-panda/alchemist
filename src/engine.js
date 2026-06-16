@@ -1,5 +1,5 @@
 /* Alchemist — game state & mechanics (ported 1:1 from app.jsx) */
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PRACTICES, STAT_LEVELS } from './data';
 import { clamp } from './theme';
@@ -13,17 +13,18 @@ export function useGame(userId) {
   const [levelUp, setLevelUp] = useState(null);
   const [lastArchived, setLastArchived] = useState(null);
 
-  // persist game state per user — was in-memory only, so all progress (practices,
-  // completions, stats, stage) reset on every reload / tab close.
+  // persist game state per user. Race-safe: a ref tracks which key has finished hydrating,
+  // so the brief anon→user key switch on reload can't save seeds over real data before load.
   const KEY = 'alchemist_game_' + (userId || 'anon');
-  const [loaded, setLoaded] = useState(false);
+  const hydratedKey = useRef(null);
   useEffect(() => {
     let cancelled = false;
-    setLoaded(false);
+    hydratedKey.current = null; // block saves for this key until it has loaded
     (async () => {
       try {
         const raw = await AsyncStorage.getItem(KEY);
-        if (raw && !cancelled) {
+        if (cancelled) return;
+        if (raw) {
           const s = JSON.parse(raw);
           if (Array.isArray(s.practices)) setPractices(s.practices);
           if (s.statLevels) setStatLevels(s.statLevels);
@@ -31,14 +32,14 @@ export function useGame(userId) {
           if (s.stage) setStage(s.stage);
         }
       } catch (e) {}
-      if (!cancelled) setLoaded(true);
+      if (!cancelled) hydratedKey.current = KEY;
     })();
     return () => { cancelled = true; };
   }, [KEY]);
   useEffect(() => {
-    if (!loaded) return;
+    if (hydratedKey.current !== KEY) return; // don't persist until this key is hydrated
     AsyncStorage.setItem(KEY, JSON.stringify({ practices, statLevels, resources, stage })).catch(() => {});
-  }, [loaded, practices, statLevels, resources, stage, KEY]);
+  }, [practices, statLevels, resources, stage, KEY]);
 
   const setDone = useCallback((target, value) => {
     setPractices((curr) => {

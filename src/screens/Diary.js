@@ -96,26 +96,31 @@ export function DiaryScreen({ ctx }) {
 
   const [data, setData] = useState(() => fresh('ten'));
   const [open, setOpen] = useState(0);
-  const [loaded, setLoaded] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const refs = useRef([]);
+  // race-safe persistence: only save once THIS key has hydrated, so the anon→user key
+  // switch on reload can't overwrite a saved diary with a fresh/empty one.
+  const hydratedKey = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
+    hydratedKey.current = null;
     (async () => {
       try {
         const raw = await AsyncStorage.getItem(diaryKey);
-        if (raw) { const d = JSON.parse(raw); if (d.day === dayNum && !cancelled) setData(d); }
+        if (cancelled) return;
+        if (raw) { const d = JSON.parse(raw); if (d.day === dayNum) setData(d); }
       } catch (e) {}
-      if (!cancelled) setLoaded(true);
+      if (!cancelled) hydratedKey.current = diaryKey;
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [diaryKey]);
 
   useEffect(() => {
-    if (loaded) AsyncStorage.setItem(diaryKey, JSON.stringify(data)).then(() => setSaveError((e) => (e ? false : e))).catch(() => setSaveError(true));
-  }, [data, loaded, diaryKey]);
+    if (hydratedKey.current !== diaryKey) return;
+    AsyncStorage.setItem(diaryKey, JSON.stringify(data)).then(() => setSaveError((e) => (e ? false : e))).catch(() => setSaveError(true));
+  }, [data, diaryKey]);
 
   const setKey = data.setKey;
   const set = SETS[setKey];
