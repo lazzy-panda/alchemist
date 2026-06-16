@@ -6,7 +6,7 @@ import { C, FONT } from '../theme';
 import { DIARY_TIMES, DIARY_SETS } from '../data';
 import { ScreenScroll, PadView } from '../layout';
 import { Card, Gradient, T, SectionHead, DiaryInput, SelChip, kf, KF, EASE } from '../ui';
-import { KitPill } from '../kit';
+import { KitPill, KitCheckbox } from '../kit';
 import { useEffects } from '../effects';
 
 function GoldPill({ children, style }) {
@@ -18,8 +18,7 @@ function GoldPill({ children, style }) {
 }
 
 function CheckDot({ on }) {
-  if (on) return <Gradient colors={[C.jadeLight, C.jade]} angle={180} style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2, borderColor: C.jadeLine }} />;
-  return <View style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm }} />;
+  return <KitCheckbox on={on} size={18} />;
 }
 
 const PMT = { plus: 'primary', minus: 'danger', todo: 'gold' };

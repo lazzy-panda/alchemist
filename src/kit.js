@@ -190,9 +190,23 @@ export function KitBar({ pct, color = 'green', height = 18 }) {
   );
 }
 
-/* ---------- round check (real kit green ✓) ---------- */
-export function KitCheck({ size = 40, style }) {
-  return <Image source={KIT.checkOn} style={[{ width: size, height: size }, style]} resizeMode="contain" />;
+/* ---------- genuine RPGUI checkbox (golden sprite) ---------- */
+const CHECKBOX_ON = require('../assets/rpgui/img/checkbox-golden-on.png');
+const CHECKBOX_OFF = require('../assets/rpgui/img/checkbox-golden-off.png');
+export function KitCheckbox({ on, size = 28, style }) {
+  return <Image source={on ? CHECKBOX_ON : CHECKBOX_OFF} style={[{ width: size, height: size }, style]} resizeMode="stretch" />;
+}
+export function KitCheck({ size = 28, style }) {
+  return <KitCheckbox on size={size} style={style} />;
+}
+
+const RADIO_ON = require('../assets/rpgui/img/radio-golden-on.png');
+const RADIO_OFF = require('../assets/rpgui/img/radio-golden-off.png');
+export function KitRadio({ on, size = 28, style }) {
+  return <Image source={on ? RADIO_ON : RADIO_OFF} style={[{ width: size, height: size }, style]} resizeMode="stretch" />;
+}
+export function KitHr({ style }) {
+  return <View style={[{ width: '100%', height: 6, backgroundColor: 'rgba(168,144,102,0.35)', borderRadius: 2 }, style]} />;
 }
 
 /* ---------- round dial frame (real kit), content centered on top ---------- */

@@ -4,7 +4,7 @@ import { View, Text, Pressable, Platform, Animated, PanResponder } from 'react-n
 import Svg, { Path } from 'react-native-svg';
 import { C, FONT } from './theme';
 import { CATS, STAT } from './data';
-import { KitGem, KitPanel } from './kit';
+import { KitGem, KitPanel, KitCheckbox } from './kit';
 import { QiTag } from './badges';
 import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
@@ -14,39 +14,7 @@ const USE_NATIVE = !WEB;
 const SWIPE_MAX = 96;
 const SWIPE_TRIG = 64;
 
-function CheckGlyph({ size = 20 }) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24">
-      <Path d="M4 13 L 10 18 L 20 6" fill="none" stroke="#fff" strokeWidth={3.6} strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  );
-}
-
-/* pixel "equipment slot" checkbox — empty carved recess ↔ raised jade slot with a check;
-   matches the carved card / gold-slot language instead of a generic web circle. */
-function Checkbox({ on, pressed }) {
-  const size = 32;
-  return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: 3,
-        borderWidth: 2,
-        borderColor: on ? C.jadeLine : '#15110b',
-        backgroundColor: on ? C.jade : '#241f19',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: on
-          ? 'inset 0 2px 0 0 rgba(255,255,255,0.22), 0 2px 0 0 ' + C.jadeLine
-          : 'inset 0 2px 4px 0 rgba(0,0,0,0.55), inset 0 0 0 1px rgba(168,144,102,0.18)',
-        transform: pressed ? [{ scale: 1.08 }] : [],
-      }}
-    >
-      {on ? <CheckGlyph size={20} /> : null}
-    </View>
-  );
-}
+// practice completion uses the genuine RPGUI checkbox sprite (KitCheckbox)
 
 function CardBase({ done, style, children }) {
   // always grey frame — framed-golden's border-image outsets and overlaps neighbours
@@ -129,7 +97,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
       ) : (
         <View ref={checkRef} style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
           <Pressable onPress={handleCheck} hitSlop={8} accessibilityRole="button" accessibilityState={{ checked: !!p.done }} accessibilityLabel={(p.done ? 'Undo: ' : 'Do: ') + p.name}>
-            {({ pressed }) => <Checkbox on={p.done} pressed={pressed} />}
+            {({ pressed }) => <KitCheckbox on={p.done} size={30} style={pressed ? { transform: [{ scale: 1.1 }] } : null} />}
           </Pressable>
         </View>
       )}

@@ -43,6 +43,13 @@ export const KIT = {
   orb: require('../assets/kit/orb.png'),
 };
 
+// genuine RPGUI checkbox / radio sprites (golden) — used for every checkbox & single-select
+const CHECKBOX_ON = require('../assets/rpgui/img/checkbox-golden-on.png');
+const CHECKBOX_OFF = require('../assets/rpgui/img/checkbox-golden-off.png');
+const RADIO_ON = require('../assets/rpgui/img/radio-golden-on.png');
+const RADIO_OFF = require('../assets/rpgui/img/radio-golden-off.png');
+const srcUri = (a) => (a && typeof a === 'object' && a.uri ? a.uri : a);
+
 /* ---- progress color mapping (RPGUI offers red/green/blue, default purple) ---- */
 function barColor(color) {
   switch (color) {
@@ -108,13 +115,33 @@ export function KitBar({ pct, color = 'green', height, style }) {
   );
 }
 
-/* ---- "done" check mark ---- */
-export function KitCheck({ size = 40, style }) {
-  return h(
-    'div',
-    { style: [{ width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.doneBg, boxSizing: 'border-box' }, style] },
-    h('p', { style: { margin: 0, color: '#fff', fontSize: Math.round(size * 0.42) } }, '✔')
-  );
+/* ---- genuine RPGUI checkbox (golden sprite) ---- */
+export function KitCheckbox({ on, size = 28, style }) {
+  return h('img', {
+    src: srcUri(on ? CHECKBOX_ON : CHECKBOX_OFF),
+    alt: on ? 'checked' : 'unchecked',
+    draggable: false,
+    style: [{ width: size, height: size, imageRendering: 'pixelated', objectFit: 'fill', display: 'block' }, style],
+  });
+}
+/* kept for back-compat; KitCheckbox is the native control */
+export function KitCheck({ size = 28, style }) {
+  return KitCheckbox({ on: true, size, style });
+}
+
+/* ---- genuine RPGUI radio (golden sprite) ---- */
+export function KitRadio({ on, size = 28, style }) {
+  return h('img', {
+    src: srcUri(on ? RADIO_ON : RADIO_OFF),
+    alt: on ? 'selected' : 'unselected',
+    draggable: false,
+    style: [{ width: size, height: size, imageRendering: 'pixelated', objectFit: 'fill', display: 'block' }, style],
+  });
+}
+
+/* ---- genuine RPGUI horizontal rule ---- */
+export function KitHr({ golden = true, style }) {
+  return h('hr', { className: golden ? 'golden' : '', style: [{ width: '100%' }, style] });
 }
 
 /* ---- round dial frame (kept custom for radar / timer) ---- */

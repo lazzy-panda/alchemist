@@ -205,7 +205,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
             <Field label="Reward stats">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {STATS.map((s) => (
-                  <SelChip key={s.key} on={!!rewards[s.key]} color={s.color} icon={s.icon} label={s.name + (rewards[s.key] ? ' +' + rewards[s.key] : '')} onPress={() => toggleReward(s.key)} />
+                  <SelChip key={s.key} multi on={!!rewards[s.key]} color={s.color} icon={s.icon} label={s.name + (rewards[s.key] ? ' +' + rewards[s.key] : '')} onPress={() => toggleReward(s.key)} />
                 ))}
               </View>
             </Field>

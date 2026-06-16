@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { C, R, FONT } from './theme';
 import { kf, tr, KF, EASE } from './anim';
-import { KitButton, KitPill, KitGem, KitPanel } from './kit';
+import { KitButton, KitPill, KitGem, KitPanel, KitRadio, KitCheckbox, KitHr } from './kit';
 
 const WEB = Platform.OS === 'web';
 
@@ -216,20 +216,21 @@ export function Stepper({ value, onDec, onInc, suffix = ' min' }) {
   );
 }
 
-/* ---------- selectable chip — compact pixel chip (gem + label) ---------- */
-export function SelChip({ on, color, icon, label, onPress }) {
+/* ---------- selectable chip — genuine RPGUI radio (single) / checkbox (multi) + gem + label ---------- */
+export function SelChip({ on, color, icon, label, onPress, multi }) {
+  const Indicator = multi ? KitCheckbox : KitRadio;
   return (
     <Pressable
       onPress={onPress}
-      accessibilityRole="button"
+      accessibilityRole={multi ? 'checkbox' : 'radio'}
       accessibilityLabel={label}
-      accessibilityState={{ selected: on }}
+      accessibilityState={{ selected: on, checked: on }}
       style={({ pressed }) => [
-        { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 6, paddingLeft: 7, paddingRight: 10, borderWidth: 2, borderRadius: 3, borderColor: on ? C.goldLine : C.stoneLine, backgroundColor: on ? C.frameGoldBg : C.chipBg },
-        !on && { opacity: 0.72 },
-        pressed && { opacity: 0.55 },
+        { flexDirection: 'row', alignItems: 'center', gap: 7, paddingVertical: 5, paddingRight: 10 },
+        pressed && { opacity: 0.6 },
       ]}
     >
+      <Indicator on={on} size={18} />
       {icon ? <KitGem size={18} icon={icon} color={color} /> : null}
       <Text style={{ fontFamily: FONT.display, fontSize: 9, color: on ? C.title : C.inkMuted }}>{label}</Text>
     </Pressable>
@@ -287,19 +288,9 @@ export function WoodPlank({ colors = [C.stoneLight, C.stoneDark], angle = 180, s
   );
 }
 
-/* ---------- brush divider (svg) ---------- */
+/* ---------- divider — genuine RPGUI hr ---------- */
 export function BrushDivider({ style }) {
-  return (
-    <View style={[{ width: '100%', height: 10, opacity: 0.5 }, style]}>
-      <Svg width="100%" height="100%" viewBox="0 0 300 12" preserveAspectRatio="none">
-        <Path
-          d="M2 7 C 40 3, 70 9, 110 6 C 150 3, 185 8, 220 6 C 250 4, 280 8, 298 6 L 298 8 C 280 10, 250 6, 220 8 C 185 10, 150 5, 110 8 C 70 11, 40 5, 2 9 Z"
-          fill={C.stoneMid}
-          opacity={0.4}
-        />
-      </Svg>
-    </View>
-  );
+  return <KitHr style={style} />;
 }
 
 /* ---------- seal 印 ---------- */
