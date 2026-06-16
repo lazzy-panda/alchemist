@@ -4,7 +4,7 @@ import { View, Text, Pressable, Platform, Animated, PanResponder } from 'react-n
 import Svg, { Path } from 'react-native-svg';
 import { C, FONT } from './theme';
 import { CATS, STAT } from './data';
-import { KitCheck, KitGem, KitPanel } from './kit';
+import { KitGem, KitPanel } from './kit';
 import { QiTag } from './badges';
 import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
@@ -14,29 +14,37 @@ const USE_NATIVE = !WEB;
 const SWIPE_MAX = 96;
 const SWIPE_TRIG = 64;
 
-function useDrawTween(active, dur = 340) {
-  const [v, setV] = useState(active ? 1 : 0);
-  useEffect(() => {
-    if (!active) { setV(0); return; }
-    let raf, start;
-    const tick = (t) => {
-      if (start == null) start = t;
-      const k = Math.min(1, (t - start) / dur);
-      setV(1 - Math.pow(1 - k, 3));
-      if (k < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => raf && cancelAnimationFrame(raf);
-  }, [active]);
-  return v;
+function CheckGlyph({ size = 20 }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M4 13 L 10 18 L 20 6" fill="none" stroke="#fff" strokeWidth={3.6} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
 }
 
-function CheckMark() {
-  const v = useDrawTween(false);
+/* pixel "equipment slot" checkbox — empty carved recess ↔ raised jade slot with a check;
+   matches the carved card / gold-slot language instead of a generic web circle. */
+function Checkbox({ on, pressed }) {
+  const size = 32;
   return (
-    <Svg width={21} height={21} viewBox="0 0 24 24">
-      <Path d="M4 13 L 10 18 L 20 6" fill="none" stroke="#fff" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={28} strokeDashoffset={28 * (1 - v)} />
-    </Svg>
+    <View
+      style={{
+        width: size,
+        height: size,
+        borderRadius: 3,
+        borderWidth: 2,
+        borderColor: on ? C.jadeLine : '#15110b',
+        backgroundColor: on ? C.jade : '#241f19',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: on
+          ? 'inset 0 2px 0 0 rgba(255,255,255,0.22), 0 2px 0 0 ' + C.jadeLine
+          : 'inset 0 2px 4px 0 rgba(0,0,0,0.55), inset 0 0 0 1px rgba(168,144,102,0.18)',
+        transform: pressed ? [{ scale: 1.08 }] : [],
+      }}
+    >
+      {on ? <CheckGlyph size={20} /> : null}
+    </View>
   );
 }
 
@@ -121,15 +129,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
       ) : (
         <View ref={checkRef} style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
           <Pressable onPress={handleCheck} hitSlop={8} accessibilityRole="button" accessibilityState={{ checked: !!p.done }} accessibilityLabel={(p.done ? 'Undo: ' : 'Do: ') + p.name}>
-            {({ pressed }) =>
-              p.done ? (
-                <KitCheck size={36} style={{ transform: pressed ? [{ scale: 1.07 }] : [] }} />
-              ) : (
-                <View style={{ width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.stoneMid, backgroundColor: C.paperWarm, transform: pressed ? [{ scale: 1.07 }] : [] }}>
-                  <CheckMark />
-                </View>
-              )
-            }
+            {({ pressed }) => <Checkbox on={p.done} pressed={pressed} />}
           </Pressable>
         </View>
       )}
