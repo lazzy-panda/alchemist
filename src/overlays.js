@@ -5,7 +5,7 @@ import { C, FONT, shade } from './theme';
 import { CATS, STATS, PRACTICES } from './data';
 import { ascension } from './quotes';
 import { Card, Btn, IconBtn, Gradient, Gloss, Han, T, SectionHead, Seal, Stepper, SelChip, Field, Input, ts, kf, KF, EASE } from './ui';
-import { RewardMedal, QiTag, StateChip, MedalPill } from './badges';
+import { RewardMedal, QiTag, StateChip, MedalPill, Bar } from './badges';
 import { CircularTimer } from './svg';
 import { PracticeCard } from './PracticeCard';
 import { KitPanel, KitClose, KitGem, KitBanner } from './kit';
@@ -65,11 +65,16 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
             </View>
           </View>
 
-          {/* timer */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 10, marginBottom: 6 }}>
-            <TStep label="−5m" onPress={() => adjust(-5)} disabled={running} />
-            <CircularTimer remaining={remaining} total={total} running={running} size={234} />
-            <TStep label="+5m" onPress={() => adjust(5)} disabled={running} />
+          {/* timer — native rpgui-progress + time readout */}
+          <View style={{ marginTop: 14, marginBottom: 8 }}>
+            <Text style={{ fontFamily: FONT.display, fontSize: 40, fontVariant: ['tabular-nums'], color: C.title, textAlign: 'center', marginBottom: 18, ...ts('rgba(0,0,0,0.5)', 0, 2, 2) }}>
+              {String(Math.floor(remaining / 60)).padStart(2, '0')}:{String(remaining % 60).padStart(2, '0')}
+            </Text>
+            <Bar pct={total > 0 ? (remaining / total) * 100 : 0} color="qi" />
+            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 12, marginTop: 16 }}>
+              <TStep label="−5m" onPress={() => adjust(-5)} disabled={running} />
+              <TStep label="+5m" onPress={() => adjust(5)} disabled={running} />
+            </View>
           </View>
 
           {/* controls */}

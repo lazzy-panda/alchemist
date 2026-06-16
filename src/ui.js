@@ -251,18 +251,18 @@ export function Field({ label, children, style }) {
   );
 }
 // flat pixel field — a dark recessed "well" with a 2px border, to match the RPGUI pixel frames
+// native RPGUI input look: grey #4e4a4e field + white text (the black pixel outline comes
+// from RPGUI's `.rpgui-content input` text-shadow CSS); gold border on focus.
 function KitField({ props, radius, fontSize, padV, padH, borderW }) {
   const [focus, setFocus] = React.useState(false);
   return (
-    <View style={{ width: '100%', borderRadius: radius, borderWidth: borderW, borderColor: focus ? C.jade : C.stoneLine, backgroundColor: C.paper, boxShadow: focus ? '0px 0px 0px 2px rgba(94,200,150,0.35), inset 0px 2px 4px rgba(0,0,0,0.45)' : 'inset 0px 2px 4px rgba(0,0,0,0.4)' }}>
-      <TextInput
-        {...props}
-        onFocus={(e) => { setFocus(true); props.onFocus && props.onFocus(e); }}
-        onBlur={(e) => { setFocus(false); props.onBlur && props.onBlur(e); }}
-        placeholderTextColor={C.inkFaint}
-        style={[{ width: '100%', fontFamily: FONT.ui, fontSize, color: C.ink, backgroundColor: 'transparent', paddingVertical: padV, paddingHorizontal: padH, ...(WEB ? { outlineStyle: 'none' } : null) }, props.style]}
-      />
-    </View>
+    <TextInput
+      {...props}
+      onFocus={(e) => { setFocus(true); props.onFocus && props.onFocus(e); }}
+      onBlur={(e) => { setFocus(false); props.onBlur && props.onBlur(e); }}
+      placeholderTextColor="rgba(255,255,255,0.45)"
+      style={[{ width: '100%', fontFamily: FONT.ui, fontSize, color: '#fff', backgroundColor: '#4e4a4e', paddingVertical: padV, paddingHorizontal: padH, borderWidth: 2, borderColor: focus ? C.gold : '#2c2a2c', ...(WEB ? { outlineStyle: 'none' } : null) }, props.style]}
+    />
   );
 }
 export function Input(props) {
@@ -294,32 +294,11 @@ export function BrushDivider({ style }) {
 }
 
 /* ---------- seal 印 ---------- */
-export function Seal({ size = 48, fontSize = 26, stamp = true, style }) {
-  const se = angleToStartEnd(160);
+// "seal" = the genuine RPGUI checked checkbox sprite (with a little stamp pop)
+export function Seal({ size = 48, stamp = true, style }) {
   return (
     <View style={style}>
-      <LinearGradient
-        colors={['#e0654a', '#a83a24']}
-        start={se.start}
-        end={se.end}
-        style={[
-          {
-            width: size,
-            height: size,
-            borderRadius: R.seal,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderWidth: 3,
-            borderColor: C.redLine,
-            boxShadow: `inset 0px 2px 0px rgba(255,255,255,0.3), 0px 4px 0px ${C.redLine}, 0px 8px 16px rgba(120,30,16,0.4)`,
-            transform: [{ rotate: '-4deg' }],
-          },
-          stamp && kf(KF.sealStamp, 0.5, { ease: EASE.overshoot, fill: 'forwards' }),
-        ]}
-      >
-        <Text style={{ fontFamily: FONT.display, color: '#fff', fontSize: Math.round(fontSize * 0.7), ...ts('rgba(0,0,0,0.4)', 0, 1, 2) }}>✓</Text>
-        <View pointerEvents="none" style={{ position: 'absolute', left: 4, right: 4, top: 4, bottom: 4, borderWidth: 2, borderColor: 'rgba(255,255,255,0.4)', borderRadius: 5 }} />
-      </LinearGradient>
+      <KitCheckbox on size={size} style={stamp ? kf(KF.sealStamp, 0.5, { ease: EASE.overshoot, fill: 'forwards' }) : null} />
     </View>
   );
 }
