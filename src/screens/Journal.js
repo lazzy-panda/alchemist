@@ -1,4 +1,6 @@
-/* Alchemist — Journal screen (RPGUI): month hero, kindle heatmap, living growth chart, scroll of deeds */
+/* Alchemist — Journal screen (RPGUI): month hero, kindle heatmap, living growth chart, scroll of deeds.
+   The heatmap / growth chart are data visualisations (the user's own stats & history) drawn as SVG
+   inside native rpgui-container panels — kept as graphics by design (no chart widget exists in RPGUI). */
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from '../theme';
@@ -88,9 +90,7 @@ export function JournalScreen({ ctx }) {
   return (
     <ScreenScroll>
       <PadView wide={wide}>
-        {/* ---- month hero: dominant metric + streak + month progress ----
-             grey frame (its border-image outset is small; golden's ~18px outset both hides
-             the title above it and mis-sizes with this much content). */}
+        {/* ---- month hero: dominant metric + streak + month progress ---- */}
         <Text style={[T.eyebrow, kf(KF.fadeUp, 0.4, { ease: EASE.out })]}>Chronicle of the Path</Text>
         <Text accessibilityRole="header" style={[T.displayM, { marginTop: 6, marginBottom: 12 }, kf(KF.fadeUp, 0.45, { ease: EASE.out, delay: 0.04 })]}>Journal · {MONTH}</Text>
         <Card frame="grey" style={[{ marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.08 })]}>
@@ -110,7 +110,7 @@ export function JournalScreen({ ctx }) {
           </View>
         </Card>
 
-        {/* ---- kindle heatmap ---- */}
+        {/* ---- kindle heatmap (data viz, kept as graphics) ---- */}
         <SectionHead title="Kindle map" right={`${active}/${total}`} style={{ marginTop: 0 }} />
         <Card style={[{ padding: 16, marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.12 })]}>
           <View style={{ flexDirection: 'row', gap: 5, marginBottom: 8 }}>
@@ -137,7 +137,7 @@ export function JournalScreen({ ctx }) {
           </View>
         </Card>
 
-        {/* ---- living growth chart ---- */}
+        {/* ---- living growth chart (data viz, kept as graphics) ---- */}
         <SectionHead title="Stat growth" style={{ marginTop: 0 }} />
         <Card style={[{ padding: 16, marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.16 })]}>
           <GrowthChart series={GROWTH} keys={growKeys} />
