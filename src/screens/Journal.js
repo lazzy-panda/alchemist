@@ -1,60 +1,44 @@
-/* Alchemist — Journal screen (RPGUI): month hero, kindle heatmap, living growth chart, scroll of deeds.
-   The heatmap / growth chart are data visualisations (the user's own stats & history) drawn as SVG
-   inside native rpgui-container panels — kept as graphics by design (no chart widget exists in RPGUI). */
+/* Alchemist — Journal screen (RPGUI native): month hero, kindle grid (checkboxes),
+   stat growth (progress bars), scroll of deeds. No custom SVG — all native RPGUI. */
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from '../theme';
 import { HEAT, GROWTH, STAT, STATS, RELICS } from '../data';
 import { ScreenScroll, PadView } from '../layout';
-import { Card, T, SectionHead, Gradient, kf, KF, EASE } from '../ui';
+import { Card, T, SectionHead, kf, KF, EASE } from '../ui';
 import { StateChip, Bar } from '../badges';
-import { GrowthChart } from '../svg';
+import { KitCheckbox } from '../kit';
 
 const MONTH = (() => { try { return new Date().toLocaleString('en-US', { month: 'long' }); } catch (e) { return 'June'; } })();
 
-// heat levels — solid glossy green tiles matching the kit's green progress segments
-const HEAT_STYLES = {
-  0: { colors: ['#403a31', '#332e27'], border: 'rgba(120,108,80,0.45)', text: '#7d735d' },
-  1: { colors: ['#a9d6bd', '#8cc4a4'], border: 'rgba(35,92,62,0.45)', text: C.jadeDeep },
-  2: { colors: ['#63b88f', '#3f9468'], border: C.jadeDeep, text: '#fff' },
-  3: { colors: ['#3e8c60', '#235c3e'], border: C.jadeLine, text: '#fff' },
-};
-
+// each day is a native RPGUI checkbox: checked = practiced, unchecked = rest day
 function HeatCell({ v, n, today, onPress, delay }) {
-  const st = HEAT_STYLES[v];
   return (
-    <Pressable style={{ flex: 1 }} onPress={onPress} accessibilityRole="button" accessibilityLabel={`Day ${n}, intensity ${v}`}>
-      <Gradient
-        colors={st.colors}
-        angle={180}
-        style={[
-          { aspectRatio: 1, borderRadius: 7, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: today ? C.gold : st.border, boxShadow: today ? `0px 0px 0px 2px ${C.gold}, inset 0px 2px 0px rgba(255,255,255,0.4)` : 'inset 0px 2px 0px rgba(255,255,255,0.35), inset 0px -2px 4px rgba(0,0,0,0.14)' },
-          kf(KF.fadeUp, 0.4, { ease: EASE.out, delay }),
-        ]}
-      >
-        <Text style={{ fontFamily: FONT.display, fontSize: 9, color: st.text }}>{n}</Text>
-      </Gradient>
+    <Pressable style={{ flex: 1, alignItems: 'center' }} onPress={onPress} accessibilityRole="button" accessibilityState={{ checked: v > 0 }} accessibilityLabel={`Day ${n}${v > 0 ? ', practiced' : ', rest'}`}>
+      <View style={[{ aspectRatio: 1, width: '100%', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: today ? C.gold : 'transparent', borderRadius: 3 }, kf(KF.fadeUp, 0.4, { ease: EASE.out, delay })]}>
+        <KitCheckbox on={v > 0} size={30} />
+      </View>
     </Pressable>
   );
 }
 
-function LegendSwatch({ v }) {
-  const st = HEAT_STYLES[v];
-  return <Gradient colors={st.colors} angle={180} style={{ width: 13, height: 13, borderRadius: 4, borderWidth: 2, borderColor: st.border }} />;
-}
-
-/* one growth line in the legend: gem + name + current value + delta */
-function GrowthLegend({ k }) {
+// native RPGUI progress bar per stat (replaces the line chart)
+const GROW_BAR = { energy: 'energy', focus: 'kind', flex: 'flex' };
+function GrowthRow({ k }) {
   const s = STAT[k];
   const arr = GROWTH[k] || [];
   const cur = arr[arr.length - 1] ?? 0;
   const delta = cur - (arr[0] ?? 0);
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 4, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: C.chipBg }}>
-      <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: s.color }} />
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: s.color }}>{s.name}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.ink }}>Lv {cur}</Text>
-      {delta > 0 ? <Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.jadeLight }}>▲{delta}</Text> : null}
+    <View style={{ marginBottom: 14 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+        <Text style={{ fontFamily: FONT.display, fontSize: 9, color: s.color }}>{s.name}</Text>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>Lv {cur}</Text>
+          {delta > 0 ? <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.jadeLight }}>▲{delta}</Text> : null}
+        </View>
+      </View>
+      <Bar pct={(cur / 10) * 100} color={GROW_BAR[k] || k} />
     </View>
   );
 }
@@ -110,7 +94,7 @@ export function JournalScreen({ ctx }) {
           </View>
         </Card>
 
-        {/* ---- kindle heatmap (data viz, kept as graphics) ---- */}
+        {/* ---- kindle grid (native checkboxes) ---- */}
         <SectionHead title="Kindle map" right={`${active}/${total}`} style={{ marginTop: 0 }} />
         <Card style={[{ padding: 16, marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.12 })]}>
           <View style={{ flexDirection: 'row', gap: 5, marginBottom: 8 }}>
@@ -129,24 +113,16 @@ export function JournalScreen({ ctx }) {
               </View>
             ))}
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 14 }}>
-            <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint }}>Tap a day for its scroll</Text>
-            <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint }}>rest</Text>
-            {[0, 1, 2, 3].map((l) => <LegendSwatch key={l} v={l} />)}
-            <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint }}>ablaze</Text>
-          </View>
+          <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint, marginTop: 14 }}>☑ practiced · ☐ rest — tap a day for its scroll</Text>
         </Card>
 
-        {/* ---- living growth chart (data viz, kept as graphics) ---- */}
+        {/* ---- stat growth (native progress bars) ---- */}
         <SectionHead title="Stat growth" style={{ marginTop: 0 }} />
         <Card style={[{ padding: 16, marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.16 })]}>
-          <GrowthChart series={GROWTH} keys={growKeys} />
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 14 }}>
-            {growKeys.map((k) => <GrowthLegend key={k} k={k} />)}
-          </View>
+          {growKeys.map((k) => <GrowthRow key={k} k={k} />)}
         </Card>
 
-        {/* ---- scroll of deeds (summary, not a metric grid) ---- */}
+        {/* ---- scroll of deeds ---- */}
         <SectionHead title="This month" style={{ marginTop: 0 }} />
         <Card style={[{ paddingHorizontal: 16, paddingVertical: 4, marginBottom: 8 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.2 })]}>
           <DeedRow glyph="⏳" label="Minutes spent in practice" value={minutes} color={C.jadeLight} />

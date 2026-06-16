@@ -6,7 +6,6 @@ import { STATS, CATS, PRACTICES, PERKS, RELICS } from '../data';
 import { ScreenScroll, PadView } from '../layout';
 import { Card, T, kf, KF, EASE } from '../ui';
 import { ResourceBar, StatMedal, Bar, Mh } from '../badges';
-import { RadarMandala } from '../svg';
 import { KitGem } from '../kit';
 
 function Section({ title, right, defaultOpen = false, children }) {
@@ -77,8 +76,21 @@ export function CharacterScreen({ ctx }) {
         <View style={{ alignItems: 'center' }}>
           <Text style={[T.eyebrow, { marginBottom: 6 }]}>Master Scroll</Text>
           <Text accessibilityRole="header" style={[T.displayL, { marginBottom: 16 }]}>Stage {stage.lvl}</Text>
-          <RadarMandala values={radarValues} size={240} animate />
-          <Text style={[T.caption, { textAlign: 'center', marginTop: 12, maxWidth: 280, lineHeight: 14 }]}>Facets of mastery — the farther the vertex, the higher the stat</Text>
+          <Card style={{ alignSelf: 'stretch' }}>
+            <Text style={[T.caption, { marginBottom: 12 }]}>Facets of mastery</Text>
+            {STATS.map((s, i) => {
+              const sl = statLevels[s.key];
+              const mp = Math.min(100, ((sl.lvl + sl.xp / sl.next) / 12) * 100);
+              return (
+                <View key={s.key} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: i === STATS.length - 1 ? 0 : 9 }}>
+                  <StatMedal stat={s.key} size={20} />
+                  <Text style={{ width: 70, fontFamily: FONT.display, fontSize: 8, color: s.color }}>{s.name}</Text>
+                  <View style={{ flex: 1 }}><Bar pct={mp} color={s.key} /></View>
+                  <Text style={{ width: 30, textAlign: 'right', fontFamily: FONT.display, fontSize: 8, color: C.ink }}>Lv {sl.lvl}</Text>
+                </View>
+              );
+            })}
+          </Card>
           {onShowHelp ? (
             <Pressable onPress={onShowHelp} hitSlop={8} accessibilityRole="button" accessibilityLabel="How it works" style={{ marginTop: 10 }}>
               <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>How it works?</Text>

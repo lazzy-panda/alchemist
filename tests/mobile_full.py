@@ -106,7 +106,7 @@ def main():
         # ===== D. CHARACTER =====
         try:
             goto_tab(page, "Character")
-            check("D1 Character: radar chart (svg) present", count_aria(page, "svg") > 0)
+            check("D1 Character: native mastery panel present", has_text(page, "Facets of mastery") and count_aria(page, ".rpgui-progress") >= 6)
             rclick(page, 'button[aria-label="Perks"]'); page.wait_for_timeout(500)
             check("D2 Character: Perks section expands", page.evaluate(
                 "()=>{const t=document.body.innerText;return /Iron|Shirt|Supple|Body|Lv|Reach|🔒/.test(t)}"))
@@ -174,7 +174,7 @@ def main():
         # ===== H. JOURNAL =====
         try:
             goto_tab(page, "Journal")
-            check("H1 Journal: growth chart (svg) present", count_aria(page, "svg") > 0)
+            check("H1 Journal: native growth bars present", page.evaluate("()=>/Stat growth/i.test(document.body.innerText)") and count_aria(page, ".rpgui-progress") >= 3)
             cell = page.query_selector('button[aria-label^="День"], button[aria-label^="Day"]')
             day_ok = False
             if cell:
