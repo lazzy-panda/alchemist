@@ -225,8 +225,8 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
               </View>
               <Stepper
                 value={dur}
-                onDec={() => setDur(Math.max(1, dur - (unit === 'reps' ? 1 : 5)))}
-                onInc={() => setDur(Math.min(unit === 'reps' ? 999 : 180, dur + (unit === 'reps' ? 1 : 5)))}
+                onDec={() => setDur(Math.max(1, dur - 1))}
+                onInc={() => setDur(Math.min(unit === 'reps' ? 999 : 180, dur + 1))}
                 suffix={unit === 'reps' ? ' ' + repWord(dur) : ' мин'}
               />
             </Field>

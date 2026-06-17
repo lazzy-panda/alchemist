@@ -65,7 +65,7 @@ export function useGame(userId) {
       if (!p) return curr;
 
       if (!!p.done === value) {
-        return curr.map((x) => (x.id === p.id ? { ...x, done: value, today: true } : x));
+        return curr.map((x) => (x.id === p.id ? { ...x, done: value } : x));
       }
       const sign = value ? 1 : -1;
       const mult = p.mult || 1;
@@ -112,7 +112,7 @@ export function useGame(userId) {
         });
       }
 
-      return curr.map((x) => (x.id === p.id ? { ...x, done: value, today: true } : x));
+      return curr.map((x) => (x.id === p.id ? { ...x, done: value } : x));
     });
   }, []);
 

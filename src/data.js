@@ -9,6 +9,7 @@ export const STATS = [
   { key: 'focus', icon: 'bullseye', short: 'ФК', name: 'Фокус', color: '#7AA6E0' },
   { key: 'kind', icon: 'mood-happy', short: 'ДБ', name: 'Доброта', color: '#E2A0C6' },
   { key: 'sex', icon: 'drop-full', short: 'ЖЗ', name: 'Жизненность', color: '#BC8AD8' },
+  { key: 'know', icon: 'book', short: 'ЗН', name: 'Знания', color: '#D9C173' },
 ];
 export const STAT = Object.fromEntries(STATS.map((s) => [s.key, s]));
 
@@ -77,6 +78,7 @@ export const STAT_LEVELS = {
   focus: { lvl: 8, xp: 88, next: 110 },
   kind: { lvl: 6, xp: 41, next: 95 },
   sex: { lvl: 3, xp: 22, next: 70 },
+  know: { lvl: 2, xp: 15, next: 75 },
 };
 
 // ---- perks ----
