@@ -75,7 +75,8 @@ def main():
         try: page.fill('input[placeholder="Реальный пример…"]', "Сохранённая заметка")
         except Exception: pass
         rclick(page, '[aria-label="Отметить"]'); page.wait_for_timeout(800)
-        DIARY_Q = "()=>(localStorage.getItem('alchemist_diary_guest')||'').includes('\\\"done\\\":true')"
+        # guest is now a Supabase anon user (uuid), so the diary key is dynamic — find it
+        DIARY_Q = "()=>{const k=Object.keys(localStorage).find(x=>x.startsWith('alchemist_diary_'));return !!k&&(localStorage.getItem(k)||'').includes('\\\"done\\\":true')}"
         diary_checked_before = page.evaluate(DIARY_Q)
 
         # sanity (pre-reload)

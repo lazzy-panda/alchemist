@@ -1,38 +1,28 @@
-/* Alchemist — authentication (local accounts via AsyncStorage, persistent session).
-   Self-contained so the deployed app needs no backend. The API surface
-   (register / login / signOut) is intentionally swappable for a real backend later. */
+/* Alchemist — authentication backed by Supabase Auth (real accounts + anonymous guest,
+   sessions persisted by supabase-js). Same API surface (register/login/guest/signOut) as the
+   old localStorage mock, so screens are unchanged. */
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const USERS_KEY = 'alchemist_users_v1';
-const SESSION_KEY = 'alchemist_session_v1';
+import { supabase, ensureUserRow } from './supabase';
 
 const AuthCtx = createContext(null);
 export const useAuth = () => useContext(AuthCtx);
 
-// lightweight, cross-platform salted hash (demo-grade gate, not crypto-strong)
-function hash(str) {
-  let h = 5381;
-  const s = 'alchemist::' + str;
-  for (let i = 0; i < s.length; i++) {
-    h = ((h << 5) + h) ^ s.charCodeAt(i);
-    h = h >>> 0;
-  }
-  return h.toString(16);
+function toUser(session) {
+  const u = session?.user;
+  if (!u) return null;
+  const name = u.user_metadata?.name || (u.is_anonymous ? 'Странник' : (u.email || '').split('@')[0] || 'Алхимик');
+  return { id: u.id, email: u.email || '', name, anon: !!u.is_anonymous };
 }
 
-async function readUsers() {
-  try {
-    const raw = await AsyncStorage.getItem(USERS_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) {
-    return {};
-  }
-}
-async function writeUsers(users) {
-  try {
-    await AsyncStorage.setItem(USERS_KEY, JSON.stringify(users));
-  } catch (e) {}
+function mapErr(error) {
+  const m = (error?.message || '').toLowerCase();
+  if (m.includes('already') && m.includes('registered')) return 'Аккаунт уже существует';
+  if (m.includes('user already exists')) return 'Аккаунт уже существует';
+  if (m.includes('invalid login') || m.includes('invalid credentials')) return 'Неверная почта или пароль';
+  if (m.includes('password')) return 'Пароль не короче 6 символов';
+  if (m.includes('email')) return 'Неверная почта';
+  if (m.includes('network') || m.includes('fetch')) return 'Нет соединения с сервером';
+  return error?.message || 'Ошибка';
 }
 
 export function AuthProvider({ children }) {
@@ -40,64 +30,49 @@ export function AuthProvider({ children }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const email = await AsyncStorage.getItem(SESSION_KEY);
-        if (email) {
-          const users = await readUsers();
-          const u = users[email.toLowerCase()];
-          if (u && !cancelled) setUser({ id: u.id, name: u.name, email: u.email });
-        }
-      } catch (e) {}
-      if (!cancelled) setReady(true);
-    })();
-    return () => { cancelled = true; };
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      const u = toUser(data.session);
+      setUser(u);
+      if (u) ensureUserRow(u.id, u.name);
+      setReady(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      const u = toUser(session);
+      setUser(u);
+      if (u) ensureUserRow(u.id, u.name);
+    });
+    return () => { mounted = false; sub.subscription.unsubscribe(); };
   }, []);
 
   const register = useCallback(async (name, email, password) => {
-    const e = (email || '').trim().toLowerCase();
     const n = (name || '').trim();
+    const e = (email || '').trim().toLowerCase();
     if (!n) return { error: 'Введите имя' };
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return { error: 'Неверная почта' };
-    if ((password || '').length < 4) return { error: 'Пароль не короче 4 символов' };
-    const users = await readUsers();
-    if (users[e]) return { error: 'Аккаунт уже существует' };
-    const u = { id: 'u' + Date.now(), name: n, email: e, hash: hash(password) };
-    users[e] = u;
-    await writeUsers(users);
-    await AsyncStorage.setItem(SESSION_KEY, e);
-    setUser({ id: u.id, name: u.name, email: u.email });
+    if ((password || '').length < 6) return { error: 'Пароль не короче 6 символов' };
+    const { data, error } = await supabase.auth.signUp({ email: e, password, options: { data: { name: n } } });
+    if (error) return { error: mapErr(error) };
+    if (!data.session) return { error: 'Подтвердите почту по ссылке из письма' }; // only if autoconfirm is ever off
     return { ok: true };
   }, []);
 
   const login = useCallback(async (email, password) => {
     const e = (email || '').trim().toLowerCase();
-    const users = await readUsers();
-    const u = users[e];
-    if (!u) return { error: 'Аккаунт не найден' };
-    if (u.hash !== hash(password)) return { error: 'Неверный пароль' };
-    await AsyncStorage.setItem(SESSION_KEY, e);
-    setUser({ id: u.id, name: u.name, email: u.email });
+    const { error } = await supabase.auth.signInWithPassword({ email: e, password });
+    if (error) return { error: mapErr(error) };
     return { ok: true };
   }, []);
 
   const guest = useCallback(async () => {
-    const e = 'guest@alchemist.local';
-    const users = await readUsers();
-    if (!users[e]) {
-      users[e] = { id: 'guest', name: 'Странник', email: e, hash: hash('guest') };
-      await writeUsers(users);
-    }
-    await AsyncStorage.setItem(SESSION_KEY, e);
-    setUser({ id: users[e].id, name: users[e].name, email: e });
+    const { error } = await supabase.auth.signInAnonymously();
+    if (error) return { error: mapErr(error) };
     return { ok: true };
   }, []);
 
   const signOut = useCallback(async () => {
-    try {
-      await AsyncStorage.removeItem(SESSION_KEY);
-    } catch (e) {}
+    try { await supabase.auth.signOut(); } catch (e) {}
     setUser(null);
   }, []);
 

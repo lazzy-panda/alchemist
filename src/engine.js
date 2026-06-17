@@ -3,6 +3,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PRACTICES, STAT_LEVELS } from './data';
 import { clamp } from './theme';
+import { loadUserData, saveUserField } from './supabase';
 
 export function useGame(userId) {
   const [practices, setPractices] = useState(() => PRACTICES.map((p) => ({ ...p })));
@@ -13,33 +14,43 @@ export function useGame(userId) {
   const [levelUp, setLevelUp] = useState(null);
   const [lastArchived, setLastArchived] = useState(null);
 
-  // persist game state per user. Race-safe: a ref tracks which key has finished hydrating,
-  // so the brief anon→user key switch on reload can't save seeds over real data before load.
+  // persist per user: instant local cache (AsyncStorage) + authoritative cloud (Supabase user_data.game).
+  // Race-safe: hydratedKey gates saves until this user's data has loaded (anon→user switch can't save seeds).
   const KEY = 'alchemist_game_' + (userId || 'anon');
   const hydratedKey = useRef(null);
+  const cloudTimer = useRef(null);
+  const applyGame = (s) => {
+    if (!s) return;
+    if (Array.isArray(s.practices)) setPractices(s.practices);
+    // merge over seed defaults so a legacy/partial save can't crash the Character screen
+    if (s.statLevels) setStatLevels({ ...JSON.parse(JSON.stringify(STAT_LEVELS)), ...s.statLevels });
+    if (s.resources) setResources(s.resources);
+    if (s.stage) setStage(s.stage);
+  };
   useEffect(() => {
     let cancelled = false;
-    hydratedKey.current = null; // block saves for this key until it has loaded
+    hydratedKey.current = null;
     (async () => {
       try {
         const raw = await AsyncStorage.getItem(KEY);
-        if (cancelled) return;
-        if (raw) {
-          const s = JSON.parse(raw);
-          if (Array.isArray(s.practices)) setPractices(s.practices);
-          // merge over seed defaults so a legacy save that's missing a stat key can't crash the Character screen
-          if (s.statLevels) setStatLevels({ ...JSON.parse(JSON.stringify(STAT_LEVELS)), ...s.statLevels });
-          if (s.resources) setResources(s.resources);
-          if (s.stage) setStage(s.stage);
-        }
+        if (!cancelled && raw) applyGame(JSON.parse(raw)); // 1) local cache → instant / offline
       } catch (e) {}
+      if (userId) {
+        const row = await loadUserData(userId); // 2) cloud → authoritative when signed in
+        if (!cancelled && row && row.game) applyGame(row.game);
+      }
       if (!cancelled) hydratedKey.current = KEY;
     })();
     return () => { cancelled = true; };
   }, [KEY]);
   useEffect(() => {
     if (hydratedKey.current !== KEY) return; // don't persist until this key is hydrated
-    AsyncStorage.setItem(KEY, JSON.stringify({ practices, statLevels, resources, stage })).catch(() => {});
+    const snap = { practices, statLevels, resources, stage };
+    AsyncStorage.setItem(KEY, JSON.stringify(snap)).catch(() => {});
+    if (userId) {
+      clearTimeout(cloudTimer.current);
+      cloudTimer.current = setTimeout(() => saveUserField(userId, 'game', snap), 600); // debounce cloud writes
+    }
   }, [practices, statLevels, resources, stage, KEY]);
 
   const setDone = useCallback((target, value) => {

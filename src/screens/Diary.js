@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loadUserData, saveUserField } from '../supabase';
 import { C, FONT } from '../theme';
 import { DIARY_TIMES, DIARY_SETS } from '../data';
 import { ScreenScroll, PadView } from '../layout';
@@ -77,7 +78,7 @@ function DiaryCheck({ v, c, isOpen, onHeaderPress, onComplete, time, onChange, r
 }
 
 export function DiaryScreen({ ctx }) {
-  const { wide, diaryKey = 'alchemist_diary_v2' } = ctx || {};
+  const { wide, diaryKey = 'alchemist_diary_v2', userId } = ctx || {};
   const fx = useEffects();
   const TIMES = DIARY_TIMES;
   const SETS = DIARY_SETS;
@@ -101,6 +102,7 @@ export function DiaryScreen({ ctx }) {
   // race-safe persistence: only save once THIS key has hydrated, so the anon→user key
   // switch on reload can't overwrite a saved diary with a fresh/empty one.
   const hydratedKey = useRef(null);
+  const cloudTimer = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -108,9 +110,12 @@ export function DiaryScreen({ ctx }) {
     (async () => {
       try {
         const raw = await AsyncStorage.getItem(diaryKey);
-        if (cancelled) return;
-        if (raw) { const d = JSON.parse(raw); if (d.day === dayNum) setData(d); }
+        if (!cancelled && raw) { const d = JSON.parse(raw); if (d.day === dayNum) setData(d); } // local cache
       } catch (e) {}
+      if (userId) {
+        const row = await loadUserData(userId); // cloud → authoritative for today's diary
+        if (!cancelled && row && row.diary && row.diary.day === dayNum) setData(row.diary);
+      }
       if (!cancelled) hydratedKey.current = diaryKey;
     })();
     return () => { cancelled = true; };
@@ -120,6 +125,10 @@ export function DiaryScreen({ ctx }) {
   useEffect(() => {
     if (hydratedKey.current !== diaryKey) return;
     AsyncStorage.setItem(diaryKey, JSON.stringify(data)).then(() => setSaveError((e) => (e ? false : e))).catch(() => setSaveError(true));
+    if (userId) {
+      clearTimeout(cloudTimer.current);
+      cloudTimer.current = setTimeout(() => saveUserField(userId, 'diary', data), 600);
+    }
   }, [data, diaryKey]);
 
   const setKey = data.setKey;
