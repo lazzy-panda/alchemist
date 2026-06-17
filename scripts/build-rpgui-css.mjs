@@ -50,8 +50,8 @@ const overrides = `
 .rpgui-content .rpgui-container { text-align: left !important; }
 /* RPGUI applies image-rendering: pixelated globally; keep our vector art (radar/timer/charts) crisp */
 .rpgui-content svg, .rpgui-content svg * { image-rendering: auto !important; }
-/* Cyrillic-capable pixel font (VT323) everywhere, incl. native RPGUI button/input/label text */
-.rpgui-content, .rpgui-content p, .rpgui-content input, .rpgui-content textarea, .rpgui-content label, .rpgui-content button { font-family: 'VT323', monospace !important; }
+/* Cyrillic-capable pixel font (Pixelify Sans) everywhere, incl. native RPGUI button/input/label text */
+.rpgui-content, .rpgui-content p, .rpgui-content input, .rpgui-content textarea, .rpgui-content label, .rpgui-content button { font-family: 'Pixelify Sans', monospace !important; }
 /* 2× font scale: RPGUI native text (buttons/inputs/labels) is sized in em relative to .rpgui-content;
    doubling its base (rpgui.css sets 0.8em ≈ 12.8px → 25.6px) doubles that text to match the doubled RN Text sizes */
 .rpgui-content { font-size: 25.6px !important; }

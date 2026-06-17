@@ -151,6 +151,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
   const [cat, setCat] = useState(practice?.cat || 'med');
   const [dur, setDur] = useState(practice?.dur || 15);
   const [rewards, setRewards] = useState(practice?.r ? { ...practice.r } : {});
+  const [icon, setIcon] = useState(practice?.icon || '');
   const [nameError, setNameError] = useState('');
   const [confirmArchive, setConfirmArchive] = useState(false);
 
@@ -211,7 +212,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
                     if (!trimmed) { setNameError('Введите название практики'); return; }
                     const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
                     if (dup) { setNameError('Практика с таким названием уже существует'); return; }
-                    onSave({ id: practice?.id, name: trimmed, cat, dur, r: rewards, qi: practice?.qi ?? 2, today: practice?.today, done: practice?.done });
+                    onSave({ id: practice?.id, name: trimmed, cat, dur, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, today: isNew ? true : practice?.today, done: practice?.done });
                   }}
                 >
                   Сохранить

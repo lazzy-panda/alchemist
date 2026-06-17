@@ -1,4 +1,4 @@
-/* Web: inject RPGUI css + VT323 (Cyrillic pixel font), and wrap the app in a .rpgui-content
+/* Web: inject RPGUI css + Pixelify Sans (Cyrillic pixel font), and wrap the app in a .rpgui-content
    scope so RPGUI's styles apply. The art is NOT base64-inlined into the bundle —
    the generated CSS carries `url("RPGUIIMG:<path>")` placeholders that we swap for
    Metro-hashed asset uris at runtime (keeps ~1 MB of PNGs out of the JS bundle). */
@@ -32,7 +32,7 @@ function inject() {
   vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=VT323&display=swap';
+  link.href = 'https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap';
   document.head.appendChild(link);
   const style = document.createElement('style');
   style.id = 'rpgui-css';

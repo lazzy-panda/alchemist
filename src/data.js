@@ -27,14 +27,14 @@ export const CATS = {
 let _id = 0;
 const P = (o) => ({ id: 'p' + ++_id, ...o });
 export const PRACTICES = [
-  P({ name: 'Самомассаж в душе', cat: 'body', dur: 5, r: { strength: 2, energy: 1 }, qi: 2, today: true, done: true }),
+  P({ name: 'Самомассаж в душе', cat: 'body', dur: 5, r: { strength: 2, energy: 1 }, qi: 2, today: true }),
   P({ name: 'Суставная гимнастика', cat: 'body', dur: 10, r: { flex: 3 }, qi: 1 }),
   P({ name: 'Даосская медитация', cat: 'med', dur: 20, r: { focus: 3, energy: 2 }, qi: 4, today: true }),
   P({ name: 'Шесть целебных звуков', cat: 'qi', dur: 12, r: { energy: 2, kind: 2 }, qi: 3, today: true }),
   P({ name: 'Цигун', cat: 'qi', dur: 15, r: { energy: 3, flex: 1 }, qi: 3, today: true }),
   P({ name: 'Самомассаж', cat: 'body', dur: 8, r: { strength: 2, energy: 1 }, qi: 1, today: true }),
   P({ name: 'Чайная церемония', cat: 'heart', dur: 10, r: { kind: 1 }, qi: 1 }),
-  P({ name: 'Дыхание Минмэнь x16', cat: 'qi', dur: 5, r: { energy: 2, sex: 2 }, qi: 3, today: true, done: true }),
+  P({ name: 'Дыхание Минмэнь x16', cat: 'qi', dur: 5, r: { energy: 2, sex: 2 }, qi: 3, today: true }),
   P({ name: 'Прохладный ветер', cat: 'qi', dur: 7, r: { energy: 2 }, qi: 2 }),
   P({ name: 'Сильный ветер', cat: 'qi', dur: 10, r: { strength: 3, energy: 1 }, qi: -4 }),
   P({ name: 'Изучение учения', cat: 'know', dur: 30, r: { focus: 2, kind: 3 }, qi: 2 }),

@@ -103,10 +103,10 @@ export const R = {
 };
 
 export const FONT = {
-  // VT323 — pixel font WITH Cyrillic (Press Start 2P can't render Russian); native keeps system default
-  display: WEB ? 'VT323' : undefined,
-  ui: WEB ? 'VT323' : undefined,
-  han: WEB ? 'VT323' : undefined,
+  // Pixelify Sans — blocky pixel font WITH Cyrillic (Press Start 2P has no Russian; VT323 read too soft); native keeps system default
+  display: WEB ? 'Pixelify Sans' : undefined,
+  ui: WEB ? 'Pixelify Sans' : undefined,
+  han: WEB ? 'Pixelify Sans' : undefined,
 };
 
 // box-shadow strings (RN 0.85 + react-native-web both support boxShadow)
