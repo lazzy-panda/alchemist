@@ -7,6 +7,8 @@ Covers:
   - Diary fixes (compact set-chips, colored +/- badges, readable inputs)
   - bottom-sheet reachability (EditorSheet + DayDetailSheet) <- the open bug
 
+UI is in Russian (VT323 pixel font), so selectors use Russian aria-labels/text.
+
 Usage:
   python3 tests/mobile_smoke.py [--url http://localhost:8081] [--shots /tmp/alch]
 Exit code 0 = all pass, 1 = at least one failure.
@@ -15,7 +17,7 @@ import sys, os, argparse
 from playwright.sync_api import sync_playwright
 
 VW, VH = 390, 844
-NAV = ["Today", "Character", "Practices", "Diary", "Journal"]
+NAV = ["Сегодня", "Герой", "Практики", "Дневник", "Летопись"]
 
 results = []  # (name, passed, detail)
 def check(name, passed, detail=""):
@@ -50,14 +52,14 @@ def main():
         page.goto(args.url, wait_until="domcontentloaded")
         # fresh context => auth screen; enter as guest to reach the app
         try:
-            page.wait_for_selector('button[aria-label="Continue as guest"]', timeout=20000)
-            page.click('button[aria-label="Continue as guest"]')
+            page.wait_for_selector('button[aria-label="Войти как гость"]', timeout=20000)
+            page.click('button[aria-label="Войти как гость"]')
         except Exception:
             pass  # session may already be active
-        page.wait_for_selector('button[aria-label="Diary"]', timeout=45000)
+        page.wait_for_selector('button[aria-label="Дневник"]', timeout=45000)
         # dismiss first-run onboarding overlay (intercepts taps), then let the launch FogVeil clear
         for _ in range(4):
-            b = page.query_selector('button[aria-label="Skip"]') or page.query_selector('button[aria-label="Begin"]')
+            b = page.query_selector('button[aria-label="Пропустить"]') or page.query_selector('button[aria-label="Начать"]')
             if not b:
                 break
             b.click(); page.wait_for_timeout(350)
@@ -69,13 +71,13 @@ def main():
             over = page.evaluate(
                 "(vw)=>{let m=0;document.querySelectorAll('*').forEach(e=>{const w=e.getBoundingClientRect().width;if(w>vw+1&&w<5000)m=Math.max(m,w)});return Math.round(m)}", VW)
             check(f"{label}: no horizontal overflow", over == 0, f"widest={over}px" if over else "")
-            page.screenshot(path=f"{args.shots}/{label.lower()}.png")
+            page.screenshot(path=f"{args.shots}/{label}.png")
 
         # ---- 2. Diary fixes ----
-        goto_tab(page, "Diary")
+        goto_tab(page, "Дневник")
         # 2a set-chips compact (were 60px rpgui-buttons)
         chip_h = page.evaluate("""()=>{
-          const el=[...document.querySelectorAll('*')].find(e=>(e.textContent||'').trim()==='The Ten' && e.children.length<=1);
+          const el=[...document.querySelectorAll('*')].find(e=>(e.textContent||'').trim()==='Десять' && e.children.length<=1);
           if(!el) return -1; let n=el; for(let i=0;i<4;i++){if(n.getBoundingClientRect().height>=20)break;n=n.parentElement;}
           return Math.round(n.getBoundingClientRect().height);}""")
         check("Diary: set-chip compact (<44px)", 0 < chip_h < 44, f"height={chip_h}px")
@@ -90,28 +92,28 @@ def main():
         check("Diary: input font <=11px (no clip)", bool(inp and inp["fs"] <= 11), f"fontSize={inp and inp['fs']}px")
 
         # ---- 3. EditorSheet reachable (THE bug) ----
-        goto_tab(page, "Practices")
-        rclick(page, 'button[aria-label="+ New"]')
+        goto_tab(page, "Практики")
+        rclick(page, 'button[aria-label="+ Новая"]')
         page.wait_for_timeout(700)
-        head = page.evaluate("""()=>{const el=[...document.querySelectorAll('div,p,span')].find(e=>e.children.length===0&&['New practice','Edit practice'].includes((e.textContent||'').trim()));
+        head = page.evaluate("""()=>{const el=[...document.querySelectorAll('div,p,span')].find(e=>e.children.length===0&&['Новая практика','Изменить практику'].includes((e.textContent||'').trim()));
           if(!el)return null;const r=el.getBoundingClientRect();return{top:Math.round(r.top),bottom:Math.round(r.bottom)}}""")
         in_view = bool(head and head["top"] >= 0 and head["top"] < VH - 20)
         check("EditorSheet: heading visible in viewport", in_view, (f"top={head['top']} (vh={VH})" if head else "heading not found"))
         page.screenshot(path=f"{args.shots}/editor-sheet.png")
         # close the editor sheet via its X button before opening the next sheet
-        rclick(page, 'button[aria-label="Close"]')
+        rclick(page, 'button[aria-label="Закрыть"]')
         page.wait_for_timeout(500)
 
         # ---- 4. DayDetailSheet reachable (same Sheet component) ----
-        goto_tab(page, "Journal")
-        cell = page.query_selector('button[aria-label^="День"], button[aria-label^="Day"]')
+        goto_tab(page, "Летопись")
+        cell = page.query_selector('button[aria-label^="День"]')
         if cell:
             try:
                 cell.click(timeout=3000)
             except Exception:
                 cell.evaluate("el => el.click()")
             page.wait_for_timeout(700)
-            dd = page.evaluate("""()=>{const el=[...document.querySelectorAll('div,p,span')].find(e=>e.children.length===0&&/^Day \\d+/.test((e.textContent||'').trim()));
+            dd = page.evaluate("""()=>{const el=[...document.querySelectorAll('div,p,span')].find(e=>e.children.length===0&&/^День \\d+/.test((e.textContent||'').trim()));
               if(!el)return null;const r=el.getBoundingClientRect();return{top:Math.round(r.top)}}""")
             check("DayDetailSheet: heading visible in viewport", bool(dd and 0 <= dd["top"] < VH - 20), (f"top={dd['top']}" if dd else "heading not found"))
             page.screenshot(path=f"{args.shots}/day-sheet.png")

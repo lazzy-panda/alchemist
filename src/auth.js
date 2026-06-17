@@ -58,11 +58,11 @@ export function AuthProvider({ children }) {
   const register = useCallback(async (name, email, password) => {
     const e = (email || '').trim().toLowerCase();
     const n = (name || '').trim();
-    if (!n) return { error: 'Enter your name' };
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return { error: 'Invalid email' };
-    if ((password || '').length < 4) return { error: 'Password must be 4+ characters' };
+    if (!n) return { error: 'Введите имя' };
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return { error: 'Неверная почта' };
+    if ((password || '').length < 4) return { error: 'Пароль не короче 4 символов' };
     const users = await readUsers();
-    if (users[e]) return { error: 'This account already exists' };
+    if (users[e]) return { error: 'Аккаунт уже существует' };
     const u = { id: 'u' + Date.now(), name: n, email: e, hash: hash(password) };
     users[e] = u;
     await writeUsers(users);
@@ -75,8 +75,8 @@ export function AuthProvider({ children }) {
     const e = (email || '').trim().toLowerCase();
     const users = await readUsers();
     const u = users[e];
-    if (!u) return { error: 'Account not found' };
-    if (u.hash !== hash(password)) return { error: 'Wrong password' };
+    if (!u) return { error: 'Аккаунт не найден' };
+    if (u.hash !== hash(password)) return { error: 'Неверный пароль' };
     await AsyncStorage.setItem(SESSION_KEY, e);
     setUser({ id: u.id, name: u.name, email: u.email });
     return { ok: true };
@@ -86,7 +86,7 @@ export function AuthProvider({ children }) {
     const e = 'guest@alchemist.local';
     const users = await readUsers();
     if (!users[e]) {
-      users[e] = { id: 'guest', name: 'Wanderer', email: e, hash: hash('guest') };
+      users[e] = { id: 'guest', name: 'Странник', email: e, hash: hash('guest') };
       await writeUsers(users);
     }
     await AsyncStorage.setItem(SESSION_KEY, e);

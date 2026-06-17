@@ -171,7 +171,7 @@ export function KitPanel({ style, children, contentStyle, slice = 56, border = 2
 /* ---------- close button (real kit ×) ---------- */
 export function KitClose({ onPress, size = 34, style }) {
   return (
-    <Pressable onPress={onPress} hitSlop={8} accessibilityRole="button" accessibilityLabel="Close" style={style}>
+    <Pressable onPress={onPress} hitSlop={8} accessibilityRole="button" accessibilityLabel="Закрыть" style={style}>
       {({ pressed }) => <Image source={KIT.close} style={{ width: size, height: size, transform: pressed ? [{ translateY: 2 }] : [] }} resizeMode="contain" />}
     </Pressable>
   );

@@ -31,12 +31,12 @@ function StatRow({ s, sl, open, onToggle, last }) {
   const feeders = PRACTICES.filter((p) => (p.r || {})[s.key]).slice(0, 4);
   return (
     <View style={{ borderBottomWidth: last ? 0 : 1, borderBottomColor: 'rgba(255,255,255,0.08)' }}>
-      <Pressable onPress={onToggle} accessibilityRole="button" accessibilityLabel={s.name} accessibilityHint="Show practices that develop it" accessibilityState={{ expanded: open }} style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 12 }, pressed && { backgroundColor: 'rgba(255,255,255,0.05)' }]}>
+      <Pressable onPress={onToggle} accessibilityRole="button" accessibilityLabel={s.name} accessibilityHint="Показать практики, что её развивают" accessibilityState={{ expanded: open }} style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 12 }, pressed && { backgroundColor: 'rgba(255,255,255,0.05)' }]}>
         <StatMedal stat={s.key} size={32} />
         <View style={{ flex: 1, minWidth: 0 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
             <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>{s.name}</Text>
-            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: s.color }}>Lv {sl.lvl}</Text>
+            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: s.color }}>Ур {sl.lvl}</Text>
           </View>
           <Bar pct={(sl.xp / sl.next) * 100} color={s.key} />
         </View>
@@ -44,7 +44,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
       </Pressable>
       {open ? (
         <View style={[{ paddingLeft: 56, paddingRight: 12, paddingBottom: 14 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
-          <Text style={[T.caption, { marginBottom: 8 }]}>{sl.xp} / {sl.next} XP to Lv {sl.lvl + 1} · grows from:</Text>
+          <Text style={[T.caption, { marginBottom: 8 }]}>{sl.xp} / {sl.next} XP до Ур {sl.lvl + 1} · растёт от:</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {feeders.map((f) => (
               <View key={f.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 5, paddingLeft: 5, paddingRight: 10, borderRadius: 6, borderWidth: 2, borderColor: s.color, backgroundColor: 'rgba(255,255,255,0.05)' }}>
@@ -74,10 +74,10 @@ export function CharacterScreen({ ctx }) {
     <ScreenScroll>
       <PadView wide={wide}>
         <View style={{ alignItems: 'center' }}>
-          <Text style={[T.eyebrow, { marginBottom: 6 }]}>Master Scroll</Text>
-          <Text accessibilityRole="header" style={[T.displayL, { marginBottom: 16 }]}>Stage {stage.lvl}</Text>
+          <Text style={[T.eyebrow, { marginBottom: 6 }]}>Свиток мастера</Text>
+          <Text accessibilityRole="header" style={[T.displayL, { marginBottom: 16 }]}>Стадия {stage.lvl}</Text>
           <Card style={{ alignSelf: 'stretch' }}>
-            <Text style={[T.caption, { marginBottom: 12 }]}>Facets of mastery</Text>
+            <Text style={[T.caption, { marginBottom: 12 }]}>Грани мастерства</Text>
             {STATS.map((s, i) => {
               const sl = statLevels[s.key];
               const mp = Math.min(100, ((sl.lvl + sl.xp / sl.next) / 12) * 100);
@@ -86,23 +86,23 @@ export function CharacterScreen({ ctx }) {
                   <StatMedal stat={s.key} size={20} />
                   <Text style={{ width: 70, fontFamily: FONT.display, fontSize: 8, color: s.color }}>{s.name}</Text>
                   <View style={{ flex: 1 }}><Bar pct={mp} color={s.key} /></View>
-                  <Text style={{ width: 30, textAlign: 'right', fontFamily: FONT.display, fontSize: 8, color: C.ink }}>Lv {sl.lvl}</Text>
+                  <Text style={{ width: 30, textAlign: 'right', fontFamily: FONT.display, fontSize: 8, color: C.ink }}>Ур {sl.lvl}</Text>
                 </View>
               );
             })}
           </Card>
           {onShowHelp ? (
-            <Pressable onPress={onShowHelp} hitSlop={8} accessibilityRole="button" accessibilityLabel="How it works" style={{ marginTop: 10 }}>
-              <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>How it works?</Text>
+            <Pressable onPress={onShowHelp} hitSlop={8} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ marginTop: 10 }}>
+              <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>Как это работает?</Text>
             </Pressable>
           ) : null}
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 18, alignSelf: 'stretch' }}>
-            <Card style={{ flex: 1 }}><ResourceBar kind="hp" label="Health" value={resources.hp} max={resources.hpMax} /></Card>
-            <Card style={{ flex: 1 }}><ResourceBar kind="qi" label="Qi" value={resources.qi} max={resources.qiMax} /></Card>
+            <Card style={{ flex: 1 }}><ResourceBar kind="hp" label="Здоровье" value={resources.hp} max={resources.hpMax} /></Card>
+            <Card style={{ flex: 1 }}><ResourceBar kind="qi" label="Ци" value={resources.qi} max={resources.qiMax} /></Card>
           </View>
         </View>
 
-        <Section title="Stats" defaultOpen>
+        <Section title="Характеристики" defaultOpen>
           <Card style={{ overflow: 'hidden' }}>
             {STATS.map((s, i) => (
               <StatRow key={s.key} s={s} sl={statLevels[s.key]} open={expanded === s.key} onToggle={() => setExpanded(expanded === s.key ? null : s.key)} last={i === STATS.length - 1} />
@@ -110,21 +110,21 @@ export function CharacterScreen({ ctx }) {
           </Card>
         </Section>
 
-        <Section title="Perks" right={`${perksOpen} / ${PERKS.length}`}>
+        <Section title="Перки" right={`${perksOpen} / ${PERKS.length}`}>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
             {PERKS.map((p, i) => (<Perk key={i} p={p} />))}
           </View>
         </Section>
 
-        <Section title="Relics" right={`${relicsGot} / ${RELICS.length}`}>
+        <Section title="Реликвии" right={`${relicsGot} / ${RELICS.length}`}>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
             {RELICS.map((r, i) => (<Relic key={i} r={r} />))}
           </View>
         </Section>
 
         {!wide && onSignOut ? (
-          <Pressable onPress={onSignOut} accessibilityRole="button" accessibilityLabel="Sign out" style={{ marginTop: 28, marginBottom: 4, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkMuted }}>↩ Sign out{userName ? ' · ' + userName : ''}</Text>
+          <Pressable onPress={onSignOut} accessibilityRole="button" accessibilityLabel="Выйти" style={{ marginTop: 28, marginBottom: 4, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkMuted }}>↩ Выйти{userName ? ' · ' + userName : ''}</Text>
           </Pressable>
         ) : null}
       </PadView>

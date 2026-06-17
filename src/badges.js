@@ -40,7 +40,7 @@ export function QiTag({ qi }) {
   const col = cost ? C.red : C.cEnergy;
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: col }}>QI {cost ? '-' + Math.abs(qi) : '+' + qi}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: col }}>ЦИ {cost ? '-' + Math.abs(qi) : '+' + qi}</Text>
     </View>
   );
 }
@@ -66,11 +66,11 @@ export function ResourceBar({ kind, label, value, max, glow }) {
 
 /* ---------- state chip ---------- */
 export const STATE_DEFS = {
-  flow: { ico: '🌀', label: 'In Flow', pill: 'primary' },
-  inspired: { ico: '✨', label: 'Inspired', pill: 'gold' },
-  spent: { ico: '🥀', label: 'Drained', pill: 'danger' },
+  flow: { ico: '🌀', label: 'В потоке', pill: 'primary' },
+  inspired: { ico: '✨', label: 'Вдохновение', pill: 'gold' },
+  spent: { ico: '🥀', label: 'Истощение', pill: 'danger' },
   streak: { ico: '🔥', label: '', pill: 'primary' },
-  calm: { ico: '🌙', label: 'Calm', pill: 'blue' },
+  calm: { ico: '🌙', label: 'Покой', pill: 'blue' },
 };
 
 export function StateChip({ state, text, gold }) {

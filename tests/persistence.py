@@ -4,6 +4,8 @@ Persistence test for Alchemist: everything the user adds / all progress must sur
 Adds a practice, completes a practice, fills a diary check, then reloads the SAME context
 (guest session persists) and verifies all three survived.
 
+UI is in Russian (VT323 pixel font), so selectors use Russian aria-labels/text.
+
 Usage: python3 tests/persistence.py [--url http://localhost:8081]
 Exit 0 = all pass.
 """
@@ -28,21 +30,21 @@ def goto(page, label):
 
 def dismiss_onboard(page):
     for _ in range(4):
-        b = page.query_selector('button[aria-label="Skip"]') or page.query_selector('button[aria-label="Begin"]')
+        b = page.query_selector('button[aria-label="Пропустить"]') or page.query_selector('button[aria-label="Начать"]')
         if not b: break
         b.click(); page.wait_for_timeout(350)
 
 def enter(page):
     try:
-        page.wait_for_selector('button[aria-label="Continue as guest"]', timeout=20000)
-        page.click('button[aria-label="Continue as guest"]')
+        page.wait_for_selector('button[aria-label="Войти как гость"]', timeout=20000)
+        page.click('button[aria-label="Войти как гость"]')
     except Exception:
         pass
-    page.wait_for_selector('button[aria-label="Diary"]', timeout=45000)
+    page.wait_for_selector('button[aria-label="Дневник"]', timeout=45000)
     dismiss_onboard(page); page.wait_for_timeout(1500)
 
 def n_done(page):
-    return page.locator('[aria-label^="Undo: "]').count()
+    return page.locator('[aria-label^="Отменить: "]').count()
 def has(page, txt):
     return page.evaluate("(t)=>[...document.querySelectorAll('div,p,span')].some(e=>(e.textContent||'').trim()===t)", txt)
 
@@ -55,24 +57,24 @@ def main():
         page.goto(args.url, wait_until="domcontentloaded")
         enter(page)
 
-        NAME = "PERSIST PROOF"
+        NAME = "ПРОВЕРКА СОХРАНЕНИЯ"
         # --- create data ---
-        goto(page, "Today")
+        goto(page, "Сегодня")
         done_before = n_done(page)
-        if page.locator('[aria-label^="Do: "]').count() > 0:
-            rclick(page, '[aria-label^="Do: "]'); page.wait_for_timeout(800)
+        if page.locator('[aria-label^="Выполнить: "]').count() > 0:
+            rclick(page, '[aria-label^="Выполнить: "]'); page.wait_for_timeout(800)
         done_after_act = n_done(page)
 
-        goto(page, "Practices")
-        rclick(page, 'button[aria-label="+ New"]')
-        page.wait_for_selector('input[placeholder="e.g. Morning qigong"]', timeout=8000)
-        page.fill('input[placeholder="e.g. Morning qigong"]', NAME)
-        rclick(page, 'button[aria-label="Save"]'); page.wait_for_timeout(900)
+        goto(page, "Практики")
+        rclick(page, 'button[aria-label="+ Новая"]')
+        page.wait_for_selector('input[placeholder="напр. Утренний цигун"]', timeout=8000)
+        page.fill('input[placeholder="напр. Утренний цигун"]', NAME)
+        rclick(page, 'button[aria-label="Сохранить"]'); page.wait_for_timeout(900)
 
-        goto(page, "Diary")
-        try: page.fill('input[placeholder="A real example…"]', "Persisted note")
+        goto(page, "Дневник")
+        try: page.fill('input[placeholder="Реальный пример…"]', "Сохранённая заметка")
         except Exception: pass
-        rclick(page, '[aria-label="Mark check"]'); page.wait_for_timeout(800)
+        rclick(page, '[aria-label="Отметить"]'); page.wait_for_timeout(800)
         DIARY_Q = "()=>(localStorage.getItem('alchemist_diary_guest')||'').includes('\\\"done\\\":true')"
         diary_checked_before = page.evaluate(DIARY_Q)
 
@@ -83,15 +85,15 @@ def main():
 
         # --- reload (same context => localStorage persists, guest session restored) ---
         page.reload(wait_until="domcontentloaded")
-        page.wait_for_selector('button[aria-label="Diary"]', timeout=45000)
+        page.wait_for_selector('button[aria-label="Дневник"]', timeout=45000)
         dismiss_onboard(page); page.wait_for_timeout(1500)
 
         # --- verify everything survived ---
-        goto(page, "Practices")
+        goto(page, "Практики")
         check("RELOAD: added practice survived", has(page, NAME))
-        goto(page, "Today")
+        goto(page, "Сегодня")
         check("RELOAD: completion survived", n_done(page) == done_after_act, f"expected {done_after_act}, got {n_done(page)}")
-        goto(page, "Diary")
+        goto(page, "Дневник")
         check("RELOAD: diary check survived", page.evaluate(DIARY_Q))
 
         errors = []

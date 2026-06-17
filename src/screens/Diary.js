@@ -30,7 +30,7 @@ function PmtRow({ badge, kind, label, value, onChange, mini, placeholder }) {
       </KitPill>
       <View style={{ flex: 1, minWidth: 0 }}>
         {label && !mini ? <Text style={[T.caption, { marginBottom: 4 }]}>{label}</Text> : null}
-        <DiaryInput value={value} onChangeText={onChange} placeholder={placeholder || 'A real example…'} />
+        <DiaryInput value={value} onChangeText={onChange} placeholder={placeholder || 'Реальный пример…'} />
       </View>
     </View>
   );
@@ -43,20 +43,20 @@ function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChan
         <GoldPill>{time}</GoldPill>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Text style={{ fontFamily: FONT.display, fontSize: 9, lineHeight: 14, color: C.ink }}>{v.n}. {v.t}</Text>
-          {!isOpen ? <Text style={[T.caption, { marginTop: 3 }]}>{c.done ? <Text style={{ color: C.jadeLight }}>✓ checked</Text> : 'tap to fill'}</Text> : null}
+          {!isOpen ? <Text style={[T.caption, { marginTop: 3 }]}>{c.done ? <Text style={{ color: C.jadeLight }}>✓ отмечено</Text> : 'нажмите, чтобы заполнить'}</Text> : null}
         </View>
         {c.done ? <CheckDot on /> : <Text style={{ color: C.inkFaint, fontSize: 16, transform: isOpen ? [{ rotate: '90deg' }] : [] }}>›</Text>}
       </Pressable>
       {isOpen ? (
         <View style={[{ paddingHorizontal: 14, paddingBottom: 14 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
           <Text style={{ fontStyle: 'italic', color: C.inkMuted, fontSize: 10, lineHeight: 20, marginBottom: 14, fontFamily: FONT.ui }}>{v.q}</Text>
-          <PmtRow badge="＋" kind="plus" label="Plus — a good thing you did" value={c.plus} onChange={(val) => onChange('plus', val)} />
-          <PmtRow badge="－" kind="minus" label="Minus — harm to self or others" value={c.minus} onChange={(val) => onChange('minus', val)} />
-          <PmtRow badge="✓" kind="todo" label="To do — for the next hours" value={c.todo} onChange={(val) => onChange('todo', val)} />
-          <Pressable onPress={onComplete} accessibilityRole="button" accessibilityLabel={c.done ? 'Update check' : 'Mark check'}>
+          <PmtRow badge="＋" kind="plus" label="Плюс — доброе дело" value={c.plus} onChange={(val) => onChange('plus', val)} />
+          <PmtRow badge="－" kind="minus" label="Минус — вред себе или другим" value={c.minus} onChange={(val) => onChange('minus', val)} />
+          <PmtRow badge="✓" kind="todo" label="Сделать — на ближайшие часы" value={c.todo} onChange={(val) => onChange('todo', val)} />
+          <Pressable onPress={onComplete} accessibilityRole="button" accessibilityLabel={c.done ? 'Обновить' : 'Отметить'}>
             {({ pressed }) => (
               <Gradient colors={c.done ? ['#48433a', '#36322b'] : [C.jadeLight, C.jade]} angle={180} style={{ marginTop: 12, paddingVertical: 11, borderRadius: 8, alignItems: 'center', borderWidth: 2.5, borderColor: c.done ? '#5a5346' : C.jadeLine, transform: pressed ? [{ translateY: 2 }] : [] }}>
-                <Text style={{ fontFamily: FONT.display, fontSize: 9, color: '#fff' }}>{c.done ? '✓ Update check' : 'Mark check'}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 9, color: '#fff' }}>{c.done ? '✓ Обновить' : 'Отметить'}</Text>
               </Gradient>
             )}
           </Pressable>
@@ -83,7 +83,7 @@ export function DiaryScreen({ ctx }) {
   const SETS = DIARY_SETS;
   const dayNum = Math.floor(Date.now() / 86400000);
   let todayStr = '';
-  try { todayStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short' }); } catch (e) { todayStr = ''; }
+  try { todayStr = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }); } catch (e) { todayStr = ''; }
 
   const fresh = (setKey) => ({
     day: dayNum,
@@ -147,19 +147,19 @@ export function DiaryScreen({ ctx }) {
       <PadView wide={wide}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <View style={{ flex: 1 }}>
-            <Text style={T.eyebrow}>Six-times ethical diary</Text>
-            <Text accessibilityRole="header" style={[T.displayL, { marginTop: 6 }]}>Diary</Text>
+            <Text style={T.eyebrow}>Шестиразовый этический дневник</Text>
+            <Text accessibilityRole="header" style={[T.displayL, { marginTop: 6 }]}>Дневник</Text>
           </View>
           <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>{todayStr}</Text>
         </View>
         <Text style={[T.body, { color: C.inkMuted, marginBottom: 16 }]}>
-          Six times a day, pause, check one vow, and note a <Text style={{ color: C.jadeLight }}>plus</Text>, <Text style={{ color: C.red }}>minus</Text> and <Text style={{ color: C.gold }}>to-do</Text>.
+          Шесть раз в день остановитесь, проверьте один обет и запишите <Text style={{ color: C.jadeLight }}>Плюс</Text>, <Text style={{ color: C.red }}>Минус</Text> и <Text style={{ color: C.gold }}>дело</Text>.
         </Text>
 
         {saveError ? (
           <Card frame="grey" style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 }}>
             <Text style={{ fontSize: 14 }}>⚠️</Text>
-            <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 9, color: C.red, lineHeight: 14 }}>Couldn't save the diary on this device — entries may be lost after closing.</Text>
+            <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 9, color: C.red, lineHeight: 14 }}>Не удалось сохранить дневник на этом устройстве — записи могут потеряться после закрытия.</Text>
           </Card>
         ) : null}
 
@@ -172,7 +172,7 @@ export function DiaryScreen({ ctx }) {
 
         {/* progress */}
         <Card frame="grey" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-          <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>{doneCount} <Text style={{ color: C.inkFaint }}>of 6 checks</Text></Text>
+          <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>{doneCount} <Text style={{ color: C.inkFaint }}>из 6 проверок</Text></Text>
           <View style={{ flex: 1, flexDirection: 'row', gap: 7, justifyContent: 'flex-end' }}>
             {data.checks.map((c, i) => <CheckDot key={i} on={c.done} />)}
           </View>
@@ -196,18 +196,18 @@ export function DiaryScreen({ ctx }) {
         </View>
 
         {/* day totals */}
-        <SectionHead title="Day totals" />
+        <SectionHead title="Итоги дня" />
         <Card frame="grey">
-          <Text style={[T.label, { color: C.jadeLight, marginBottom: 8 }]}>Three best deeds</Text>
-          {data.best.map((v, i) => <PmtRow key={'b' + i} badge="＋" kind="plus" mini value={v} onChange={(val) => updList('best', i, val)} placeholder={'Best #' + (i + 1)} />)}
-          <Text style={[T.label, { color: C.red, marginTop: 14, marginBottom: 8 }]}>Three worst deeds</Text>
-          {data.worst.map((v, i) => <PmtRow key={'w' + i} badge="－" kind="minus" mini value={v} onChange={(val) => updList('worst', i, val)} placeholder={'Worst #' + (i + 1)} />)}
-          <Text style={[T.label, { marginTop: 14, marginBottom: 8 }]}>🌙 Meditation note</Text>
-          <DiaryInput value={data.note} onChangeText={(val) => setData((d) => ({ ...d, note: val }))} placeholder="How the meditation went, what you noticed…" multiline numberOfLines={2} style={{ minHeight: 56, textAlignVertical: 'top' }} />
+          <Text style={[T.label, { color: C.jadeLight, marginBottom: 8 }]}>Три лучших дела</Text>
+          {data.best.map((v, i) => <PmtRow key={'b' + i} badge="＋" kind="plus" mini value={v} onChange={(val) => updList('best', i, val)} placeholder={'Лучшее №' + (i + 1)} />)}
+          <Text style={[T.label, { color: C.red, marginTop: 14, marginBottom: 8 }]}>Три худших дела</Text>
+          {data.worst.map((v, i) => <PmtRow key={'w' + i} badge="－" kind="minus" mini value={v} onChange={(val) => updList('worst', i, val)} placeholder={'Худшее №' + (i + 1)} />)}
+          <Text style={[T.label, { marginTop: 14, marginBottom: 8 }]}>🌙 Заметка о медитации</Text>
+          <DiaryInput value={data.note} onChangeText={(val) => setData((d) => ({ ...d, note: val }))} placeholder="Как прошла медитация, что вы заметили…" multiline numberOfLines={2} style={{ minHeight: 56, textAlignVertical: 'top' }} />
         </Card>
 
         <Text style={[T.caption, { textAlign: 'center', marginTop: 18, fontStyle: 'italic', lineHeight: 14 }]}>
-          «Check your heart six times a day» — Geshe Michael Roach
+          «Проверяй сердце шесть раз в день» — Геше Майкл Роуч
         </Text>
       </PadView>
     </ScreenScroll>

@@ -22,10 +22,10 @@ export function LibraryScreen({ ctx }) {
         {/* header */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <View>
-            <Text style={T.eyebrow}>Hall of Scrolls</Text>
-            <Text accessibilityRole="header" style={T.displayM}>Practice Library</Text>
+            <Text style={T.eyebrow}>Зал свитков</Text>
+            <Text accessibilityRole="header" style={T.displayM}>Библиотека практик</Text>
           </View>
-          <Btn variant="gold" onPress={() => onAdd()}>+ New</Btn>
+          <Btn variant="gold" onPress={() => onAdd()}>+ Новая</Btn>
         </View>
 
         {cats.map((ck) => {
@@ -57,9 +57,9 @@ export function LibraryScreen({ ctx }) {
         })}
 
         {/* archive */}
-        <Pressable onPress={() => setArchiveOpen(!archiveOpen)} accessibilityRole="button" accessibilityLabel="Archived practices" accessibilityState={{ expanded: archiveOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 18 }}>
+        <Pressable onPress={() => setArchiveOpen(!archiveOpen)} accessibilityRole="button" accessibilityLabel="Архивные практики" accessibilityState={{ expanded: archiveOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 18 }}>
           <Text style={{ color: C.inkFaint, fontSize: 16, transform: archiveOpen ? [{ rotate: '90deg' }] : [] }}>›</Text>
-          <Text style={{ color: C.inkFaint, fontSize: 9, fontFamily: FONT.display }}>Archive</Text>
+          <Text style={{ color: C.inkFaint, fontSize: 9, fontFamily: FONT.display }}>Архив</Text>
           {archived.length ? <Text style={T.caption}>{archived.length}</Text> : null}
         </Pressable>
         {archiveOpen ? (
@@ -70,12 +70,12 @@ export function LibraryScreen({ ctx }) {
                   <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 }}>
                     <Mh size={22} icon={CATS[p.cat].icon} color={CATS[p.cat].color} />
                     <Text style={{ flex: 1, fontFamily: FONT.display, fontSize: 9, color: C.ink }} numberOfLines={1}>{p.name}</Text>
-                    <Btn variant="secondary" onPress={() => restorePractice && restorePractice(p.id)}>Restore</Btn>
+                    <Btn variant="secondary" onPress={() => restorePractice && restorePractice(p.id)}>Восстановить</Btn>
                   </View>
                 ))}
               </View>
             ) : (
-              <Text style={{ color: C.inkFaint, fontFamily: FONT.ui, fontSize: 9, textAlign: 'center', lineHeight: 15 }}>Archive is empty. Archived practices appear here — you can restore them.</Text>
+              <Text style={{ color: C.inkFaint, fontFamily: FONT.ui, fontSize: 9, textAlign: 'center', lineHeight: 15 }}>Архив пуст. Архивные практики появятся здесь — их можно восстановить.</Text>
             )}
           </Card>
         ) : null}

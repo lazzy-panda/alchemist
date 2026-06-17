@@ -72,7 +72,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
 
   const inner = (
     <View ref={cardRef} style={[{ position: 'relative' }, active ? kf(KF.breathe, 3.2, { ease: EASE.soft, iter: 'infinite' }) : null, shake ? kf(KF.shakeNo, 0.42, { ease: EASE.soft }) : null]}>
-      <Pressable onPress={() => onOpen && onOpen(p)} disabled={locked} accessibilityRole="button" accessibilityLabel={p.name + (locked ? ', locked' : '')}>
+      <Pressable onPress={() => onOpen && onOpen(p)} disabled={locked} accessibilityRole="button" accessibilityLabel={p.name + (locked ? ', заблокировано' : '')}>
         <CardBase
           done={p.done}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingRight: 56, opacity: locked ? 0.6 : 1 }}
@@ -82,7 +82,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
             <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontSize: 10, color: p.done ? C.jadeLight : C.ink, marginBottom: 5, lineHeight: 14 }}>{p.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
               <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: cat.color }}>{cat.name}</Text>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkFaint }}>{p.dur} min</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkFaint }}>{p.dur} мин</Text>
               {p.mult ? <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.gold }}>x{p.mult}</Text> : null}
               {compact ? <QiTag qi={p.qi} /> : null}
             </View>
@@ -92,11 +92,11 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
 
       {locked ? (
         <View style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center', maxWidth: 84 }} pointerEvents="none">
-          <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint, textAlign: 'right', lineHeight: 12 }}>Low Qi{'\n'}need {Math.abs(p.qi)} QI</Text>
+          <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint, textAlign: 'right', lineHeight: 12 }}>Мало Ци{'\n'}нужно {Math.abs(p.qi)} ЦИ</Text>
         </View>
       ) : (
         <View ref={checkRef} style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
-          <Pressable onPress={handleCheck} hitSlop={8} accessibilityRole="button" accessibilityState={{ checked: !!p.done }} accessibilityLabel={(p.done ? 'Undo: ' : 'Do: ') + p.name}>
+          <Pressable onPress={handleCheck} hitSlop={8} accessibilityRole="button" accessibilityState={{ checked: !!p.done }} accessibilityLabel={(p.done ? 'Отменить: ' : 'Выполнить: ') + p.name}>
             {({ pressed }) => <KitCheckbox on={p.done} size={30} style={pressed ? { transform: [{ scale: 1.1 }] } : null} />}
           </Pressable>
         </View>
@@ -110,7 +110,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
     <View style={{ position: 'relative' }}>
       {swiping ? (
         <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderRadius: 8, backgroundColor: C.jade, alignItems: 'flex-end', justifyContent: 'center', overflow: 'hidden' }}>
-          <Text style={{ color: '#fff', fontFamily: FONT.display, fontSize: 9, paddingRight: 22 }}>DONE ✓</Text>
+          <Text style={{ color: '#fff', fontFamily: FONT.display, fontSize: 9, paddingRight: 22 }}>ГОТОВО ✓</Text>
         </View>
       ) : null}
       <Animated.View {...pan.panHandlers} style={{ width: '100%', transform: [{ translateX: tx }] }}>

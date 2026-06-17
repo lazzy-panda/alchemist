@@ -176,14 +176,14 @@ export function IconBtn({ onPress, children, style }) {
 }
 
 /* ---------- stepper — real kit pills ---------- */
-export function Stepper({ value, onDec, onInc, suffix = ' min' }) {
+export function Stepper({ value, onDec, onInc, suffix = ' мин' }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 10 }}>
-      <KitPill color="primary" onPress={onDec} accessibilityLabel="Decrease">
+      <KitPill color="primary" onPress={onDec} accessibilityLabel="Уменьшить">
         <Text style={{ fontSize: 14, color: '#fff' }}>−</Text>
       </KitPill>
       <Text style={{ minWidth: 70, textAlign: 'center', fontFamily: FONT.display, fontSize: 11, fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
-      <KitPill color="primary" onPress={onInc} accessibilityLabel="Increase">
+      <KitPill color="primary" onPress={onInc} accessibilityLabel="Увеличить">
         <Text style={{ fontSize: 14, color: '#fff' }}>+</Text>
       </KitPill>
     </View>

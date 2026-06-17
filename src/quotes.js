@@ -1,21 +1,21 @@
 /* Alchemist — rotating wisdom (English). Stable within a day, fresh across days. */
 
 export const WISDOM = [
-  'Great skill looks simple',
-  'The highest good is like water',
-  'A journey of a thousand miles begins with one step',
-  'One who knows enough is rich',
-  'The soft overcomes the hard',
-  'In non-doing, nothing is left undone',
-  'Stillness rules over haste',
-  'The Way follows nature',
+  'Великое мастерство выглядит простым',
+  'Высшее благо подобно воде',
+  'Путь в тысячу ли начинается с одного шага',
+  'Богат тот, кому достаточно',
+  'Мягкое одолевает твёрдое',
+  'В недеянии не остаётся несделанного',
+  'Покой повелевает суетой',
+  'Путь следует природе',
 ];
 
 export const ASCENSION = [
-  'The mist parts over one more peak. Your cultivation deepens.',
-  'One more floor of the tower behind you — the view widens.',
-  'Still waters run deep. Power gathers in calm.',
-  'The cocoon splits. What slept now spreads its wings.',
+  'Туман расступается над новой вершиной. Твоё совершенствование углубляется.',
+  'Ещё один ярус башни позади — и шире становится вид.',
+  'Тихие воды глубоки. Сила собирается в покое.',
+  'Кокон раскрывается. То, что дремало, расправляет крылья.',
 ];
 
 export function dailyWisdom() {

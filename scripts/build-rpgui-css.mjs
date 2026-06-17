@@ -50,6 +50,8 @@ const overrides = `
 .rpgui-content .rpgui-container { text-align: left !important; }
 /* RPGUI applies image-rendering: pixelated globally; keep our vector art (radar/timer/charts) crisp */
 .rpgui-content svg, .rpgui-content svg * { image-rendering: auto !important; }
+/* Cyrillic-capable pixel font (VT323) everywhere, incl. native RPGUI button/input/label text */
+.rpgui-content, .rpgui-content p, .rpgui-content input, .rpgui-content textarea, .rpgui-content label, .rpgui-content button { font-family: 'VT323', monospace !important; }
 `;
 css += overrides;
 

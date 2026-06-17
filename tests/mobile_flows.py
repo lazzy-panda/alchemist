@@ -2,9 +2,11 @@
 """
 Mobile FUNCTIONAL flow tests for Alchemist (390px) against the running Expo web dev server.
 Exercises real user journeys (not just layout):
-  1. Add a practice (Practices -> + New -> fill -> Save -> appears in list)
+  1. Add a practice (Practices -> + Новая -> fill -> Save -> appears in list)
   2. Complete a practice on Today (tap check -> done count rises)
   3. Diary check (type + Mark check -> shows checked)
+
+UI is in Russian (VT323 pixel font), so selectors use Russian aria-labels/text.
 
 Usage: python3 tests/mobile_flows.py [--url http://localhost:8081] [--shots /tmp/alch-flows]
 Exit 0 = all pass.
@@ -31,13 +33,13 @@ def goto_tab(page, label):
 def setup(page):
     """Reach the app: guest login + dismiss first-run onboarding + let FogVeil clear."""
     try:
-        page.wait_for_selector('button[aria-label="Continue as guest"]', timeout=20000)
-        page.click('button[aria-label="Continue as guest"]')
+        page.wait_for_selector('button[aria-label="Войти как гость"]', timeout=20000)
+        page.click('button[aria-label="Войти как гость"]')
     except Exception:
         pass
-    page.wait_for_selector('button[aria-label="Diary"]', timeout=45000)
+    page.wait_for_selector('button[aria-label="Дневник"]', timeout=45000)
     for _ in range(4):
-        b = page.query_selector('button[aria-label="Skip"]') or page.query_selector('button[aria-label="Begin"]')
+        b = page.query_selector('button[aria-label="Пропустить"]') or page.query_selector('button[aria-label="Начать"]')
         if not b:
             break
         b.click(); page.wait_for_timeout(350)
@@ -65,56 +67,56 @@ def main():
         page.goto(args.url, wait_until="domcontentloaded")
         setup(page)
 
-        NAME = "QA Test Practice"
+        NAME = "Тест ОК практика"
 
         # ---- FLOW 1: add a practice ----
-        goto_tab(page, "Practices")
+        goto_tab(page, "Практики")
         before = count_text(page, NAME)
-        rclick(page, 'button[aria-label="+ New"]')
-        page.wait_for_selector('input[placeholder="e.g. Morning qigong"]', timeout=8000)
-        page.fill('input[placeholder="e.g. Morning qigong"]', NAME)
+        rclick(page, 'button[aria-label="+ Новая"]')
+        page.wait_for_selector('input[placeholder="напр. Утренний цигун"]', timeout=8000)
+        page.fill('input[placeholder="напр. Утренний цигун"]', NAME)
         # pick a reward stat (aria-label unique to the sheet; categories collide with Library headers)
         try:
-            rclick(page, '[aria-label="Strength"]')
+            rclick(page, '[aria-label="Сила"]')
         except Exception:
             pass
         page.screenshot(path=f"{args.shots}/add-1-form.png")
-        rclick(page, 'button[aria-label="Save"]')
+        rclick(page, 'button[aria-label="Сохранить"]')
         page.wait_for_timeout(900)  # sheet close (290ms) + list update
         after = count_text(page, NAME)
         check("Add practice: appears in library after Save", after > before, f"before={before} after={after}")
         page.screenshot(path=f"{args.shots}/add-2-list.png")
 
         # ---- FLOW 2: complete a practice on Today ----
-        goto_tab(page, "Today")
-        done_before = count_aria_prefix(page, "Undo: ")
-        todo_before = count_aria_prefix(page, "Do: ")
+        goto_tab(page, "Сегодня")
+        done_before = count_aria_prefix(page, "Отменить: ")
+        todo_before = count_aria_prefix(page, "Выполнить: ")
         if todo_before > 0:
-            rclick(page, '[aria-label^="Do: "]')
+            rclick(page, '[aria-label^="Выполнить: "]')
             page.wait_for_timeout(900)
-            done_after = count_aria_prefix(page, "Undo: ")
+            done_after = count_aria_prefix(page, "Отменить: ")
             check("Complete practice: done count rises", done_after == done_before + 1,
                   f"done {done_before}->{done_after} (todo was {todo_before})")
         else:
-            check("Complete practice: a pending practice exists", False, "no 'Do:' checks found")
+            check("Complete practice: a pending practice exists", False, "no 'Выполнить:' checks found")
         page.screenshot(path=f"{args.shots}/complete-today.png")
 
         # ---- FLOW 3: diary check ----
-        goto_tab(page, "Diary")
-        checked_before = count_text(page, "✓ checked")
+        goto_tab(page, "Дневник")
+        checked_before = count_text(page, "✓ отмечено")
         # first check is open by default; fill its Plus input then mark
         try:
-            page.fill('input[placeholder="A real example…"]', "Helped a neighbour")
+            page.fill('input[placeholder="Реальный пример…"]', "Помог соседу")
         except Exception:
             pass
         marked = False
         try:
-            rclick(page, '[aria-label="Mark check"]')
+            rclick(page, '[aria-label="Отметить"]')
             marked = True
         except Exception:
             pass
         page.wait_for_timeout(900)
-        checked_after = count_text(page, "✓ checked")
+        checked_after = count_text(page, "✓ отмечено")
         check("Diary: marking a check shows it as checked", marked and checked_after > checked_before,
               f"checked {checked_before}->{checked_after}")
         page.screenshot(path=f"{args.shots}/diary-check.png")

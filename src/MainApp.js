@@ -62,7 +62,7 @@ export function MainApp() {
   const onOpenDay = useCallback((d) => setDaySheet(d), []);
   const onArchive = useCallback((id) => {
     game.archivePractice(id);
-    setToast({ message: 'Practice archived', actionLabel: 'Undo', action: 'undo' });
+    setToast({ message: 'Практика в архиве', actionLabel: 'Отменить', action: 'undo' });
   }, [game.archivePractice]);
 
   const ctx = {

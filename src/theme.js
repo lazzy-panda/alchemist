@@ -103,10 +103,10 @@ export const R = {
 };
 
 export const FONT = {
-  // RPGUI pixel font everywhere on web (content is English so it renders); native keeps system default
-  display: WEB ? 'Press Start 2P' : undefined,
-  ui: WEB ? 'Press Start 2P' : undefined,
-  han: WEB ? 'Press Start 2P' : undefined,
+  // VT323 — pixel font WITH Cyrillic (Press Start 2P can't render Russian); native keeps system default
+  display: WEB ? 'VT323' : undefined,
+  ui: WEB ? 'VT323' : undefined,
+  han: WEB ? 'VT323' : undefined,
 };
 
 // box-shadow strings (RN 0.85 + react-native-web both support boxShadow)

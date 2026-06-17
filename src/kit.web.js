@@ -97,7 +97,7 @@ export function KitPanel({ style, children, contentStyle, frame = 'golden' }) {
 export function KitClose({ onPress, size = 34, style }) {
   return h(
     'button',
-    { className: 'rpgui-button', onClick: onPress, 'aria-label': 'Close', style: [{ margin: 0, minWidth: size + 14, padding: '0 8px' }, style] },
+    { className: 'rpgui-button', onClick: onPress, 'aria-label': 'Закрыть', style: [{ margin: 0, minWidth: size + 14, padding: '0 8px' }, style] },
     h('p', { style: { margin: 0 } }, '✕')
   );
 }
@@ -187,5 +187,5 @@ export function KitParchPill({ children, style, onPress, accessibilityLabel, sel
 
 /* ---- level-up banner → golden framed ribbon ---- */
 export function KitBanner({ width = 300, style }) {
-  return h('div', { className: 'rpgui-container framed-golden', style: [FLEX_COL, { width, padding: '6px 12px', alignItems: 'center' }, style] }, h('p', { style: { margin: 0, color: '#ffe9a8' } }, 'LEVEL UP!'));
+  return h('div', { className: 'rpgui-container framed-golden', style: [FLEX_COL, { width, padding: '6px 12px', alignItems: 'center' }, style] }, h('p', { style: { margin: 0, color: '#ffe9a8' } }, 'НОВЫЙ УРОВЕНЬ!'));
 }

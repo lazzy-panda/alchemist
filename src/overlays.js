@@ -54,7 +54,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
         <View style={[{ paddingHorizontal: 18, paddingTop: 20, paddingBottom: 30, minHeight: '100%' }, wide && { maxWidth: 720, width: '100%', alignSelf: 'center', paddingHorizontal: 40 }]}>
           {/* header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-            <Btn variant="ghost" onPress={onClose} style={{ paddingVertical: 8, paddingHorizontal: 10, marginLeft: -8 }}>‹ Back</Btn>
+            <Btn variant="ghost" onPress={onClose} style={{ paddingVertical: 8, paddingHorizontal: 10, marginLeft: -8 }}>‹ Назад</Btn>
             <KitClose onPress={onClose} size={34} />
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 22 }}>
@@ -72,44 +72,44 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
             </Text>
             <Bar pct={total > 0 ? (remaining / total) * 100 : 0} color="qi" />
             <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 12, marginTop: 16 }}>
-              <TStep label="−5m" onPress={() => adjust(-5)} disabled={running} />
-              <TStep label="+5m" onPress={() => adjust(5)} disabled={running} />
+              <TStep label="−5м" onPress={() => adjust(-5)} disabled={running} />
+              <TStep label="+5м" onPress={() => adjust(5)} disabled={running} />
             </View>
           </View>
 
           {/* controls */}
           <View style={{ flexDirection: 'row', gap: 10, marginTop: 14, marginBottom: 8 }}>
-            {!running && remaining > 0 && remaining === total ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Start</Btn> : null}
-            {running ? <Btn variant="secondary" block onPress={() => setRunning(false)} style={{ flex: 1 }}>⏸ Pause</Btn> : null}
-            {!running && remaining < total && remaining > 0 ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Resume</Btn> : null}
-            {remaining === 0 ? <Btn variant="gold" block onPress={() => onComplete(practice)} style={{ flex: 1 }}>✦ Finish</Btn> : null}
-            {remaining < total && remaining > 0 ? <Btn variant="ghost" onPress={() => { setRemaining(total); setRunning(false); }}>Reset</Btn> : null}
+            {!running && remaining > 0 && remaining === total ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Начать</Btn> : null}
+            {running ? <Btn variant="secondary" block onPress={() => setRunning(false)} style={{ flex: 1 }}>⏸ Пауза</Btn> : null}
+            {!running && remaining < total && remaining > 0 ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Продолжить</Btn> : null}
+            {remaining === 0 ? <Btn variant="gold" block onPress={() => onComplete(practice)} style={{ flex: 1 }}>✦ Завершить</Btn> : null}
+            {remaining < total && remaining > 0 ? <Btn variant="ghost" onPress={() => { setRemaining(total); setRunning(false); }}>Сброс</Btn> : null}
           </View>
-          <Btn variant="ghost" block onPress={() => onComplete(practice)}>Mark complete</Btn>
+          <Btn variant="ghost" block onPress={() => onComplete(practice)}>Отметить выполненной</Btn>
 
           {/* instruction */}
           <Pressable onPress={() => setShowInstr(!showInstr)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20 }}>
             <Text style={{ color: C.inkMuted, fontSize: 14, transform: showInstr ? [{ rotate: '90deg' }] : [] }}>›</Text>
-            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.inkMuted }}>Guide</Text>
+            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.inkMuted }}>Инструкция</Text>
           </Pressable>
           {showInstr ? (
             <Text style={[T.body, { color: C.inkMuted, paddingHorizontal: 4, paddingTop: 8, lineHeight: 20 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
-              Sit comfortably, spine straight. Breathe into the belly, slow and even. Rest attention on the flow of Qi through the meridians. Don't rush — a calm rhythm matters more than length.
+              Сядьте удобно, спина прямая. Дышите в живот, медленно и ровно. Удерживайте внимание на течении Ци по меридианам. Не торопитесь — спокойный ритм важнее длительности.
             </Text>
           ) : null}
 
           {/* rewards */}
-          <SectionHead title="Rewards" />
+          <SectionHead title="Награды" />
           <Card style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
             {rewards.map(([k, v]) => <RewardMedal key={k} stat={k} value={practice.mult ? Math.round(v * practice.mult) : v} />)}
             <QiTag qi={practice.qi} />
             {practice.mult ? (
               <MedalPill>
-                <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>Zhan Zhuang x{practice.mult}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>Чжан Чжуан x{practice.mult}</Text>
               </MedalPill>
             ) : null}
           </Card>
-          <Text style={[T.caption, { marginTop: 8, paddingHorizontal: 2, lineHeight: 13 }]}>+N — stat points · QI — change to your Qi pool{practice.mult ? ' · x' + practice.mult + ' — Zhan Zhuang bonus' : ''}</Text>
+          <Text style={[T.caption, { marginTop: 8, paddingHorizontal: 2, lineHeight: 13 }]}>+N — очки характеристик · ЦИ — изменение запаса Ци{practice.mult ? ' · x' + practice.mult + ' — бонус Чжан Чжуан' : ''}</Text>
         </View>
       </ScrollViewSafe>
     </View>
@@ -184,14 +184,14 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
       {(close) => (
         <ScrollViewSafe>
           <View style={{ paddingHorizontal: 22, paddingTop: 8, paddingBottom: 24 }}>
-            <Text style={[T.displayM, { marginTop: 6, marginBottom: 18 }]}>{isNew ? 'New practice' : 'Edit practice'}</Text>
+            <Text style={[T.displayM, { marginTop: 6, marginBottom: 18 }]}>{isNew ? 'Новая практика' : 'Изменить практику'}</Text>
 
-            <Field label="Name">
-              <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(''); }} placeholder="e.g. Morning qigong" />
+            <Field label="Название">
+              <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(''); }} placeholder="напр. Утренний цигун" />
             </Field>
             {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.red, fontFamily: FONT.ui, fontSize: 9 }}>{nameError}</Text> : null}
 
-            <Field label="Category">
+            <Field label="Категория">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {Object.keys(CATS).map((ck) => (
                   <SelChip key={ck} on={cat === ck} color={CATS[ck].color} icon={CATS[ck].icon} label={CATS[ck].name} onPress={() => setCat(ck)} />
@@ -199,25 +199,25 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
               </View>
             </Field>
 
-            <Field label="Duration">
+            <Field label="Длительность">
               <Stepper value={dur} onDec={() => setDur(Math.max(1, dur - 5))} onInc={() => setDur(Math.min(180, dur + 5))} />
             </Field>
 
-            <Field label="Reward stats">
+            <Field label="Награды-характеристики">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {STATS.map((s) => (
                   <SelChip key={s.key} multi on={!!rewards[s.key]} color={s.color} icon={s.icon} label={s.name + (rewards[s.key] ? ' +' + rewards[s.key] : '')} onPress={() => toggleReward(s.key)} />
                 ))}
               </View>
             </Field>
-            {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 9, lineHeight: 14 }}>Tip: bind at least one stat so the practice grants points.</Text> : null}
+            {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 9, lineHeight: 14 }}>Совет: привяжите хотя бы одну характеристику, чтобы практика давала очки.</Text> : null}
 
             {confirmArchive ? (
               <View style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
-                <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.red, marginBottom: 12, lineHeight: 14 }}>Archive “{name || practice?.name}”? You can restore it from the Library.</Text>
+                <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.red, marginBottom: 12, lineHeight: 14 }}>Архивировать «{name || practice?.name}»? Можно восстановить из Библиотеки.</Text>
                 <View style={{ flexDirection: 'row', gap: 10 }}>
-                  <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirmArchive(false)}>Cancel</Btn>
-                  <Btn variant="danger" style={{ flex: 1 }} onPress={() => { close(); setTimeout(() => onArchive && onArchive(practice.id), 290); }}>Archive</Btn>
+                  <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirmArchive(false)}>Отмена</Btn>
+                  <Btn variant="danger" style={{ flex: 1 }} onPress={() => { close(); setTimeout(() => onArchive && onArchive(practice.id), 290); }}>Архивировать</Btn>
                 </View>
               </View>
             ) : (
@@ -227,16 +227,16 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
                   style={{ flex: 1 }}
                   onPress={() => {
                     const trimmed = name.trim();
-                    if (!trimmed) { setNameError('Enter a practice name'); return; }
+                    if (!trimmed) { setNameError('Введите название практики'); return; }
                     const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
-                    if (dup) { setNameError('A practice with this name already exists'); return; }
+                    if (dup) { setNameError('Практика с таким названием уже существует'); return; }
                     close();
                     setTimeout(() => onSave({ id: practice?.id, name: trimmed, cat, dur, r: rewards, qi: practice?.qi ?? 2, today: practice?.today, done: practice?.done }), 290);
                   }}
                 >
-                  Save
+                  Сохранить
                 </Btn>
-                {!isNew ? <Btn variant="danger" onPress={() => setConfirmArchive(true)}>Archive</Btn> : null}
+                {!isNew ? <Btn variant="danger" onPress={() => setConfirmArchive(true)}>Архивировать</Btn> : null}
               </View>
             )}
           </View>
@@ -256,15 +256,15 @@ export function DayDetailSheet({ day, onClose }) {
       <ScrollViewSafe>
         <View style={{ paddingHorizontal: 22, paddingTop: 8, paddingBottom: 24 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, marginBottom: 14 }}>
-            <Text style={T.displayM}>Day {day + 1}</Text>
+            <Text style={T.displayM}>День {day + 1}</Text>
             <StateChip state="flow" />
           </View>
           <View style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
             <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.gold }}>+18 XP</Text></MedalPill>
-            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.red }}>HP 92%</Text></MedalPill>
-            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.cEnergy }}>QI 78%</Text></MedalPill>
+            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.red }}>ЗД 92%</Text></MedalPill>
+            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.cEnergy }}>ЦИ 78%</Text></MedalPill>
           </View>
-          <Text style={[T.label, { marginBottom: 8 }]}>Completed</Text>
+          <Text style={[T.label, { marginBottom: 8 }]}>Выполнено</Text>
           <View style={{ gap: 10 }}>
             {sample.map((p) => <PracticeCard key={p.id} p={{ ...p, done: true }} compact />)}
           </View>
@@ -303,7 +303,7 @@ export function LevelUpOverlay({ stage, onClose }) {
           <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 40, color: '#5a3d10', ...ts('rgba(255,255,255,0.5)', 0, 1) }}>{stage}</Text>
           <Gloss radius={41} />
         </Gradient>
-        <Text style={{ fontFamily: FONT.display, fontSize: 12, color: C.title, marginBottom: 8 }}>Stage {stage}</Text>
+        <Text style={{ fontFamily: FONT.display, fontSize: 12, color: C.title, marginBottom: 8 }}>Стадия {stage}</Text>
         <Text style={[T.body, { color: C.inkMuted, textAlign: 'center' }]}>{asc}</Text>
       </View>
     </Pressable>
@@ -335,9 +335,9 @@ export function FogVeil() {
    ONBOARDING (first run) — teaches the core loop by doing
    ============================================================ */
 const ONBOARD_STEPS = [
-  { icon: 'magic-slot', color: C.jade, title: 'Do your practices', body: 'Tap a practice to open the timer, then check it off when done.' },
-  { icon: 'potion-blue', color: C.cEnergy, title: 'Grow', body: 'Each practice grants stat points, stage XP, and shifts your Qi.' },
-  { icon: 'potion-red', color: C.red, title: 'Watch your state', body: 'Health and Qi bars show your form. Keep Qi flowing for a steady path.' },
+  { icon: 'magic-slot', color: C.jade, title: 'Выполняйте практики', body: 'Нажмите на практику, чтобы открыть таймер, затем отметьте её выполненной.' },
+  { icon: 'potion-blue', color: C.cEnergy, title: 'Развивайтесь', body: 'Каждая практика даёт очки характеристик, XP стадии и меняет вашу Ци.' },
+  { icon: 'potion-red', color: C.red, title: 'Следите за состоянием', body: 'Полоски Здоровья и Ци показывают вашу форму. Держите Ци в потоке для ровного пути.' },
 ];
 
 export function Onboarding({ onDone }) {
@@ -355,8 +355,8 @@ export function Onboarding({ onDone }) {
             <View key={i} style={{ width: i === step ? 18 : 7, height: 7, borderRadius: 4, backgroundColor: i === step ? C.gold : C.paperDeep }} />
           ))}
         </View>
-        <Btn variant="primary" block onPress={() => (last ? onDone() : setStep(step + 1))}>{last ? 'Begin' : 'Next'}</Btn>
-        {!last ? <Btn variant="ghost" onPress={onDone} style={{ marginTop: 2 }}>Skip</Btn> : null}
+        <Btn variant="primary" block onPress={() => (last ? onDone() : setStep(step + 1))}>{last ? 'Начать' : 'Далее'}</Btn>
+        {!last ? <Btn variant="ghost" onPress={onDone} style={{ marginTop: 2 }}>Пропустить</Btn> : null}
       </View>
     </View>
   );

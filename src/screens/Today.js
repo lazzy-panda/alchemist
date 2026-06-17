@@ -11,10 +11,10 @@ import { dailyWisdom } from '../quotes';
 function greeting() {
   let h = 9;
   try { h = new Date().getHours(); } catch (e) {}
-  if (h >= 5 && h < 12) return 'Morning';
-  if (h >= 12 && h < 18) return 'Afternoon';
-  if (h >= 18 && h < 23) return 'Evening';
-  return 'Night';
+  if (h >= 5 && h < 12) return 'Утро';
+  if (h >= 12 && h < 18) return 'День';
+  if (h >= 18 && h < 23) return 'Вечер';
+  return 'Ночь';
 }
 
 function DayStateChip({ dayState }) {
@@ -34,9 +34,9 @@ function EmptyDay({ onAdd }) {
   return (
     <Card style={{ alignItems: 'center' }}>
       <Text style={{ fontSize: 36 }}>🐉</Text>
-      <Text style={[T.displayM, { marginTop: 10, marginBottom: 8, textAlign: 'center' }]}>Begin your path today</Text>
-      <Text style={[T.body, { color: C.inkMuted, marginBottom: 16, textAlign: 'center' }]}>The sleeping dragon awaits the first breath. Add a practice to unroll the day.</Text>
-      <Btn variant="primary" onPress={onAdd}>Add practice</Btn>
+      <Text style={[T.displayM, { marginTop: 10, marginBottom: 8, textAlign: 'center' }]}>Начни свой путь сегодня</Text>
+      <Text style={[T.body, { color: C.inkMuted, marginBottom: 16, textAlign: 'center' }]}>Спящий дракон ждёт первого вдоха. Добавь практику, чтобы развернуть день.</Text>
+      <Btn variant="primary" onPress={onAdd}>Добавить практику</Btn>
     </Card>
   );
 }
@@ -46,8 +46,8 @@ function AllDoneState({ dayXp }) {
   return (
     <Card frame="golden" style={{ alignItems: 'center', marginBottom: 14 }}>
       <Seal size={44} style={{ marginBottom: 12 }} />
-      <Text style={[T.displayM, { marginBottom: 8, textAlign: 'center' }]}>Day scroll sealed</Text>
-      <Text style={[T.body, { color: C.inkMuted, textAlign: 'center' }]}>All practices complete. +{dayXp} XP today.{'\n'}«{w}»</Text>
+      <Text style={[T.displayM, { marginBottom: 8, textAlign: 'center' }]}>Свиток дня запечатан</Text>
+      <Text style={[T.body, { color: C.inkMuted, textAlign: 'center' }]}>Все практики выполнены. +{dayXp} XP сегодня.{'\n'}«{w}»</Text>
     </Card>
   );
 }
@@ -61,7 +61,7 @@ export function TodayScreen({ ctx }) {
   const dayXp = done.reduce((s, p) => s + Object.values(p.r || {}).reduce((a, b) => a + b, 0), 0);
   const ordered = [...pending, ...done];
   const onCompleteAll = () => pending.forEach((pp) => onToggle(pp));
-  const name = (userName || '').trim().split(' ')[0] || 'Wanderer';
+  const name = (userName || '').trim().split(' ')[0] || 'Странник';
   const streakMilestone = streak >= 7 && streak % 7 === 0;
 
   return (
@@ -72,7 +72,7 @@ export function TodayScreen({ ctx }) {
           <View style={{ position: 'absolute', right: 0, top: 2, alignItems: 'flex-end', gap: 8, zIndex: 3 }}>
             <DayStateChip dayState={dayState} />
             {onShowHelp ? (
-              <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="How it works" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
+              <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontFamily: FONT.display, fontSize: 13, color: C.inkMuted }}>?</Text>
               </Pressable>
             ) : null}
@@ -80,13 +80,13 @@ export function TodayScreen({ ctx }) {
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 14, zIndex: 2 }}>
             <Avatar flow={dayState === 'flow'} size={72} stage={stage.lvl} />
             <View style={{ flex: 1, paddingTop: 2, paddingRight: 92 }}>
-              <Text style={[T.eyebrow, { marginBottom: 6 }]}>Stage {stage.lvl}</Text>
+              <Text style={[T.eyebrow, { marginBottom: 6 }]}>Стадия {stage.lvl}</Text>
               <Text accessibilityRole="header" style={[T.displayM]}>{greeting()},{'\n'}{name}</Text>
             </View>
           </View>
           <View style={{ gap: 12, marginTop: 18, zIndex: 2 }}>
-            <ResourceBar kind="hp" label="Health" value={resources.hp} max={resources.hpMax} />
-            <ResourceBar kind="qi" label="Qi" value={resources.qi} max={resources.qiMax} glow={dayState === 'flow'} />
+            <ResourceBar kind="hp" label="Здоровье" value={resources.hp} max={resources.hpMax} />
+            <ResourceBar kind="qi" label="Ци" value={resources.qi} max={resources.qiMax} glow={dayState === 'flow'} />
           </View>
         </View>
       </Gradient>
@@ -94,10 +94,10 @@ export function TodayScreen({ ctx }) {
       {/* summary ribbon */}
       <View style={{ backgroundColor: C.paperWarm }}>
         <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 18, paddingVertical: 12 }, wide ? { maxWidth: WIDE_MAX, width: '100%', alignSelf: 'center' } : null]}>
-          <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>{done.length} <Text style={{ color: C.inkFaint }}>of {today.length}</Text></Text>
+          <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>{done.length} <Text style={{ color: C.inkFaint }}>из {today.length}</Text></Text>
           <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>+{dayXp} XP</Text>
           <View style={{ flex: 1 }} />
-          <StateChip state="streak" text={(streakMilestone ? '✦ ' : '') + streak + ' days'} gold={streakMilestone} />
+          <StateChip state="streak" text={(streakMilestone ? '✦ ' : '') + streak + ' дн.'} gold={streakMilestone} />
         </View>
       </View>
 
@@ -106,14 +106,14 @@ export function TodayScreen({ ctx }) {
         {dayState === 'spent' ? (
           <Card frame="grey" style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 14 }}>
             <Text style={{ fontSize: 18 }}>🌙</Text>
-            <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 9, lineHeight: 15, color: C.inkMuted }}>Qi is low — a signal to recover, not a failure. Pick a light practice or rest.</Text>
+            <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 9, lineHeight: 15, color: C.inkMuted }}>Ци на исходе — это сигнал восстановиться, а не провал. Выбери лёгкую практику или отдохни.</Text>
           </Card>
         ) : null}
 
         {today.length === 0 ? <EmptyDay onAdd={onAdd} /> : allDone ? <AllDoneState dayXp={dayXp} /> : null}
 
         {!allDone && pending.length > 0 && pending.length <= 2 ? (
-          <Btn variant="primary" block onPress={onCompleteAll} style={{ marginBottom: 12 }}>{`✦ Complete all (${pending.length})`}</Btn>
+          <Btn variant="primary" block onPress={onCompleteAll} style={{ marginBottom: 12 }}>{`✦ Выполнить всё (${pending.length})`}</Btn>
         ) : null}
 
         <View style={{ gap: 14 }}>
@@ -124,7 +124,7 @@ export function TodayScreen({ ctx }) {
           ))}
         </View>
 
-        <Btn variant="ghost" block onPress={onAdd} style={{ marginTop: 14, minHeight: 44 }}>+ Add practice</Btn>
+        <Btn variant="ghost" block onPress={onAdd} style={{ marginTop: 14, minHeight: 44 }}>+ Добавить практику</Btn>
       </PadView>
     </ScreenScroll>
   );
