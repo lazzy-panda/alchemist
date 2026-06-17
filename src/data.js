@@ -72,7 +72,7 @@ export const STAT_LEVELS = {
 // ---- perks ----
 export const PERKS = [
   { icon: 'wind', name: 'Поток Ци', color: '#3E9C8A', open: true },
-  { icon: 'lightbulb', name: 'Ясный ум', color: '#4A6FA5', open: true },
+  { icon: 'brain', name: 'Ясный ум', color: '#4A6FA5', open: true },
   { icon: 'move', name: 'Гибкое тело', color: '#7BA84E', open: true },
   { icon: 'shield', name: 'Железная рубашка', color: '#C06B3E', open: false, req: 'Сила 6' },
   { icon: 'heart', name: 'Открытое сердце', color: '#C77BA0', open: false, req: 'Доброта 8' },

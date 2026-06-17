@@ -12,12 +12,12 @@ import { KitPanel, KitClose, KitGem, KitBanner } from './kit';
 import { IconTile, PixelIcon } from './PixelIcon';
 
 // curated pixel icons a user can pick for their own practice
-const ICON_CHOICES = ['moon-stars', 'wind', 'human-handsup', 'human-run', 'book', 'heart', 'zap', 'shield', 'move', 'bullseye', 'mood-happy', 'drop-full', 'lightbulb', 'tea', 'trophy', 'music', 'sun', 'gift', 'coffee', 'lock'];
+const ICON_CHOICES = ['moon-stars', 'wind', 'human-handsup', 'human-run', 'book', 'brain', 'heart', 'zap', 'shield', 'move', 'bullseye', 'mood-happy', 'drop-full', 'lightbulb', 'tea', 'trophy', 'music', 'sun', 'gift', 'coffee', 'lock'];
 
 /* ============================================================
    PRACTICE DETAIL (full-screen page, timer)
    ============================================================ */
-export function PracticeDetail({ practice, onComplete, onClose, wide }) {
+export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) {
   const cat = CATS[practice.cat] || { name: practice.cat || 'Прочее', icon: 'flag', color: C.inkMuted };
   const [total, setTotal] = useState(practice.dur * 60);
   const [remaining, setRemaining] = useState(practice.dur * 60);
@@ -57,6 +57,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
               <Text style={[T.displayM, { fontSize: 26, lineHeight: 36 }]}>{practice.name}</Text>
               <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: cat.color }}>{cat.name}{practice.mult ? ' · x' + practice.mult : ''}</Text>
             </View>
+            {onEdit ? <Btn variant="ghost" onPress={onEdit}>Изменить</Btn> : null}
           </View>
 
           {/* timer — native rpgui-progress + time readout */}
@@ -149,7 +150,7 @@ function PageShell({ children, onClose, wide }) {
 /* ============================================================
    EDITOR SHEET
    ============================================================ */
-export function EditorSheet({ practice, onSave, onClose, onArchive, existingNames, wide }) {
+export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, existingNames, wide }) {
   const isNew = !practice;
   const [name, setName] = useState(practice?.name || '');
   const [cat, setCat] = useState(practice?.cat || 'med');
@@ -157,7 +158,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
   const [rewards, setRewards] = useState(practice?.r ? { ...practice.r } : {});
   const [icon, setIcon] = useState(practice?.icon || '');
   const [nameError, setNameError] = useState('');
-  const [confirmArchive, setConfirmArchive] = useState(false);
+  const [confirm, setConfirm] = useState(null); // null | 'archive' | 'delete'
 
   const toggleReward = (k) => {
     setRewards((r) => {
@@ -218,19 +219,33 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
             </Field>
             {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 18, lineHeight: 28 }}>Совет: привяжите хотя бы одну характеристику, чтобы практика давала очки.</Text> : null}
 
-            {confirmArchive ? (
+            {confirm ? (
               <View style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
-                <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.red, marginBottom: 12, lineHeight: 28 }}>Архивировать «{name || practice?.name}»? Можно восстановить из Библиотеки.</Text>
+                <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.red, marginBottom: 12, lineHeight: 28 }}>
+                  {confirm === 'delete'
+                    ? `Удалить «${name || practice?.name}» навсегда? Это действие необратимо.`
+                    : `Архивировать «${name || practice?.name}»? Можно восстановить из Библиотеки.`}
+                </Text>
                 <View style={{ flexDirection: 'row', gap: 10 }}>
-                  <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirmArchive(false)}>Отмена</Btn>
-                  <Btn variant="danger" style={{ flex: 1 }} onPress={() => { onArchive && onArchive(practice.id); onClose && onClose(); }}>Архивировать</Btn>
+                  <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirm(null)}>Отмена</Btn>
+                  <Btn
+                    variant="danger"
+                    style={{ flex: 1 }}
+                    onPress={() => {
+                      if (confirm === 'delete') onDelete && onDelete(practice.id);
+                      else onArchive && onArchive(practice.id);
+                      onClose && onClose();
+                    }}
+                  >
+                    {confirm === 'delete' ? 'Удалить' : 'Архивировать'}
+                  </Btn>
                 </View>
               </View>
             ) : (
-              <View style={{ flexDirection: 'row', gap: 10, marginTop: 22 }}>
+              <View style={{ marginTop: 22 }}>
                 <Btn
                   variant="primary"
-                  style={{ flex: 1 }}
+                  block
                   onPress={() => {
                     const trimmed = name.trim();
                     if (!trimmed) { setNameError('Введите название практики'); return; }
@@ -241,7 +256,12 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
                 >
                   Сохранить
                 </Btn>
-                {!isNew ? <Btn variant="danger" onPress={() => setConfirmArchive(true)}>Архивировать</Btn> : null}
+                {!isNew ? (
+                  <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
+                    <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirm('archive')}>Архивировать</Btn>
+                    <Btn variant="danger" style={{ flex: 1 }} onPress={() => setConfirm('delete')}>Удалить</Btn>
+                  </View>
+                ) : null}
               </View>
             )}
     </PageShell>

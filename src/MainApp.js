@@ -65,6 +65,10 @@ export function MainApp() {
     game.archivePractice(id);
     setToast({ message: 'Практика в архиве', actionLabel: 'Отменить', action: 'undo' });
   }, [game.archivePractice]);
+  const onDelete = useCallback((id) => {
+    game.deletePractice(id);
+    setToast({ message: 'Практика удалена', actionLabel: null });
+  }, [game.deletePractice]);
 
   const ctx = {
     ...game,
@@ -95,8 +99,8 @@ export function MainApp() {
 
   const overlays = (
     <>
-      {detail ? <PracticeDetail practice={detail} wide={wide} onComplete={onComplete} onClose={() => setDetail(null)} /> : null}
-      {editor !== undefined ? <EditorSheet practice={editor} wide={wide} onSave={onSave} onClose={() => setEditor(undefined)} onArchive={onArchive} existingNames={game.practices.filter((x) => !x.archived).map((x) => x.name)} /> : null}
+      {detail ? <PracticeDetail practice={detail} wide={wide} onComplete={onComplete} onClose={() => setDetail(null)} onEdit={() => { const p = detail; setDetail(null); setEditor(p); }} /> : null}
+      {editor !== undefined ? <EditorSheet practice={editor} wide={wide} onSave={onSave} onClose={() => setEditor(undefined)} onArchive={onArchive} onDelete={onDelete} existingNames={game.practices.filter((x) => !x.archived).map((x) => x.name)} /> : null}
       {daySheet !== null ? <DayDetailSheet day={daySheet} wide={wide} onClose={() => setDaySheet(null)} /> : null}
       {game.levelUp ? <LevelUpOverlay stage={game.levelUp} onClose={game.clearLevelUp} /> : null}
       {toast ? <Toast message={toast.message} actionLabel={toast.actionLabel} onAction={() => { if (toast.action === 'undo') game.undoArchive(); setToast(null); }} onClose={() => setToast(null)} /> : null}

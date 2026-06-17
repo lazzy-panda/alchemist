@@ -139,6 +139,11 @@ export function useGame(userId) {
       return null;
     });
   }, []);
+  // permanent delete (archive is the soft/undoable option; this removes the practice entirely)
+  const deletePractice = useCallback((id) => {
+    setPractices((ps) => ps.filter((x) => x.id !== id));
+    setLastArchived((cur) => (cur === id ? null : cur));
+  }, []);
 
   const setAvatar = useCallback((id) => {
     setAvatarState(id);
@@ -167,6 +172,7 @@ export function useGame(userId) {
     archivePractice,
     restorePractice,
     undoArchive,
+    deletePractice,
     lastArchived,
   };
 }
