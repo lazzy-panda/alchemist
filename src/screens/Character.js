@@ -7,6 +7,7 @@ import { ScreenScroll, PadView } from '../layout';
 import { Card, T, kf, KF, EASE } from '../ui';
 import { ResourceBar, StatMedal, Bar, Mh } from '../badges';
 import { PixelIcon } from '../PixelIcon';
+import { JournalSections } from './Journal';
 
 function Section({ title, right, defaultOpen = false, children }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -121,6 +122,10 @@ export function CharacterScreen({ ctx }) {
             {RELICS.map((r, i) => (<Relic key={i} r={r} />))}
           </View>
         </Section>
+
+        {/* ---- chronicle (merged from the former Летопись tab) ---- */}
+        <View style={{ height: 2, backgroundColor: C.goldLine, opacity: 0.4, marginTop: 28, marginBottom: 6 }} />
+        <JournalSections ctx={ctx} />
 
         {!wide && onSignOut ? (
           <Pressable onPress={onSignOut} accessibilityRole="button" accessibilityLabel="Выйти" style={{ marginTop: 28, marginBottom: 4, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}>

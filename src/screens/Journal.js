@@ -58,8 +58,8 @@ function DeedRow({ glyph, label, value, color, last }) {
   );
 }
 
-export function JournalScreen({ ctx }) {
-  const { wide, onOpenDay, streak = 14 } = ctx;
+export function JournalSections({ ctx }) {
+  const { onOpenDay, streak = 14 } = ctx;
   let todayIdx = 14;
   try { todayIdx = Math.min(HEAT.length - 1, Math.max(0, new Date().getDate() - 1)); } catch (e) {}
   const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -74,8 +74,7 @@ export function JournalScreen({ ctx }) {
   const growKeys = ['energy', 'focus', 'flex'];
 
   return (
-    <ScreenScroll>
-      <PadView wide={wide}>
+    <>
         {/* ---- month hero: dominant metric + streak + month progress ---- */}
         <Text style={[T.eyebrow, kf(KF.fadeUp, 0.4, { ease: EASE.out })]}>Хроника Пути</Text>
         <Text accessibilityRole="header" style={[T.displayM, { marginTop: 6, marginBottom: 12 }, kf(KF.fadeUp, 0.45, { ease: EASE.out, delay: 0.04 })]}>Летопись · {MONTH}</Text>
@@ -132,6 +131,15 @@ export function JournalScreen({ ctx }) {
           <DeedRow glyph="💠" label="Реликвий обретено" value={`${relicsGot}/${RELICS.length}`} color={C.cEnergy} />
           <DeedRow glyph="✦" label="Граней мастерства растёт" value={STATS.length} color={C.cKind} last />
         </Card>
+    </>
+  );
+}
+
+export function JournalScreen({ ctx }) {
+  return (
+    <ScreenScroll>
+      <PadView wide={ctx.wide}>
+        <JournalSections ctx={ctx} />
       </PadView>
     </ScreenScroll>
   );

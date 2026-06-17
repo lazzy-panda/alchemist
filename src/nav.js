@@ -12,7 +12,6 @@ export const NAV = [
   { key: 'character', label: 'Герой' },
   { key: 'library', label: 'Практики' },
   { key: 'diary', label: 'Дневник' },
-  { key: 'journal', label: 'Летопись' },
 ];
 
 /* ---- pixel-art nav icons (Pixelarticons), tinted gold when active ---- */

@@ -17,7 +17,7 @@ import sys, os, argparse
 from playwright.sync_api import sync_playwright
 
 VW, VH = 390, 844
-NAV = ["Сегодня", "Герой", "Практики", "Дневник", "Летопись"]
+NAV = ["Сегодня", "Герой", "Практики", "Дневник"]
 
 results = []  # (name, passed, detail)
 def check(name, passed, detail=""):
@@ -105,7 +105,7 @@ def main():
         page.wait_for_timeout(500)
 
         # ---- 4. DayDetailSheet reachable (same Sheet component) ----
-        goto_tab(page, "Летопись")
+        goto_tab(page, "Герой")  # chronicle/heatmap merged into the Hero tab
         cell = page.query_selector('button[aria-label^="День"]')
         if cell:
             try:

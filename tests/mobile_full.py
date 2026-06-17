@@ -175,7 +175,7 @@ def main():
 
         # ===== H. JOURNAL =====
         try:
-            goto_tab(page, "Летопись")
+            goto_tab(page, "Герой")  # chronicle/heatmap/growth merged into the Hero tab
             check("H1 Journal: native growth bars present", page.evaluate("()=>/Рост характеристик/i.test(document.body.innerText)") and count_aria(page, ".rpgui-progress") >= 3)
             cell = page.query_selector('button[aria-label^="День"]')
             day_ok = False
@@ -206,7 +206,7 @@ def main():
 
         # ===== K. A11Y / LOCALIZATION (Russian) =====
         try:
-            goto_tab(page, "Летопись")
+            goto_tab(page, "Герой")  # day cells live in the merged Hero tab now
             ru_day = count_aria(page, 'button[aria-label^="День"]')
             en_day = count_aria(page, 'button[aria-label^="Day "]')
             check("K1 Journal day cells use Russian aria-labels", ru_day > 0 and en_day == 0, f"ru={ru_day} en={en_day}")
