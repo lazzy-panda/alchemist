@@ -30,7 +30,6 @@ export const AVATAR_BY_ID = Object.fromEntries(AVATARS.map((a) => [a.id, a]));
 export const CATS = {
   med: { name: 'Медитация', icon: 'moon-stars', color: '#7AA6E0' },
   qi: { name: 'Цигун', icon: 'wind', color: '#5BC2AD' },
-  zhan: { name: 'Стояние', icon: 'human-handsup', color: '#A6D173' },
   body: { name: 'Тело', icon: 'human-run', color: '#E0905C' },
   know: { name: 'Знание', icon: 'book', color: '#BC8AD8' },
   heart: { name: 'Сердце', icon: 'heart', color: '#E2A0C6' },
@@ -52,7 +51,7 @@ export const PRACTICES = [
   P({ name: 'Прохладный ветер', cat: 'qi', dur: 7, r: { energy: 2 }, qi: 2 }),
   P({ name: 'Сильный ветер', cat: 'qi', dur: 10, r: { strength: 3, energy: 1 }, qi: -4 }),
   P({ name: 'Изучение учения', cat: 'know', dur: 30, r: { focus: 2, kind: 3 }, qi: 2 }),
-  P({ name: 'Тай-чи', cat: 'zhan', dur: 25, r: { flex: 3, focus: 2 }, qi: 3, mult: 1.5 }),
+  P({ name: 'Тай-чи', cat: 'qi', dur: 25, r: { flex: 3, focus: 2 }, qi: 3, mult: 1.5 }),
   P({ name: 'Шаматха', cat: 'med', dur: 25, r: { focus: 4 }, qi: 4 }),
   P({ name: 'Четыре безмерных', cat: 'heart', dur: 20, r: { kind: 4 }, qi: 3 }),
   P({ name: 'Растяжка', cat: 'body', dur: 12, r: { flex: 3 }, qi: 1 }),

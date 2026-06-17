@@ -23,7 +23,8 @@ export function useGame(userId) {
   const cloudTimer = useRef(null);
   const applyGame = (s) => {
     if (!s) return;
-    if (Array.isArray(s.practices)) setPractices(s.practices);
+    // migrate the removed 'zhan' (Стояние) category into 'qi' (Цигун) for legacy saves
+    if (Array.isArray(s.practices)) setPractices(s.practices.map((p) => (p.cat === 'zhan' ? { ...p, cat: 'qi' } : p)));
     // merge over seed defaults so a legacy/partial save can't crash the Character screen
     if (s.statLevels) setStatLevels({ ...JSON.parse(JSON.stringify(STAT_LEVELS)), ...s.statLevels });
     if (s.resources) setResources(s.resources);
