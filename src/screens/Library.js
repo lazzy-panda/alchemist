@@ -56,6 +56,35 @@ export function LibraryScreen({ ctx }) {
           );
         })}
 
+        {/* fallback group: any active practice whose category is unknown/legacy still shows up
+            (otherwise it would be invisible here yet still block its name as a duplicate) */}
+        {(() => {
+          const others = active.filter((p) => !CATS[p.cat]);
+          if (!others.length) return null;
+          const isCol = collapsed.__other;
+          return (
+            <View key="__other" style={{ marginBottom: 8 }}>
+              <Pressable onPress={() => setCollapsed({ ...collapsed, __other: !isCol })} accessibilityRole="button" accessibilityLabel="Прочее" accessibilityState={{ expanded: !isCol }} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingTop: 14, paddingBottom: 8, paddingHorizontal: 2 }}>
+                <Mh size={24} icon="flag" color={C.inkMuted} />
+                <Text style={{ fontFamily: FONT.display, fontSize: 20, color: C.title }}>Прочее</Text>
+                <Text style={T.caption}>{others.length}</Text>
+                <View style={{ flex: 1 }} />
+                <Text style={{ color: C.inkFaint, fontSize: 36, transform: isCol ? [] : [{ rotate: '90deg' }] }}>›</Text>
+              </Pressable>
+              <BrushDivider />
+              {!isCol ? (
+                <View style={{ gap: 12, marginTop: 10 }}>
+                  {others.map((p, i) => (
+                    <View key={p.id} style={kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: i * 0.04 })}>
+                      <PracticeCard p={p} compact onToggle={onToggle} onOpen={() => onEdit(p)} />
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+            </View>
+          );
+        })()}
+
         {/* archive */}
         <Pressable onPress={() => setArchiveOpen(!archiveOpen)} accessibilityRole="button" accessibilityLabel="Архивные практики" accessibilityState={{ expanded: archiveOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 18 }}>
           <Text style={{ color: C.inkFaint, fontSize: 32, transform: archiveOpen ? [{ rotate: '90deg' }] : [] }}>›</Text>
@@ -68,7 +97,7 @@ export function LibraryScreen({ ctx }) {
               <View style={{ gap: 4 }}>
                 {archived.map((p) => (
                   <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 }}>
-                    <Mh size={22} icon={CATS[p.cat].icon} color={CATS[p.cat].color} />
+                    <Mh size={22} icon={(CATS[p.cat] || {}).icon || 'flag'} color={(CATS[p.cat] || {}).color || C.inkMuted} />
                     <Text style={{ flex: 1, fontFamily: FONT.display, fontSize: 18, color: C.ink }} numberOfLines={1}>{p.name}</Text>
                     <Btn variant="secondary" onPress={() => restorePractice && restorePractice(p.id)}>Восстановить</Btn>
                   </View>

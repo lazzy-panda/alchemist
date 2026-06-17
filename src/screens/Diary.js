@@ -123,7 +123,7 @@ export function DiaryScreen({ ctx }) {
   }, [data, diaryKey]);
 
   const setKey = data.setKey;
-  const set = SETS[setKey];
+  const set = SETS[setKey] || SETS[Object.keys(SETS)[0]]; // never crash on a legacy/unknown set key
   const vows = set.vows;
   const start = (((dayNum * 6) % vows.length) + vows.length) % vows.length;
   const todays = Array.from({ length: 6 }, (_, i) => ({ ...vows[(start + i) % vows.length], n: ((start + i) % vows.length) + 1 }));

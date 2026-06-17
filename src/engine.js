@@ -27,7 +27,8 @@ export function useGame(userId) {
         if (raw) {
           const s = JSON.parse(raw);
           if (Array.isArray(s.practices)) setPractices(s.practices);
-          if (s.statLevels) setStatLevels(s.statLevels);
+          // merge over seed defaults so a legacy save that's missing a stat key can't crash the Character screen
+          if (s.statLevels) setStatLevels({ ...JSON.parse(JSON.stringify(STAT_LEVELS)), ...s.statLevels });
           if (s.resources) setResources(s.resources);
           if (s.stage) setStage(s.stage);
         }

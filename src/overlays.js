@@ -18,7 +18,7 @@ const ICON_CHOICES = ['moon-stars', 'wind', 'human-handsup', 'human-run', 'book'
    PRACTICE DETAIL (full-screen page, timer)
    ============================================================ */
 export function PracticeDetail({ practice, onComplete, onClose, wide }) {
-  const cat = CATS[practice.cat];
+  const cat = CATS[practice.cat] || { name: practice.cat || 'Прочее', icon: 'flag', color: C.inkMuted };
   const [total, setTotal] = useState(practice.dur * 60);
   const [remaining, setRemaining] = useState(practice.dur * 60);
   const [running, setRunning] = useState(false);

@@ -27,7 +27,8 @@ function CardBase({ done, style, children }) {
 }
 
 function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
-  const cat = CATS[p.cat];
+  // never crash on an unknown/legacy category — fall back to a neutral one
+  const cat = CATS[p.cat] || { name: p.cat || 'Прочее', icon: 'flag', color: C.inkMuted };
   const cardRef = useRef(null);
   const checkRef = useRef(null);
   const [shake, setShake] = useState(false);

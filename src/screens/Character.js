@@ -64,7 +64,7 @@ export function CharacterScreen({ ctx }) {
   const [expanded, setExpanded] = useState(null);
   const radarValues = {};
   STATS.forEach((s) => {
-    const sl = statLevels[s.key];
+    const sl = statLevels[s.key] || { lvl: 1, xp: 0, next: 100 };
     radarValues[s.key] = Math.min(1, (sl.lvl + sl.xp / sl.next) / 12);
   });
   const perksOpen = PERKS.filter((p) => p.open).length;
@@ -79,7 +79,7 @@ export function CharacterScreen({ ctx }) {
           <Card style={{ alignSelf: 'stretch' }}>
             <Text style={[T.caption, { marginBottom: 12 }]}>Грани мастерства</Text>
             {STATS.map((s, i) => {
-              const sl = statLevels[s.key];
+              const sl = statLevels[s.key] || { lvl: 1, xp: 0, next: 100 };
               const mp = Math.min(100, ((sl.lvl + sl.xp / sl.next) / 12) * 100);
               return (
                 <View key={s.key} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: i === STATS.length - 1 ? 0 : 9 }}>
@@ -105,7 +105,7 @@ export function CharacterScreen({ ctx }) {
         <Section title="Характеристики" defaultOpen>
           <Card style={{ overflow: 'hidden' }}>
             {STATS.map((s, i) => (
-              <StatRow key={s.key} s={s} sl={statLevels[s.key]} open={expanded === s.key} onToggle={() => setExpanded(expanded === s.key ? null : s.key)} last={i === STATS.length - 1} />
+              <StatRow key={s.key} s={s} sl={statLevels[s.key] || { lvl: 1, xp: 0, next: 100 }} open={expanded === s.key} onToggle={() => setExpanded(expanded === s.key ? null : s.key)} last={i === STATS.length - 1} />
             ))}
           </Card>
         </Section>
