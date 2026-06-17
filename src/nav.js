@@ -5,7 +5,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from './theme';
 import { Bar as ProgressBar } from './badges';
-import { KitGem } from './kit';
+import { PixelIcon } from './PixelIcon';
 
 export const NAV = [
   { key: 'today', label: 'Сегодня' },
@@ -15,10 +15,10 @@ export const NAV = [
   { key: 'journal', label: 'Летопись' },
 ];
 
-/* ---- native RPGUI icons for nav (RPGUI has no nav widget; use its rpgui-icon sprites) ---- */
-const NAV_ICON = { today: 'potion-red', character: 'helmet-slot', library: 'sword', diary: 'magic-slot', journal: 'shield' };
+/* ---- pixel-art nav icons (Pixelarticons), tinted gold when active ---- */
+const NAV_ICON = { today: 'sun', character: 'user', library: 'list-box', diary: 'notes', journal: 'script-text' };
 function NavIcon({ name, size = 22, on }) {
-  return <KitGem size={size} icon={NAV_ICON[name] || 'empty-slot'} style={{ opacity: on ? 1 : 0.5 }} />;
+  return <PixelIcon name={NAV_ICON[name] || 'circle'} size={size} color={on ? C.gold : C.inkFaint} />;
 }
 
 /* ---- bottom footer (mobile) ---- */

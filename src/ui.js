@@ -6,6 +6,7 @@ import Svg, { Path } from 'react-native-svg';
 import { C, R, FONT } from './theme';
 import { kf, tr, KF, EASE } from './anim';
 import { KitButton, KitPill, KitGem, KitPanel, KitRadio, KitCheckbox, KitHr } from './kit';
+import { PixelIcon } from './PixelIcon';
 
 const WEB = Platform.OS === 'web';
 
@@ -205,7 +206,7 @@ export function SelChip({ on, color, icon, label, onPress, multi }) {
       ]}
     >
       <Indicator on={on} size={18} />
-      {icon ? <KitGem size={18} icon={icon} color={color} /> : null}
+      {icon ? <PixelIcon name={icon} size={18} color={color} /> : null}
       <Text style={{ fontFamily: FONT.display, fontSize: 18, color: on ? C.title : C.inkMuted }}>{label}</Text>
     </Pressable>
   );

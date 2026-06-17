@@ -4,7 +4,8 @@ import { View, Text, Pressable, Platform, Animated, PanResponder } from 'react-n
 import Svg, { Path } from 'react-native-svg';
 import { C, FONT } from './theme';
 import { CATS, STAT } from './data';
-import { KitGem, KitPanel, KitCheckbox } from './kit';
+import { KitPanel, KitCheckbox } from './kit';
+import { IconTile } from './PixelIcon';
 import { QiTag } from './badges';
 import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
@@ -77,7 +78,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
           done={p.done}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingRight: 56, opacity: locked ? 0.6 : 1 }}
         >
-          <KitGem size={44} icon={cat.icon} color={cat.color} />
+          <IconTile name={p.icon || cat.icon} color={cat.color} size={44} />
           <View style={{ flex: 1, minWidth: 0 }}>
             <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontSize: 20, color: p.done ? C.jadeLight : C.ink, marginBottom: 5, lineHeight: 28, textDecorationLine: p.done ? 'line-through' : 'none', textDecorationColor: C.jadeLight }}>{p.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>

@@ -3,23 +3,23 @@
 // ---- characteristics ----  (icon = RPGUI icon class; short = reward-chip label)
 // colors lightened so they read as text on the dark RPGUI frames (WCAG AA)
 export const STATS = [
-  { key: 'energy', icon: 'potion-blue', short: 'ЭН', name: 'Энергия', color: '#5BC2AD' },
-  { key: 'strength', icon: 'sword', short: 'СЛ', name: 'Сила', color: '#E0905C' },
-  { key: 'flex', icon: 'shoes-slot', short: 'ГБ', name: 'Гибкость', color: '#A6D173' },
-  { key: 'focus', icon: 'magic-slot', short: 'ФК', name: 'Фокус', color: '#7AA6E0' },
-  { key: 'kind', icon: 'potion-green', short: 'ДБ', name: 'Доброта', color: '#E2A0C6' },
-  { key: 'sex', icon: 'ring-slot', short: 'ЖЗ', name: 'Жизненность', color: '#BC8AD8' },
+  { key: 'energy', icon: 'zap', short: 'ЭН', name: 'Энергия', color: '#5BC2AD' },
+  { key: 'strength', icon: 'shield', short: 'СЛ', name: 'Сила', color: '#E0905C' },
+  { key: 'flex', icon: 'move', short: 'ГБ', name: 'Гибкость', color: '#A6D173' },
+  { key: 'focus', icon: 'bullseye', short: 'ФК', name: 'Фокус', color: '#7AA6E0' },
+  { key: 'kind', icon: 'mood-happy', short: 'ДБ', name: 'Доброта', color: '#E2A0C6' },
+  { key: 'sex', icon: 'drop-full', short: 'ЖЗ', name: 'Жизненность', color: '#BC8AD8' },
 ];
 export const STAT = Object.fromEntries(STATS.map((s) => [s.key, s]));
 
 // ---- categories ----
 export const CATS = {
-  med: { name: 'Медитация', icon: 'magic-slot', color: '#7AA6E0' },
-  qi: { name: 'Цигун', icon: 'potion-blue', color: '#5BC2AD' },
-  zhan: { name: 'Стояние', icon: 'shoes-slot', color: '#A6D173' },
-  body: { name: 'Тело', icon: 'armor-slot', color: '#E0905C' },
-  know: { name: 'Знание', icon: 'helmet-slot', color: '#BC8AD8' },
-  heart: { name: 'Сердце', icon: 'potion-red', color: '#E2A0C6' },
+  med: { name: 'Медитация', icon: 'moon-stars', color: '#7AA6E0' },
+  qi: { name: 'Цигун', icon: 'wind', color: '#5BC2AD' },
+  zhan: { name: 'Стояние', icon: 'human-handsup', color: '#A6D173' },
+  body: { name: 'Тело', icon: 'human-run', color: '#E0905C' },
+  know: { name: 'Знание', icon: 'book', color: '#BC8AD8' },
+  heart: { name: 'Сердце', icon: 'heart', color: '#E2A0C6' },
 };
 
 // ---- practices ----
@@ -57,20 +57,20 @@ export const STAT_LEVELS = {
 
 // ---- perks ----
 export const PERKS = [
-  { icon: 'potion-blue', name: 'Поток Ци', color: '#3E9C8A', open: true },
-  { icon: 'magic-slot', name: 'Ясный ум', color: '#4A6FA5', open: true },
-  { icon: 'shoes-slot', name: 'Гибкое тело', color: '#7BA84E', open: true },
-  { icon: 'armor-slot', name: 'Железная рубашка', color: '#C06B3E', open: false, req: 'Сила 6' },
-  { icon: 'potion-red', name: 'Открытое сердце', color: '#C77BA0', open: false, req: 'Доброта 8' },
-  { icon: 'potion-green', name: 'Внутренний эликсир', color: '#8E5AA8', open: false, req: 'Стадия 12' },
+  { icon: 'wind', name: 'Поток Ци', color: '#3E9C8A', open: true },
+  { icon: 'lightbulb', name: 'Ясный ум', color: '#4A6FA5', open: true },
+  { icon: 'move', name: 'Гибкое тело', color: '#7BA84E', open: true },
+  { icon: 'shield', name: 'Железная рубашка', color: '#C06B3E', open: false, req: 'Сила 6' },
+  { icon: 'heart', name: 'Открытое сердце', color: '#C77BA0', open: false, req: 'Доброта 8' },
+  { icon: 'drop-full', name: 'Внутренний эликсир', color: '#8E5AA8', open: false, req: 'Стадия 12' },
 ];
 
 // ---- relics ----
 export const RELICS = [
-  { icon: 'magic-slot', got: true, name: 'Лотос покоя' },
-  { icon: 'potion-red', got: true, name: 'Чаша рассвета' },
-  { icon: 'potion-blue', got: false },
-  { icon: 'shield', got: false },
+  { icon: 'moon-stars', got: true, name: 'Лотос покоя' },
+  { icon: 'tea', got: true, name: 'Чаша рассвета' },
+  { icon: 'music', got: false },
+  { icon: 'trophy', got: false },
 ];
 
 // ---- journal: heatmap (28 days, intensity 0..3) ----
@@ -88,7 +88,7 @@ export const DIARY_TIMES = ['08:00', '10:30', '12:00', '15:00', '17:00', '19:00'
 export const DIARY_SETS = {
   ten: {
     name: 'Десять',
-    icon: 'magic-slot',
+    icon: 'checklist',
     color: '#3E8C60',
     vows: [
       { t: 'Защита жизни', q: 'Защитили ли вы сегодня жизнь, пусть в малом — помогли уставшему, убрали опасность?' },
@@ -124,7 +124,7 @@ export const DIARY_SETS = {
   },
   freedom: {
     name: 'Свобода',
-    icon: 'shoes-slot',
+    icon: 'lock-open',
     color: '#4574B5',
     vows: [
       { t: 'Не убивать', q: 'Воздержались ли вы от убийства?' },
@@ -141,7 +141,7 @@ export const DIARY_SETS = {
   },
   worldly: {
     name: 'Мирские',
-    icon: 'potion-red',
+    icon: 'home',
     color: '#C66A38',
     vows: [
       { t: 'Жизнь человека', q: 'Избегали ли вы убийства человека или нерождённого ребёнка?' },

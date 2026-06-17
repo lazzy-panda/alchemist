@@ -9,6 +9,10 @@ import { RewardMedal, QiTag, StateChip, MedalPill, Bar } from './badges';
 import { CircularTimer } from './svg';
 import { PracticeCard } from './PracticeCard';
 import { KitPanel, KitClose, KitGem, KitBanner } from './kit';
+import { IconTile, PixelIcon } from './PixelIcon';
+
+// curated pixel icons a user can pick for their own practice
+const ICON_CHOICES = ['moon-stars', 'wind', 'human-handsup', 'human-run', 'book', 'heart', 'zap', 'shield', 'move', 'bullseye', 'mood-happy', 'drop-full', 'lightbulb', 'tea', 'trophy', 'music', 'sun', 'gift', 'coffee', 'lock'];
 
 /* ============================================================
    PRACTICE DETAIL (full-screen page, timer)
@@ -48,7 +52,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
   return (
     <PageShell onClose={onClose} wide={wide}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 22 }}>
-            <KitGem size={48} icon={cat.icon} color={cat.color} />
+            <IconTile name={practice.icon || cat.icon} color={cat.color} size={48} />
             <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
               <Text style={[T.displayM, { fontSize: 26, lineHeight: 36 }]}>{practice.name}</Text>
               <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: cat.color }}>{cat.name}{practice.mult ? ' · x' + practice.mult : ''}</Text>
@@ -181,6 +185,26 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
               </View>
             </Field>
 
+            <Field label="Иконка">
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                {ICON_CHOICES.map((ic) => {
+                  const sel = (icon || CATS[cat].icon) === ic;
+                  return (
+                    <Pressable
+                      key={ic}
+                      onPress={() => setIcon(ic)}
+                      accessibilityRole="button"
+                      accessibilityLabel={'Иконка ' + ic}
+                      accessibilityState={{ selected: sel }}
+                      style={{ width: 46, height: 46, borderRadius: 4, borderWidth: 2, borderColor: sel ? C.gold : C.stoneLine, backgroundColor: sel ? C.frameGoldBg : C.frameDark, alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <PixelIcon name={ic} size={26} color={sel ? C.gold : C.inkMuted} />
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </Field>
+
             <Field label="Длительность">
               <Stepper value={dur} onDec={() => setDur(Math.max(1, dur - 5))} onInc={() => setDur(Math.min(180, dur + 5))} />
             </Field>
@@ -309,9 +333,9 @@ export function FogVeil() {
    ONBOARDING (first run) — teaches the core loop by doing
    ============================================================ */
 const ONBOARD_STEPS = [
-  { icon: 'magic-slot', color: C.jade, title: 'Выполняйте практики', body: 'Нажмите на практику, чтобы открыть таймер, затем отметьте её выполненной.' },
-  { icon: 'potion-blue', color: C.cEnergy, title: 'Развивайтесь', body: 'Каждая практика даёт очки характеристик, XP стадии и меняет вашу Ци.' },
-  { icon: 'potion-red', color: C.red, title: 'Следите за состоянием', body: 'Полоски Здоровья и Ци показывают вашу форму. Держите Ци в потоке для ровного пути.' },
+  { icon: 'checklist', color: C.jade, title: 'Выполняйте практики', body: 'Нажмите на практику, чтобы открыть таймер, затем отметьте её выполненной.' },
+  { icon: 'trending-up', color: C.cEnergy, title: 'Развивайтесь', body: 'Каждая практика даёт очки характеристик, XP стадии и меняет вашу Ци.' },
+  { icon: 'heart', color: C.red, title: 'Следите за состоянием', body: 'Полоски Здоровья и Ци показывают вашу форму. Держите Ци в потоке для ровного пути.' },
 ];
 
 export function Onboarding({ onDone }) {
@@ -321,7 +345,7 @@ export function Onboarding({ onDone }) {
   return (
     <View style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 280, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 26, backgroundColor: 'rgba(35,25,12,0.55)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
       <View key={step} style={[{ width: '100%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 30, paddingBottom: 22, borderRadius: 26, borderWidth: 4, borderColor: C.stoneDark, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(0,0,0,0.4)` }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}>
-        <KitGem size={64} icon={s.icon} color={s.color} />
+        <IconTile name={s.icon} color={s.color} size={64} />
         <Text style={[T.displayM, { marginTop: 14, marginBottom: 10, textAlign: 'center' }]}>{s.title}</Text>
         <Text style={[T.body, { color: C.inkMuted, textAlign: 'center', marginBottom: 18 }]}>{s.body}</Text>
         <View style={{ flexDirection: 'row', gap: 7, marginBottom: 18 }}>

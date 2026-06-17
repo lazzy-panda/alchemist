@@ -6,7 +6,7 @@ import { STATS, CATS, PRACTICES, PERKS, RELICS } from '../data';
 import { ScreenScroll, PadView } from '../layout';
 import { Card, T, kf, KF, EASE } from '../ui';
 import { ResourceBar, StatMedal, Bar, Mh } from '../badges';
-import { KitGem } from '../kit';
+import { PixelIcon } from '../PixelIcon';
 
 function Section({ title, right, defaultOpen = false, children }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -135,7 +135,7 @@ export function CharacterScreen({ ctx }) {
 function Perk({ p }) {
   return (
     <View style={{ flexGrow: 1, flexBasis: '30%', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, paddingHorizontal: 6, minHeight: 96, borderRadius: 8, borderWidth: 2, borderColor: p.open ? C.goldLine : C.stoneLine, backgroundColor: p.open ? C.frameGoldBg : C.frameDark, opacity: p.open ? 1 : 0.7 }}>
-      {p.open ? <KitGem size={34} icon={p.icon} color={p.color} /> : <Text style={{ fontSize: 40 }}>🔒</Text>}
+      {p.open ? <PixelIcon name={p.icon} size={38} color={p.color} /> : <PixelIcon name="lock" size={34} color={C.inkFaint} />}
       <Text style={{ fontFamily: FONT.display, fontSize: 16, lineHeight: 24, color: C.inkMuted, textAlign: 'center' }}>{p.name}</Text>
       {!p.open ? <Text style={[T.caption, { fontSize: 16, textAlign: 'center' }]}>{p.req}</Text> : null}
     </View>
@@ -145,7 +145,7 @@ function Perk({ p }) {
 function Relic({ r }) {
   return (
     <View style={{ flexGrow: 1, flexBasis: '22%', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, minHeight: 64, borderRadius: 8, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: C.frameDark, opacity: r.got ? 1 : 0.55 }}>
-      {r.got ? <KitGem size={48} icon={r.icon} /> : <Text style={{ fontSize: 44, opacity: 0.5, color: C.inkFaint }}>◌</Text>}
+      {r.got ? <PixelIcon name={r.icon} size={44} color={C.gold} /> : <PixelIcon name="lock" size={36} color={C.inkFaint} />}
     </View>
   );
 }

@@ -4,15 +4,16 @@ import { View, Text } from 'react-native';
 import { C, FONT } from './theme';
 import { STAT } from './data';
 import { KitBar, KitGem, KitPill, KitParchPill } from './kit';
+import { PixelIcon } from './PixelIcon';
 
 /* ---------- icon medallion ---------- */
 export function Mh({ size = 20, icon, color }) {
-  return <KitGem size={size} icon={icon} color={color} />;
+  return <PixelIcon name={icon} size={size} color={color} />;
 }
 
 export function StatMedal({ stat, size = 18 }) {
   const s = STAT[stat] || stat;
-  return <KitGem size={size} icon={s.icon} color={s.color} />;
+  return <PixelIcon name={s.icon} size={size} color={s.color} />;
 }
 
 /* ---------- reward medallion (+N) ---------- */
@@ -21,7 +22,7 @@ export function RewardMedal({ stat, value }) {
   if (!s) return null;
   return (
     <KitParchPill style={{ paddingLeft: 5, paddingRight: 9, gap: 4 }}>
-      <KitGem size={18} icon={s.icon} color={s.color} />
+      <PixelIcon name={s.icon} size={18} color={s.color} />
       <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.ink }}>+{value}</Text>
       <Text style={{ fontFamily: FONT.display, fontSize: 16, color: s.color }}>{s.short}</Text>
     </KitParchPill>
@@ -66,11 +67,11 @@ export function ResourceBar({ kind, label, value, max, glow }) {
 
 /* ---------- state chip ---------- */
 export const STATE_DEFS = {
-  flow: { ico: 'potion-blue', label: 'В потоке', pill: 'primary' },
-  inspired: { ico: 'magic-slot', label: 'Вдохновение', pill: 'gold' },
-  spent: { ico: 'exclamation', label: 'Истощение', pill: 'danger' },
-  streak: { ico: 'sword', label: '', pill: 'primary' },
-  calm: { ico: 'potion-green', label: 'Покой', pill: 'blue' },
+  flow: { ico: 'wind', label: 'В потоке', pill: 'primary' },
+  inspired: { ico: 'lightbulb-on', label: 'Вдохновение', pill: 'gold' },
+  spent: { ico: 'battery-1', label: 'Истощение', pill: 'danger' },
+  streak: { ico: 'trending-up', label: '', pill: 'primary' },
+  calm: { ico: 'moon', label: 'Покой', pill: 'blue' },
 };
 
 export function StateChip({ state, text, gold }) {
@@ -79,7 +80,7 @@ export function StateChip({ state, text, gold }) {
   const tc = { primary: C.jadeLight, gold: C.gold, danger: C.red, blue: C.blueLight }[d.pill] || C.ink;
   return (
     <KitPill color={d.pill} accessibilityLabel={text || d.label}>
-      <KitGem size={22} icon={d.ico} />
+      <PixelIcon name={d.ico} size={20} color={tc} />
       <Text style={{ fontFamily: FONT.display, fontSize: 16, color: tc }}>{text || d.label}</Text>
     </KitPill>
   );
