@@ -176,17 +176,28 @@ export function IconBtn({ onPress, children, style }) {
   );
 }
 
-/* ---------- stepper — real kit pills ---------- */
+/* ---------- stepper — compact pixel-framed ± buttons (44px touch target) ---------- */
+function StepBtn({ label, onPress, accessibilityLabel }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      style={({ pressed }) => [
+        { width: 44, height: 44, borderRadius: 6, borderWidth: 2, borderColor: C.goldLine, backgroundColor: C.frameGoldBg, alignItems: 'center', justifyContent: 'center' },
+        pressed && { backgroundColor: C.gold },
+      ]}
+    >
+      <Text style={{ fontFamily: FONT.display, fontSize: 22, lineHeight: 24, color: C.gold }}>{label}</Text>
+    </Pressable>
+  );
+}
 export function Stepper({ value, onDec, onInc, suffix = ' мин' }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 10 }}>
-      <KitPill color="primary" onPress={onDec} accessibilityLabel="Уменьшить">
-        <Text style={{ fontSize: 28, color: '#fff' }}>−</Text>
-      </KitPill>
-      <Text style={{ minWidth: 70, textAlign: 'center', fontFamily: FONT.display, fontSize: 22, fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
-      <KitPill color="primary" onPress={onInc} accessibilityLabel="Увеличить">
-        <Text style={{ fontSize: 28, color: '#fff' }}>+</Text>
-      </KitPill>
+    <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 12 }}>
+      <StepBtn label="−" onPress={onDec} accessibilityLabel="Уменьшить" />
+      <Text style={{ minWidth: 64, textAlign: 'center', fontFamily: FONT.display, fontSize: 20, fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
+      <StepBtn label="+" onPress={onInc} accessibilityLabel="Увеличить" />
     </View>
   );
 }
