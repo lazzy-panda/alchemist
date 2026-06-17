@@ -22,8 +22,8 @@ export function RewardMedal({ stat, value }) {
   return (
     <KitParchPill style={{ paddingLeft: 5, paddingRight: 9, gap: 4 }}>
       <KitGem size={18} icon={s.icon} color={s.color} />
-      <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>+{value}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: s.color }}>{s.short}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.ink }}>+{value}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 16, color: s.color }}>{s.short}</Text>
     </KitParchPill>
   );
 }
@@ -40,7 +40,7 @@ export function QiTag({ qi }) {
   const col = cost ? C.red : C.cEnergy;
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: col }}>ЦИ {cost ? '-' + Math.abs(qi) : '+' + qi}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 16, color: col }}>ЦИ {cost ? '-' + Math.abs(qi) : '+' + qi}</Text>
     </View>
   );
 }
@@ -56,8 +56,8 @@ export function ResourceBar({ kind, label, value, max, glow }) {
   return (
     <View style={{ gap: 6 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontFamily: FONT.display, fontSize: 9, color: kind === 'hp' ? C.red : C.cEnergy }}>{label}</Text>
-        <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.inkMuted }}>{Math.round(value)} / {max}</Text>
+        <Text style={{ fontFamily: FONT.display, fontSize: 18, color: kind === 'hp' ? C.red : C.cEnergy }}>{label}</Text>
+        <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.inkMuted }}>{Math.round(value)} / {max}</Text>
       </View>
       <KitBar pct={pct} color={kind} />
     </View>
@@ -79,8 +79,8 @@ export function StateChip({ state, text, gold }) {
   const tc = { primary: C.jadeLight, gold: C.gold, danger: C.red, blue: C.blueLight }[d.pill] || C.ink;
   return (
     <KitPill color={d.pill} accessibilityLabel={text || d.label}>
-      <Text style={{ fontSize: 11 }}>{d.ico}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, color: tc }}>{text || d.label}</Text>
+      <Text style={{ fontSize: 22 }}>{d.ico}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 16, color: tc }}>{text || d.label}</Text>
     </KitPill>
   );
 }
@@ -92,7 +92,7 @@ export function Avatar({ flow, size = 96, stage }) {
       <KitGem size={size} icon="helmet-slot" />
       {stage != null ? (
         <View pointerEvents="none" style={{ position: 'absolute', right: -3, bottom: -3, minWidth: 22, height: 20, paddingHorizontal: 5, backgroundColor: C.gold, borderWidth: 2, borderColor: C.goldLine, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.kitGoldText }}>{stage}</Text>
+          <Text style={{ fontFamily: FONT.display, fontSize: 16, color: C.kitGoldText }}>{stage}</Text>
         </View>
       ) : null}
     </View>

@@ -33,7 +33,7 @@ function DoneSeal() {
 function EmptyDay({ onAdd }) {
   return (
     <Card style={{ alignItems: 'center' }}>
-      <Text style={{ fontSize: 36 }}>🐉</Text>
+      <Text style={{ fontSize: 72 }}>🐉</Text>
       <Text style={[T.displayM, { marginTop: 10, marginBottom: 8, textAlign: 'center' }]}>Начни свой путь сегодня</Text>
       <Text style={[T.body, { color: C.inkMuted, marginBottom: 16, textAlign: 'center' }]}>Спящий дракон ждёт первого вдоха. Добавь практику, чтобы развернуть день.</Text>
       <Btn variant="primary" onPress={onAdd}>Добавить практику</Btn>
@@ -59,7 +59,8 @@ export function TodayScreen({ ctx }) {
   const pending = today.filter((p) => !p.done);
   const allDone = today.length > 0 && pending.length === 0;
   const dayXp = done.reduce((s, p) => s + Object.values(p.r || {}).reduce((a, b) => a + b, 0), 0);
-  const ordered = [...pending, ...done];
+  // keep practices in their original slot when completed (strike-through in place, no jump to bottom)
+  const ordered = today;
   const onCompleteAll = () => pending.forEach((pp) => onToggle(pp));
   const name = (userName || '').trim().split(' ')[0] || 'Странник';
   const streakMilestone = streak >= 7 && streak % 7 === 0;
@@ -73,7 +74,7 @@ export function TodayScreen({ ctx }) {
             <DayStateChip dayState={dayState} />
             {onShowHelp ? (
               <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontFamily: FONT.display, fontSize: 13, color: C.inkMuted }}>?</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 26, color: C.inkMuted }}>?</Text>
               </Pressable>
             ) : null}
           </View>
@@ -94,8 +95,8 @@ export function TodayScreen({ ctx }) {
       {/* summary ribbon */}
       <View style={{ backgroundColor: C.paperWarm }}>
         <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 18, paddingVertical: 12 }, wide ? { maxWidth: WIDE_MAX, width: '100%', alignSelf: 'center' } : null]}>
-          <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>{done.length} <Text style={{ color: C.inkFaint }}>из {today.length}</Text></Text>
-          <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>+{dayXp} XP</Text>
+          <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.ink }}>{done.length} <Text style={{ color: C.inkFaint }}>из {today.length}</Text></Text>
+          <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>+{dayXp} XP</Text>
           <View style={{ flex: 1 }} />
           <StateChip state="streak" text={(streakMilestone ? '✦ ' : '') + streak + ' дн.'} gold={streakMilestone} />
         </View>
@@ -105,8 +106,8 @@ export function TodayScreen({ ctx }) {
       <PadView wide={wide}>
         {dayState === 'spent' ? (
           <Card frame="grey" style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-            <Text style={{ fontSize: 18 }}>🌙</Text>
-            <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 9, lineHeight: 15, color: C.inkMuted }}>Ци на исходе — это сигнал восстановиться, а не провал. Выбери лёгкую практику или отдохни.</Text>
+            <Text style={{ fontSize: 36 }}>🌙</Text>
+            <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 18, lineHeight: 30, color: C.inkMuted }}>Ци на исходе — это сигнал восстановиться, а не провал. Выбери лёгкую практику или отдохни.</Text>
           </Card>
         ) : null}
 

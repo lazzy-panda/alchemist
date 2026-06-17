@@ -34,10 +34,10 @@ function GrowthRow({ k }) {
   return (
     <View style={{ marginBottom: 14 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-        <Text style={{ fontFamily: FONT.display, fontSize: 9, color: s.color }}>{s.name}</Text>
+        <Text style={{ fontFamily: FONT.display, fontSize: 18, color: s.color }}>{s.name}</Text>
         <View style={{ flexDirection: 'row', gap: 8 }}>
-          <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>Ур {cur}</Text>
-          {delta > 0 ? <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.jadeLight }}>▲{delta}</Text> : null}
+          <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.ink }}>Ур {cur}</Text>
+          {delta > 0 ? <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.jadeLight }}>▲{delta}</Text> : null}
         </View>
       </View>
       <Bar pct={(cur / 10) * 100} color={GROW_BAR[k] || k} />
@@ -50,10 +50,10 @@ function DeedRow({ glyph, label, value, color, last }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: last ? 0 : 1, borderBottomColor: 'rgba(255,255,255,0.08)' }}>
       <View style={{ width: 34, height: 34, borderRadius: 6, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: C.frameDark, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: 17 }}>{glyph}</Text>
+        <Text style={{ fontSize: 34 }}>{glyph}</Text>
       </View>
-      <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 9, lineHeight: 14, color: C.inkMuted }}>{label}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 14, color: color || C.title }}>{value}</Text>
+      <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 18, lineHeight: 28, color: C.inkMuted }}>{label}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 28, color: color || C.title }}>{value}</Text>
     </View>
   );
 }
@@ -83,16 +83,16 @@ export function JournalScreen({ ctx }) {
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <View style={{ flex: 1, minWidth: 0 }}>
               <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
-                <Text style={{ fontFamily: FONT.display, fontSize: 38, lineHeight: 42, color: C.title, textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 0 }}>{active}</Text>
-                <Text style={{ fontFamily: FONT.display, fontSize: 12, color: C.inkFaint }}>/ {total}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 76, lineHeight: 84, color: C.title, textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 0 }}>{active}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 24, color: C.inkFaint }}>/ {total}</Text>
               </View>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 9, lineHeight: 14, color: C.inkMuted, marginTop: 4 }}>дней с практикой в {MONTH_PREP}</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 18, lineHeight: 28, color: C.inkMuted, marginTop: 4 }}>дней с практикой в {MONTH_PREP}</Text>
             </View>
             <StateChip state="streak" text={streak + ' дн.'} gold />
           </View>
           <View style={{ marginTop: 14 }}>
             <Bar pct={pct} color="xp" />
-            <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint, marginTop: 6, textAlign: 'right' }}>{pct}% месяца пройдено</Text>
+            <Text style={{ fontFamily: FONT.ui, fontSize: 16, color: C.inkFaint, marginTop: 6, textAlign: 'right' }}>{pct}% месяца пройдено</Text>
           </View>
         </Card>
 
@@ -101,7 +101,7 @@ export function JournalScreen({ ctx }) {
         <Card style={[{ padding: 16, marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.12 })]}>
           <View style={{ flexDirection: 'row', gap: 5, marginBottom: 8 }}>
             {weekdays.map((w) => (
-              <Text key={w} style={{ flex: 1, textAlign: 'center', fontFamily: FONT.display, fontSize: 8, color: C.inkFaint }}>{w}</Text>
+              <Text key={w} style={{ flex: 1, textAlign: 'center', fontFamily: FONT.display, fontSize: 16, color: C.inkFaint }}>{w}</Text>
             ))}
           </View>
           <View style={{ gap: 5 }}>
@@ -115,7 +115,7 @@ export function JournalScreen({ ctx }) {
               </View>
             ))}
           </View>
-          <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint, marginTop: 14 }}>☑ занимался · ☐ отдых — нажмите день для деталей</Text>
+          <Text style={{ fontFamily: FONT.ui, fontSize: 16, color: C.inkFaint, marginTop: 14 }}>☑ занимался · ☐ отдых — нажмите день для деталей</Text>
         </Card>
 
         {/* ---- stat growth (native progress bars) ---- */}

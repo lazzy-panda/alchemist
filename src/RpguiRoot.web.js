@@ -1,4 +1,4 @@
-/* Web: inject RPGUI css + Press Start 2P, and wrap the app in a .rpgui-content
+/* Web: inject RPGUI css + VT323 (Cyrillic pixel font), and wrap the app in a .rpgui-content
    scope so RPGUI's styles apply. The art is NOT base64-inlined into the bundle —
    the generated CSS carries `url("RPGUIIMG:<path>")` placeholders that we swap for
    Metro-hashed asset uris at runtime (keeps ~1 MB of PNGs out of the JS bundle). */
@@ -26,6 +26,10 @@ let injected = false;
 function inject() {
   if (injected || typeof document === 'undefined') return;
   injected = true;
+  // Disable mobile zoom (input-focus auto-zoom on iOS + pinch) — keep the pixel UI at 1:1.
+  let vp = document.querySelector('meta[name=viewport]');
+  if (!vp) { vp = document.createElement('meta'); vp.setAttribute('name', 'viewport'); document.head.appendChild(vp); }
+  vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = 'https://fonts.googleapis.com/css2?family=VT323&display=swap';

@@ -79,11 +79,11 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
         >
           <KitGem size={44} icon={cat.icon} color={cat.color} />
           <View style={{ flex: 1, minWidth: 0 }}>
-            <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontSize: 10, color: p.done ? C.jadeLight : C.ink, marginBottom: 5, lineHeight: 14 }}>{p.name}</Text>
+            <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontSize: 20, color: p.done ? C.jadeLight : C.ink, marginBottom: 5, lineHeight: 28, textDecorationLine: p.done ? 'line-through' : 'none', textDecorationColor: C.jadeLight }}>{p.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: cat.color }}>{cat.name}</Text>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkFaint }}>{p.dur} мин</Text>
-              {p.mult ? <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.gold }}>x{p.mult}</Text> : null}
+              <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: cat.color }}>{cat.name}</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.inkFaint }}>{p.dur} мин</Text>
+              {p.mult ? <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.gold }}>x{p.mult}</Text> : null}
               {compact ? <QiTag qi={p.qi} /> : null}
             </View>
           </View>
@@ -92,7 +92,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
 
       {locked ? (
         <View style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center', maxWidth: 84 }} pointerEvents="none">
-          <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkFaint, textAlign: 'right', lineHeight: 12 }}>Мало Ци{'\n'}нужно {Math.abs(p.qi)} ЦИ</Text>
+          <Text style={{ fontFamily: FONT.ui, fontSize: 16, color: C.inkFaint, textAlign: 'right', lineHeight: 24 }}>Мало Ци{'\n'}нужно {Math.abs(p.qi)} ЦИ</Text>
         </View>
       ) : (
         <View ref={checkRef} style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
@@ -110,7 +110,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
     <View style={{ position: 'relative' }}>
       {swiping ? (
         <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderRadius: 8, backgroundColor: C.jade, alignItems: 'flex-end', justifyContent: 'center', overflow: 'hidden' }}>
-          <Text style={{ color: '#fff', fontFamily: FONT.display, fontSize: 9, paddingRight: 22 }}>ГОТОВО ✓</Text>
+          <Text style={{ color: '#fff', fontFamily: FONT.display, fontSize: 18, paddingRight: 22 }}>ГОТОВО ✓</Text>
         </View>
       ) : null}
       <Animated.View {...pan.panHandlers} style={{ width: '100%', transform: [{ translateX: tx }] }}>

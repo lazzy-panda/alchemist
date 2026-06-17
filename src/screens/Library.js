@@ -37,10 +37,10 @@ export function LibraryScreen({ ctx }) {
             <View key={ck} style={{ marginBottom: 8 }}>
               <Pressable onPress={() => setCollapsed({ ...collapsed, [ck]: !isCol })} accessibilityRole="button" accessibilityLabel={cat.name} accessibilityState={{ expanded: !isCol }} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingTop: 14, paddingBottom: 8, paddingHorizontal: 2 }}>
                 <Mh size={24} icon={cat.icon} color={cat.color} />
-                <Text style={{ fontFamily: FONT.display, fontSize: 10, color: C.title }}>{cat.name}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 20, color: C.title }}>{cat.name}</Text>
                 <Text style={T.caption}>{items.length}</Text>
                 <View style={{ flex: 1 }} />
-                <Text style={{ color: C.inkFaint, fontSize: 18, transform: isCol ? [] : [{ rotate: '90deg' }] }}>›</Text>
+                <Text style={{ color: C.inkFaint, fontSize: 36, transform: isCol ? [] : [{ rotate: '90deg' }] }}>›</Text>
               </Pressable>
               <BrushDivider />
               {!isCol ? (
@@ -58,8 +58,8 @@ export function LibraryScreen({ ctx }) {
 
         {/* archive */}
         <Pressable onPress={() => setArchiveOpen(!archiveOpen)} accessibilityRole="button" accessibilityLabel="Архивные практики" accessibilityState={{ expanded: archiveOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 18 }}>
-          <Text style={{ color: C.inkFaint, fontSize: 16, transform: archiveOpen ? [{ rotate: '90deg' }] : [] }}>›</Text>
-          <Text style={{ color: C.inkFaint, fontSize: 9, fontFamily: FONT.display }}>Архив</Text>
+          <Text style={{ color: C.inkFaint, fontSize: 32, transform: archiveOpen ? [{ rotate: '90deg' }] : [] }}>›</Text>
+          <Text style={{ color: C.inkFaint, fontSize: 18, fontFamily: FONT.display }}>Архив</Text>
           {archived.length ? <Text style={T.caption}>{archived.length}</Text> : null}
         </Pressable>
         {archiveOpen ? (
@@ -69,13 +69,13 @@ export function LibraryScreen({ ctx }) {
                 {archived.map((p) => (
                   <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 }}>
                     <Mh size={22} icon={CATS[p.cat].icon} color={CATS[p.cat].color} />
-                    <Text style={{ flex: 1, fontFamily: FONT.display, fontSize: 9, color: C.ink }} numberOfLines={1}>{p.name}</Text>
+                    <Text style={{ flex: 1, fontFamily: FONT.display, fontSize: 18, color: C.ink }} numberOfLines={1}>{p.name}</Text>
                     <Btn variant="secondary" onPress={() => restorePractice && restorePractice(p.id)}>Восстановить</Btn>
                   </View>
                 ))}
               </View>
             ) : (
-              <Text style={{ color: C.inkFaint, fontFamily: FONT.ui, fontSize: 9, textAlign: 'center', lineHeight: 15 }}>Архив пуст. Архивные практики появятся здесь — их можно восстановить.</Text>
+              <Text style={{ color: C.inkFaint, fontFamily: FONT.ui, fontSize: 18, textAlign: 'center', lineHeight: 30 }}>Архив пуст. Архивные практики появятся здесь — их можно восстановить.</Text>
             )}
           </Card>
         ) : null}

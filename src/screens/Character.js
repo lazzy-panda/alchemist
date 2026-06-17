@@ -14,12 +14,12 @@ function Section({ title, right, defaultOpen = false, children }) {
     <View>
       <Pressable onPress={() => setOpen((o) => !o)} accessibilityRole="button" accessibilityLabel={title} accessibilityState={{ expanded: open }} style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 22, marginBottom: 12, marginHorizontal: 2, opacity: pressed ? 0.6 : 1 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Text style={{ fontSize: 8, color: C.gold }}>◆</Text>
-          <Text accessibilityRole="header" style={{ fontFamily: FONT.display, fontSize: 11, textTransform: 'uppercase', color: C.title }}>{title}</Text>
+          <Text style={{ fontSize: 16, color: C.gold }}>◆</Text>
+          <Text accessibilityRole="header" style={{ fontFamily: FONT.display, fontSize: 22, textTransform: 'uppercase', color: C.title }}>{title}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
           {right != null ? <Text style={T.caption}>{right}</Text> : null}
-          <Text style={{ color: C.inkFaint, fontSize: 16, transform: open ? [{ rotate: '90deg' }] : [] }}>›</Text>
+          <Text style={{ color: C.inkFaint, fontSize: 32, transform: open ? [{ rotate: '90deg' }] : [] }}>›</Text>
         </View>
       </Pressable>
       {open ? <View style={kf(KF.fadeUp, 0.4, { ease: EASE.out })}>{children}</View> : null}
@@ -35,12 +35,12 @@ function StatRow({ s, sl, open, onToggle, last }) {
         <StatMedal stat={s.key} size={32} />
         <View style={{ flex: 1, minWidth: 0 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
-            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.ink }}>{s.name}</Text>
-            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: s.color }}>Ур {sl.lvl}</Text>
+            <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.ink }}>{s.name}</Text>
+            <Text style={{ fontFamily: FONT.display, fontSize: 18, color: s.color }}>Ур {sl.lvl}</Text>
           </View>
           <Bar pct={(sl.xp / sl.next) * 100} color={s.key} />
         </View>
-        <Text style={{ color: C.inkFaint, fontSize: 16, transform: open ? [{ rotate: '90deg' }] : [] }}>›</Text>
+        <Text style={{ color: C.inkFaint, fontSize: 32, transform: open ? [{ rotate: '90deg' }] : [] }}>›</Text>
       </Pressable>
       {open ? (
         <View style={[{ paddingLeft: 56, paddingRight: 12, paddingBottom: 14 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
@@ -49,7 +49,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
             {feeders.map((f) => (
               <View key={f.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 5, paddingLeft: 5, paddingRight: 10, borderRadius: 6, borderWidth: 2, borderColor: s.color, backgroundColor: 'rgba(255,255,255,0.05)' }}>
                 <Mh size={18} icon={CATS[f.cat].icon} color={CATS[f.cat].color} />
-                <Text style={{ fontFamily: FONT.display, fontSize: 8, color: s.color }}>{f.name}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 16, color: s.color }}>{f.name}</Text>
               </View>
             ))}
           </View>
@@ -84,16 +84,16 @@ export function CharacterScreen({ ctx }) {
               return (
                 <View key={s.key} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: i === STATS.length - 1 ? 0 : 9 }}>
                   <StatMedal stat={s.key} size={20} />
-                  <Text style={{ width: 70, fontFamily: FONT.display, fontSize: 8, color: s.color }}>{s.name}</Text>
+                  <Text numberOfLines={1} style={{ width: 100, fontFamily: FONT.display, fontSize: 16, color: s.color }}>{s.name}</Text>
                   <View style={{ flex: 1 }}><Bar pct={mp} color={s.key} /></View>
-                  <Text style={{ width: 30, textAlign: 'right', fontFamily: FONT.display, fontSize: 8, color: C.ink }}>Ур {sl.lvl}</Text>
+                  <Text numberOfLines={1} style={{ width: 52, textAlign: 'right', fontFamily: FONT.display, fontSize: 16, color: C.ink }}>Ур {sl.lvl}</Text>
                 </View>
               );
             })}
           </Card>
           {onShowHelp ? (
             <Pressable onPress={onShowHelp} hitSlop={8} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ marginTop: 10 }}>
-              <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>Как это работает?</Text>
+              <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>Как это работает?</Text>
             </Pressable>
           ) : null}
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 18, alignSelf: 'stretch' }}>
@@ -124,7 +124,7 @@ export function CharacterScreen({ ctx }) {
 
         {!wide && onSignOut ? (
           <Pressable onPress={onSignOut} accessibilityRole="button" accessibilityLabel="Выйти" style={{ marginTop: 28, marginBottom: 4, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkMuted }}>↩ Выйти{userName ? ' · ' + userName : ''}</Text>
+            <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.inkMuted }}>↩ Выйти{userName ? ' · ' + userName : ''}</Text>
           </Pressable>
         ) : null}
       </PadView>
@@ -135,9 +135,9 @@ export function CharacterScreen({ ctx }) {
 function Perk({ p }) {
   return (
     <View style={{ flexGrow: 1, flexBasis: '30%', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, paddingHorizontal: 6, minHeight: 96, borderRadius: 8, borderWidth: 2, borderColor: p.open ? C.goldLine : C.stoneLine, backgroundColor: p.open ? C.frameGoldBg : C.frameDark, opacity: p.open ? 1 : 0.7 }}>
-      {p.open ? <KitGem size={34} icon={p.icon} color={p.color} /> : <Text style={{ fontSize: 20 }}>🔒</Text>}
-      <Text style={{ fontFamily: FONT.display, fontSize: 8, lineHeight: 12, color: C.inkMuted, textAlign: 'center' }}>{p.name}</Text>
-      {!p.open ? <Text style={[T.caption, { fontSize: 8, textAlign: 'center' }]}>{p.req}</Text> : null}
+      {p.open ? <KitGem size={34} icon={p.icon} color={p.color} /> : <Text style={{ fontSize: 40 }}>🔒</Text>}
+      <Text style={{ fontFamily: FONT.display, fontSize: 16, lineHeight: 24, color: C.inkMuted, textAlign: 'center' }}>{p.name}</Text>
+      {!p.open ? <Text style={[T.caption, { fontSize: 16, textAlign: 'center' }]}>{p.req}</Text> : null}
     </View>
   );
 }
@@ -145,7 +145,7 @@ function Perk({ p }) {
 function Relic({ r }) {
   return (
     <View style={{ flexGrow: 1, flexBasis: '22%', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, minHeight: 64, borderRadius: 8, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: C.frameDark, opacity: r.got ? 1 : 0.55 }}>
-      <Text style={{ fontSize: 24, opacity: r.got ? 1 : 0.5 }}>{r.got ? r.icon : '◌'}</Text>
+      <Text style={{ fontSize: 48, opacity: r.got ? 1 : 0.5 }}>{r.got ? r.icon : '◌'}</Text>
     </View>
   );
 }

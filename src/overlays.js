@@ -60,14 +60,14 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 22 }}>
             <KitGem size={48} icon={cat.icon} color={cat.color} />
             <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
-              <Text style={[T.displayM, { fontSize: 13, lineHeight: 18 }]}>{practice.name}</Text>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: cat.color }}>{cat.name}{practice.mult ? ' · x' + practice.mult : ''}</Text>
+              <Text style={[T.displayM, { fontSize: 26, lineHeight: 36 }]}>{practice.name}</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: cat.color }}>{cat.name}{practice.mult ? ' · x' + practice.mult : ''}</Text>
             </View>
           </View>
 
           {/* timer — native rpgui-progress + time readout */}
           <View style={{ marginTop: 14, marginBottom: 8 }}>
-            <Text style={{ fontFamily: FONT.display, fontSize: 40, fontVariant: ['tabular-nums'], color: C.title, textAlign: 'center', marginBottom: 18, ...ts('rgba(0,0,0,0.5)', 0, 2, 2) }}>
+            <Text style={{ fontFamily: FONT.display, fontSize: 80, fontVariant: ['tabular-nums'], color: C.title, textAlign: 'center', marginBottom: 18, ...ts('rgba(0,0,0,0.5)', 0, 2, 2) }}>
               {String(Math.floor(remaining / 60)).padStart(2, '0')}:{String(remaining % 60).padStart(2, '0')}
             </Text>
             <Bar pct={total > 0 ? (remaining / total) * 100 : 0} color="qi" />
@@ -89,11 +89,11 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
 
           {/* instruction */}
           <Pressable onPress={() => setShowInstr(!showInstr)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20 }}>
-            <Text style={{ color: C.inkMuted, fontSize: 14, transform: showInstr ? [{ rotate: '90deg' }] : [] }}>›</Text>
-            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.inkMuted }}>Инструкция</Text>
+            <Text style={{ color: C.inkMuted, fontSize: 28, transform: showInstr ? [{ rotate: '90deg' }] : [] }}>›</Text>
+            <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.inkMuted }}>Инструкция</Text>
           </Pressable>
           {showInstr ? (
-            <Text style={[T.body, { color: C.inkMuted, paddingHorizontal: 4, paddingTop: 8, lineHeight: 20 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
+            <Text style={[T.body, { color: C.inkMuted, paddingHorizontal: 4, paddingTop: 8, lineHeight: 40 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
               Сядьте удобно, спина прямая. Дышите в живот, медленно и ровно. Удерживайте внимание на течении Ци по меридианам. Не торопитесь — спокойный ритм важнее длительности.
             </Text>
           ) : null}
@@ -105,11 +105,11 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
             <QiTag qi={practice.qi} />
             {practice.mult ? (
               <MedalPill>
-                <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>Чжан Чжуан x{practice.mult}</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>Чжан Чжуан x{practice.mult}</Text>
               </MedalPill>
             ) : null}
           </Card>
-          <Text style={[T.caption, { marginTop: 8, paddingHorizontal: 2, lineHeight: 13 }]}>+N — очки характеристик · ЦИ — изменение запаса Ци{practice.mult ? ' · x' + practice.mult + ' — бонус Чжан Чжуан' : ''}</Text>
+          <Text style={[T.caption, { marginTop: 8, paddingHorizontal: 2, lineHeight: 26 }]}>+N — очки характеристик · ЦИ — изменение запаса Ци{practice.mult ? ' · x' + practice.mult + ' — бонус Чжан Чжуан' : ''}</Text>
         </View>
       </ScrollViewSafe>
     </View>
@@ -189,7 +189,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
             <Field label="Название">
               <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(''); }} placeholder="напр. Утренний цигун" />
             </Field>
-            {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.red, fontFamily: FONT.ui, fontSize: 9 }}>{nameError}</Text> : null}
+            {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.red, fontFamily: FONT.ui, fontSize: 18 }}>{nameError}</Text> : null}
 
             <Field label="Категория">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -210,11 +210,11 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
                 ))}
               </View>
             </Field>
-            {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 9, lineHeight: 14 }}>Совет: привяжите хотя бы одну характеристику, чтобы практика давала очки.</Text> : null}
+            {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 18, lineHeight: 28 }}>Совет: привяжите хотя бы одну характеристику, чтобы практика давала очки.</Text> : null}
 
             {confirmArchive ? (
               <View style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
-                <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.red, marginBottom: 12, lineHeight: 14 }}>Архивировать «{name || practice?.name}»? Можно восстановить из Библиотеки.</Text>
+                <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.red, marginBottom: 12, lineHeight: 28 }}>Архивировать «{name || practice?.name}»? Можно восстановить из Библиотеки.</Text>
                 <View style={{ flexDirection: 'row', gap: 10 }}>
                   <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirmArchive(false)}>Отмена</Btn>
                   <Btn variant="danger" style={{ flex: 1 }} onPress={() => { close(); setTimeout(() => onArchive && onArchive(practice.id), 290); }}>Архивировать</Btn>
@@ -260,9 +260,9 @@ export function DayDetailSheet({ day, onClose }) {
             <StateChip state="flow" />
           </View>
           <View style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
-            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.gold }}>+18 XP</Text></MedalPill>
-            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.red }}>ЗД 92%</Text></MedalPill>
-            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 8, color: C.cEnergy }}>ЦИ 78%</Text></MedalPill>
+            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 16, color: C.gold }}>+18 XP</Text></MedalPill>
+            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 16, color: C.red }}>ЗД 92%</Text></MedalPill>
+            <MedalPill><Text style={{ fontFamily: FONT.display, fontSize: 16, color: C.cEnergy }}>ЦИ 78%</Text></MedalPill>
           </View>
           <Text style={[T.label, { marginBottom: 8 }]}>Выполнено</Text>
           <View style={{ gap: 10 }}>
@@ -300,10 +300,10 @@ export function LevelUpOverlay({ stage, onClose }) {
         {/* real kit LEVEL UP! winged banner */}
         <KitBanner width={270} style={{ marginTop: -36, marginBottom: 6 }} />
         <Gradient colors={[C.goldLight, C.gold]} angle={180} style={{ width: 82, height: 82, borderRadius: 41, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: 3, borderColor: C.goldLine, marginBottom: 12, boxShadow: `inset 0px 3px 0px rgba(255,255,255,0.6), 0px 5px 0px ${C.goldLine}, 0px 9px 16px rgba(154,98,18,0.4)` }}>
-          <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 40, color: '#5a3d10', ...ts('rgba(255,255,255,0.5)', 0, 1) }}>{stage}</Text>
+          <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 80, color: '#5a3d10', ...ts('rgba(255,255,255,0.5)', 0, 1) }}>{stage}</Text>
           <Gloss radius={41} />
         </Gradient>
-        <Text style={{ fontFamily: FONT.display, fontSize: 12, color: C.title, marginBottom: 8 }}>Стадия {stage}</Text>
+        <Text style={{ fontFamily: FONT.display, fontSize: 24, color: C.title, marginBottom: 8 }}>Стадия {stage}</Text>
         <Text style={[T.body, { color: C.inkMuted, textAlign: 'center' }]}>{asc}</Text>
       </View>
     </Pressable>
@@ -373,10 +373,10 @@ export function Toast({ message, actionLabel, onAction, onClose }) {
   return (
     <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, bottom: 92, alignItems: 'center', paddingHorizontal: 18, zIndex: 260 }}>
       <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 14, width: '100%', maxWidth: 420, paddingVertical: 12, paddingLeft: 16, paddingRight: 12, borderRadius: 16, borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: C.paperLight, boxShadow: '0px 8px 22px rgba(40,28,12,0.4)' }, kf(KF.fadeUp, 0.4, { ease: EASE.out })]}>
-        <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 9, lineHeight: 14, color: C.ink }}>{message}</Text>
+        <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 18, lineHeight: 28, color: C.ink }}>{message}</Text>
         {actionLabel ? (
           <Pressable onPress={onAction} hitSlop={8} accessibilityRole="button" accessibilityLabel={actionLabel}>
-            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: C.gold }}>{actionLabel}</Text>
+            <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>{actionLabel}</Text>
           </Pressable>
         ) : null}
       </View>

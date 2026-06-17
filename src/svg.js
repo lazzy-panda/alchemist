@@ -66,7 +66,7 @@ export function RadarMandala({ values, size = 230, animate = true, tick = 0 }) {
         const [x, y] = pt(i, 1.26);
         return (
           <View key={s.key} style={{ position: 'absolute', left: x - 14, top: y - 8, width: 28, alignItems: 'center' }} pointerEvents="none">
-            <Text style={{ color: s.color, fontSize: 8, fontFamily: FONT.display }}>{s.short}</Text>
+            <Text style={{ color: s.color, fontSize: 16, fontFamily: FONT.display }}>{s.short}</Text>
           </View>
         );
       })}

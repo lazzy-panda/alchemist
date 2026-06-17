@@ -52,12 +52,12 @@ export function Gloss({ radius = 50 }) {
 /* ---------- typography ---------- */
 // pixel font (Press Start 2P) is large & monospaced → smaller sizes, generous line-height, dark shadow
 export const T = {
-  displayL: { fontFamily: FONT.display, fontSize: 16, lineHeight: 26, color: C.title, ...ts('rgba(0,0,0,0.55)', 0, 2) },
-  displayM: { fontFamily: FONT.display, fontSize: 12, lineHeight: 21, color: C.title, ...ts('rgba(0,0,0,0.5)', 0, 1) },
-  body: { fontFamily: FONT.ui, fontSize: 10, lineHeight: 21, color: C.ink },
-  label: { fontFamily: FONT.ui, fontSize: 9, lineHeight: 14, letterSpacing: 0.3, color: C.inkMuted },
-  caption: { fontFamily: FONT.ui, fontSize: 9, lineHeight: 16, color: C.inkFaint },
-  eyebrow: { fontFamily: FONT.ui, fontSize: 8, lineHeight: 14, letterSpacing: 1, textTransform: 'uppercase', color: C.inkFaint },
+  displayL: { fontFamily: FONT.display, fontSize: 32, lineHeight: 52, color: C.title, ...ts('rgba(0,0,0,0.55)', 0, 2) },
+  displayM: { fontFamily: FONT.display, fontSize: 24, lineHeight: 42, color: C.title, ...ts('rgba(0,0,0,0.5)', 0, 1) },
+  body: { fontFamily: FONT.ui, fontSize: 20, lineHeight: 42, color: C.ink },
+  label: { fontFamily: FONT.ui, fontSize: 18, lineHeight: 28, letterSpacing: 0.3, color: C.inkMuted },
+  caption: { fontFamily: FONT.ui, fontSize: 18, lineHeight: 32, color: C.inkFaint },
+  eyebrow: { fontFamily: FONT.ui, fontSize: 16, lineHeight: 28, letterSpacing: 1, textTransform: 'uppercase', color: C.inkFaint },
   numXl: { fontFamily: FONT.display, fontVariant: ['tabular-nums'] },
 };
 
@@ -80,8 +80,8 @@ export function SectionHead({ title, right, style }) {
   return (
     <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 26, marginBottom: 13, marginHorizontal: 2 }, style]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Text style={{ fontSize: 8, color: C.gold }}>◆</Text>
-        <Text accessibilityRole="header" style={{ fontFamily: FONT.display, fontSize: 11, textTransform: 'uppercase', color: C.title }}>{title}</Text>
+        <Text style={{ fontSize: 16, color: C.gold }}>◆</Text>
+        <Text accessibilityRole="header" style={{ fontFamily: FONT.display, fontSize: 22, textTransform: 'uppercase', color: C.title }}>{title}</Text>
       </View>
       {right != null ? (typeof right === 'string' ? <Text style={T.caption}>{right}</Text> : right) : null}
     </View>
@@ -134,7 +134,7 @@ export function Btn({ variant = 'primary', onPress, children, style, textStyle, 
           style,
         ]}
       >
-        <Text style={[{ fontFamily: FONT.display, fontSize: 10, color: C.gold }, textStyle]}>{children}</Text>
+        <Text style={[{ fontFamily: FONT.display, fontSize: 20, color: C.gold }, textStyle]}>{children}</Text>
       </Pressable>
     );
   }
@@ -168,7 +168,7 @@ export function IconBtn({ onPress, children, style }) {
             transform: pressed ? [{ translateY: 3 }] : [],
           }}
         >
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800', ...ts('rgba(0,0,0,0.3)', 0, 1) }}>{children}</Text>
+          <Text style={{ color: '#fff', fontSize: 32, fontWeight: '800', ...ts('rgba(0,0,0,0.3)', 0, 1) }}>{children}</Text>
         </LinearGradient>
       )}
     </Pressable>
@@ -180,11 +180,11 @@ export function Stepper({ value, onDec, onInc, suffix = ' мин' }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 10 }}>
       <KitPill color="primary" onPress={onDec} accessibilityLabel="Уменьшить">
-        <Text style={{ fontSize: 14, color: '#fff' }}>−</Text>
+        <Text style={{ fontSize: 28, color: '#fff' }}>−</Text>
       </KitPill>
-      <Text style={{ minWidth: 70, textAlign: 'center', fontFamily: FONT.display, fontSize: 11, fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
+      <Text style={{ minWidth: 70, textAlign: 'center', fontFamily: FONT.display, fontSize: 22, fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
       <KitPill color="primary" onPress={onInc} accessibilityLabel="Увеличить">
-        <Text style={{ fontSize: 14, color: '#fff' }}>+</Text>
+        <Text style={{ fontSize: 28, color: '#fff' }}>+</Text>
       </KitPill>
     </View>
   );
@@ -206,7 +206,7 @@ export function SelChip({ on, color, icon, label, onPress, multi }) {
     >
       <Indicator on={on} size={18} />
       {icon ? <KitGem size={18} icon={icon} color={color} /> : null}
-      <Text style={{ fontFamily: FONT.display, fontSize: 9, color: on ? C.title : C.inkMuted }}>{label}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 18, color: on ? C.title : C.inkMuted }}>{label}</Text>
     </Pressable>
   );
 }
@@ -219,7 +219,7 @@ export function Field({ label, children, style }) {
     : children;
   return (
     <View style={[{ marginBottom: 16 }, style]}>
-      {label ? <Text style={{ fontFamily: FONT.display, fontSize: 13, fontWeight: '700', color: C.inkMuted, marginBottom: 7 }}>{label}</Text> : null}
+      {label ? <Text style={{ fontFamily: FONT.display, fontSize: 26, fontWeight: '700', color: C.inkMuted, marginBottom: 7 }}>{label}</Text> : null}
       {child}
     </View>
   );
@@ -240,10 +240,10 @@ function KitField({ props, radius, fontSize, padV, padH, borderW }) {
   );
 }
 export function Input(props) {
-  return <KitField props={props} radius={2} fontSize={11} padV={11} padH={12} borderW={2} />;
+  return <KitField props={props} radius={2} fontSize={22} padV={11} padH={12} borderW={2} />;
 }
 export function DiaryInput(props) {
-  return <KitField props={props} radius={2} fontSize={10} padV={10} padH={11} borderW={2} />;
+  return <KitField props={props} radius={2} fontSize={20} padV={10} padH={11} borderW={2} />;
 }
 
 /* ---------- wood plank surface ---------- */

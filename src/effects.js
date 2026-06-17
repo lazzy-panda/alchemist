@@ -102,8 +102,8 @@ export function EffectsProvider({ children }) {
               kf(frames, dur, { ease: EASE.overshoot, delay: i * 0.08, fill: 'forwards' }),
             ]}
           >
-            <Mh size={18} color={s.color} han={s.han} fontSize={11} />
-            <Text style={{ fontFamily: FONT.ui, fontWeight: '800', fontSize: 14, color: s.color }}>+{v}</Text>
+            <Mh size={18} color={s.color} han={s.han} fontSize={22} />
+            <Text style={{ fontFamily: FONT.ui, fontWeight: '800', fontSize: 28, color: s.color }}>+{v}</Text>
           </View>,
           dur * 1000 + i * 80 + 120
         );

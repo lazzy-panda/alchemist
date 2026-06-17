@@ -39,7 +39,7 @@ export function BottomNav({ route, setRoute }) {
               ]}
             >
               <NavIcon name={n.key} size={22} on={on} />
-              <Text style={{ fontFamily: FONT.display, fontSize: 7, color: on ? C.gold : C.inkFaint }}>{n.label}</Text>
+              <Text style={{ fontFamily: FONT.display, fontSize: 14, color: on ? C.gold : C.inkFaint }}>{n.label}</Text>
             </View>
           </Pressable>
         );
@@ -53,28 +53,28 @@ export function SideRail({ route, setRoute, stage, onSignOut, userName }) {
   return (
     <View style={{ width: 240, paddingVertical: 22, paddingHorizontal: 14, backgroundColor: C.railBg, borderRightWidth: 3, borderRightColor: C.paperDeep }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 22, marginHorizontal: 4 }}>
-        <Text style={{ fontSize: 24 }}>⚗️</Text>
-        <Text style={{ fontFamily: FONT.display, fontSize: 13, color: C.gold }}>Алхимик</Text>
+        <Text style={{ fontSize: 48 }}>⚗️</Text>
+        <Text style={{ fontFamily: FONT.display, fontSize: 26, color: C.gold }}>Алхимик</Text>
       </View>
       {NAV.map((n) => {
         const on = route === n.key;
         return (
           <Pressable key={n.key} onPress={() => setRoute(n.key)} accessibilityRole="button" accessibilityLabel={n.label} accessibilityState={{ selected: on }} style={{ flexDirection: 'row', alignItems: 'center', gap: 11, paddingVertical: 10, paddingHorizontal: 11, marginBottom: 4, borderRadius: 6, minHeight: 44, borderWidth: 2, borderColor: on ? C.goldLine : 'transparent', backgroundColor: on ? C.frameGoldBg : 'transparent' }}>
             <NavIcon name={n.key} size={20} on={on} />
-            <Text style={{ fontFamily: FONT.display, fontSize: 9, color: on ? C.gold : C.inkMuted }}>{n.label}</Text>
+            <Text style={{ fontFamily: FONT.display, fontSize: 18, color: on ? C.gold : C.inkMuted }}>{n.label}</Text>
           </Pressable>
         );
       })}
       <View style={{ flex: 1 }} />
       <View style={{ padding: 12, backgroundColor: C.paperWarm, borderWidth: 2, borderColor: C.paperDeep, borderRadius: 6 }}>
-        <Text style={{ fontFamily: FONT.ui, fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: C.inkFaint, marginBottom: 6 }}>Стадия</Text>
-        <Text style={{ fontFamily: FONT.display, fontSize: 20, color: C.gold }}>{stage.lvl}</Text>
+        <Text style={{ fontFamily: FONT.ui, fontSize: 16, letterSpacing: 1, textTransform: 'uppercase', color: C.inkFaint, marginBottom: 6 }}>Стадия</Text>
+        <Text style={{ fontFamily: FONT.display, fontSize: 40, color: C.gold }}>{stage.lvl}</Text>
         <View style={{ marginTop: 8 }}>
           <ProgressBar pct={(stage.xp / stage.next) * 100} color="xp" />
         </View>
       </View>
       <Pressable onPress={onSignOut} accessibilityRole="button" accessibilityLabel="Выход" style={{ marginTop: 10, paddingVertical: 8, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontFamily: FONT.ui, fontSize: 8, color: C.inkMuted }}>↩ Выход{userName ? ' · ' + userName : ''}</Text>
+        <Text style={{ fontFamily: FONT.ui, fontSize: 16, color: C.inkMuted }}>↩ Выход{userName ? ' · ' + userName : ''}</Text>
       </Pressable>
     </View>
   );

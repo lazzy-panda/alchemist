@@ -31,10 +31,10 @@ export function AuthScreen() {
               {/* brand */}
               <View style={{ alignItems: 'center', marginBottom: 22 }}>
                 <Gradient colors={['#e0654a', '#a93a24']} angle={160} style={{ width: 68, height: 68, borderRadius: 12, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: C.redLine, marginBottom: 14 }}>
-                  <Text style={{ fontSize: 32 }}>⚗️</Text>
+                  <Text style={{ fontSize: 64 }}>⚗️</Text>
                 </Gradient>
-                <Text style={{ fontFamily: FONT.display, fontSize: 22, color: '#F6D685' }}>Алхимик</Text>
-                <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: '#b8c4bd', marginTop: 12, textAlign: 'center', lineHeight: 14 }}>RPG-трекер медитации, цигун и Чжан Чжуан</Text>
+                <Text style={{ fontFamily: FONT.display, fontSize: 44, color: '#F6D685' }}>Алхимик</Text>
+                <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: '#b8c4bd', marginTop: 12, textAlign: 'center', lineHeight: 28 }}>RPG-трекер медитации, цигун и Чжан Чжуан</Text>
               </View>
 
               {/* card */}
@@ -47,11 +47,11 @@ export function AuthScreen() {
                       <Pressable key={m} onPress={() => { setMode(m); setError(''); }} accessibilityRole="button" accessibilityLabel={lbl} accessibilityState={{ selected: on }} style={{ flex: 1, borderRadius: 999, overflow: 'hidden' }}>
                         {on ? (
                           <Gradient colors={[C.jadeLight, C.jade]} angle={180} style={{ paddingVertical: 9, alignItems: 'center', borderRadius: 999, boxShadow: `0px 2px 0px ${C.jadeLine}` }}>
-                            <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 9, color: '#fff' }}>{lbl}</Text>
+                            <Text style={{ fontFamily: FONT.display, fontWeight: '700', fontSize: 18, color: '#fff' }}>{lbl}</Text>
                           </Gradient>
                         ) : (
                           <View style={{ paddingVertical: 9, alignItems: 'center' }}>
-                            <Text style={{ fontFamily: FONT.display, fontWeight: '600', fontSize: 9, color: C.inkMuted }}>{lbl}</Text>
+                            <Text style={{ fontFamily: FONT.display, fontWeight: '600', fontSize: 18, color: C.inkMuted }}>{lbl}</Text>
                           </View>
                         )}
                       </Pressable>
@@ -73,7 +73,7 @@ export function AuthScreen() {
 
                 {error ? (
                   <View style={{ backgroundColor: 'rgba(217,84,59,0.12)', borderRadius: 10, paddingVertical: 8, paddingHorizontal: 12, marginBottom: 12, borderWidth: 1.5, borderColor: 'rgba(217,84,59,0.4)' }}>
-                    <Text style={{ color: C.redDeep, fontFamily: FONT.ui, fontWeight: '600', fontSize: 13 }}>{error}</Text>
+                    <Text style={{ color: C.redDeep, fontFamily: FONT.ui, fontWeight: '600', fontSize: 26 }}>{error}</Text>
                   </View>
                 ) : null}
 
@@ -82,11 +82,11 @@ export function AuthScreen() {
                 </Btn>
 
                 <Pressable onPress={async () => { setBusy(true); await guest(); setBusy(false); }} accessibilityRole="button" accessibilityLabel="Войти как гость" style={{ marginTop: 14, alignItems: 'center' }}>
-                  <Text style={{ fontFamily: FONT.ui, fontSize: 9, color: C.inkMuted }}>Войти как гость →</Text>
+                  <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.inkMuted }}>Войти как гость →</Text>
                 </Pressable>
               </Gradient>
 
-              <Text style={{ textAlign: 'center', color: '#8fa39a', fontSize: 8, marginTop: 18, fontFamily: FONT.ui }}>Путь следует природе</Text>
+              <Text style={{ textAlign: 'center', color: '#8fa39a', fontSize: 16, marginTop: 18, fontFamily: FONT.ui }}>Путь следует природе</Text>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>

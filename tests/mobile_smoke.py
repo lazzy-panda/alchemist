@@ -89,7 +89,7 @@ def main():
         check("Diary: +/- badges color-coded", bool(plus and minus and plus != minus), f"plus={plus} minus={minus}")
         # 2c input font not oversized (was 14px) + readable
         inp = page.evaluate("""()=>{const i=document.querySelector('input');return i?{fs:parseInt(getComputedStyle(i).fontSize)}:null}""")
-        check("Diary: input font <=11px (no clip)", bool(inp and inp["fs"] <= 11), f"fontSize={inp and inp['fs']}px")
+        check("Diary: input font 16-24px (2x scale, no clip)", bool(inp and 16 <= inp["fs"] <= 24), f"fontSize={inp and inp['fs']}px")
 
         # ---- 3. EditorSheet reachable (THE bug) ----
         goto_tab(page, "Практики")
