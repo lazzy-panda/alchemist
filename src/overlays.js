@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT, shade } from './theme';
-import { CATS, STATS, PRACTICES } from './data';
+import { CATS, STATS, PRACTICES, AVATARS } from './data';
 import { ascension } from './quotes';
 import { Card, Btn, IconBtn, Gradient, Gloss, Han, T, SectionHead, Seal, Stepper, SelChip, Field, Input, ts, kf, KF, EASE } from './ui';
 import { RewardMedal, QiTag, StateChip, MedalPill, Bar } from './badges';
@@ -357,6 +357,45 @@ export function Onboarding({ onDone }) {
         {!last ? <Btn variant="ghost" onPress={onDone} style={{ marginTop: 2 }}>Пропустить</Btn> : null}
       </View>
     </View>
+  );
+}
+
+/* ============================================================
+   AVATAR PICKER — choose your portrait (Baldur's Gate-style grid)
+   ============================================================ */
+export function AvatarPicker({ current, onPick, onClose }) {
+  return (
+    <Pressable
+      onPress={onClose}
+      style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 270, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, backgroundColor: 'rgba(35,25,12,0.6)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}
+    >
+      <Pressable
+        onPress={() => {}}
+        style={[{ width: '100%', maxWidth: 380, padding: 22, borderRadius: 18, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.paperWarm }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <Text style={T.displayM}>Выберите образ</Text>
+          <KitClose onPress={onClose} size={34} />
+        </View>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+          {AVATARS.map((a) => {
+            const sel = current === a.id;
+            return (
+              <Pressable
+                key={a.id}
+                onPress={() => { onPick && onPick(a.id); onClose && onClose(); }}
+                accessibilityRole="button"
+                accessibilityLabel={'Образ ' + a.id}
+                accessibilityState={{ selected: sel }}
+                style={{ padding: 3, borderRadius: 12, borderWidth: 3, borderColor: sel ? C.gold : 'transparent' }}
+              >
+                <IconTile name={a.icon} color={a.color} size={88} style={{ borderRadius: 8 }} />
+              </Pressable>
+            );
+          })}
+        </View>
+      </Pressable>
+    </Pressable>
   );
 }
 

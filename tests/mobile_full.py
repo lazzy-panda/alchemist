@@ -147,7 +147,7 @@ def main():
         try:
             goto_tab(page, "Сегодня")
             # tap a practice card (aria-label == its name) -> PracticeDetail
-            name = page.evaluate("""()=>{const el=[...document.querySelectorAll('[role=button][aria-label]')].find(e=>{const a=e.getAttribute('aria-label');return a&&!a.startsWith('Выполнить: ')&&!a.startsWith('Отменить: ')&&!['Сегодня','Герой','Практики','Дневник','Летопись','Как это работает'].includes(a)&&/[А-Яа-я]/.test(a)&&e.querySelector('div')});return el?el.getAttribute('aria-label'):null}""")
+            name = page.evaluate("""()=>{const el=[...document.querySelectorAll('[role=button][aria-label]')].find(e=>{const a=e.getAttribute('aria-label');return a&&!a.startsWith('Выполнить: ')&&!a.startsWith('Отменить: ')&&!['Сегодня','Герой','Практики','Дневник','Летопись','Как это работает','Сменить образ'].includes(a)&&/[А-Яа-я]/.test(a)&&e.querySelector('div')});return el?el.getAttribute('aria-label'):null}""")
             opened = False
             if name:
                 rclick(page, f'[aria-label="{name}"]')

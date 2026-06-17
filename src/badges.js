@@ -1,10 +1,10 @@
 /* Alchemist — gem medallions (RPGUI icons), resource bars, state chips, avatar. */
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from './theme';
-import { STAT } from './data';
+import { STAT, AVATARS, AVATAR_BY_ID } from './data';
 import { KitBar, KitGem, KitPill, KitParchPill } from './kit';
-import { PixelIcon } from './PixelIcon';
+import { PixelIcon, IconTile } from './PixelIcon';
 
 /* ---------- icon medallion ---------- */
 export function Mh({ size = 20, icon, color }) {
@@ -86,17 +86,24 @@ export function StateChip({ state, text, gold }) {
   );
 }
 
-/* ---------- avatar — RPGUI helmet slot + stage badge ---------- */
-export function Avatar({ flow, size = 96, stage }) {
-  return (
+/* ---------- avatar — chosen pixel portrait + stage badge (tappable to change) ---------- */
+export function Avatar({ flow, size = 96, stage, avatar, onPress }) {
+  const av = AVATAR_BY_ID[avatar] || AVATARS[0];
+  const inner = (
     <View style={{ width: size, height: size, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
-      <KitGem size={size} icon="helmet-slot" />
+      <IconTile name={av.icon} color={av.color} size={size} style={{ borderRadius: 8, borderWidth: 3 }} />
       {stage != null ? (
         <View pointerEvents="none" style={{ position: 'absolute', right: -3, bottom: -3, minWidth: 22, height: 20, paddingHorizontal: 5, backgroundColor: C.gold, borderWidth: 2, borderColor: C.goldLine, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: FONT.display, fontSize: 16, color: C.kitGoldText }}>{stage}</Text>
         </View>
       ) : null}
     </View>
+  );
+  if (!onPress) return inner;
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel="Сменить образ">
+      {inner}
+    </Pressable>
   );
 }
 

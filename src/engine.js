@@ -13,10 +13,12 @@ export function useGame(userId) {
   const [streak] = useState(14);
   const [levelUp, setLevelUp] = useState(null);
   const [lastArchived, setLastArchived] = useState(null);
+  const [avatar, setAvatarState] = useState(null);
 
   // persist per user: instant local cache (AsyncStorage) + authoritative cloud (Supabase user_data.game).
   // Race-safe: hydratedKey gates saves until this user's data has loaded (anon→user switch can't save seeds).
   const KEY = 'alchemist_game_' + (userId || 'anon');
+  const AVATAR_KEY = 'alchemist_avatar_' + (userId || 'anon');
   const hydratedKey = useRef(null);
   const cloudTimer = useRef(null);
   const applyGame = (s) => {
@@ -34,10 +36,13 @@ export function useGame(userId) {
       try {
         const raw = await AsyncStorage.getItem(KEY);
         if (!cancelled && raw) applyGame(JSON.parse(raw)); // 1) local cache → instant / offline
+        const av = await AsyncStorage.getItem(AVATAR_KEY);
+        if (!cancelled && av) setAvatarState(av);
       } catch (e) {}
       if (userId) {
         const row = await loadUserData(userId); // 2) cloud → authoritative when signed in
         if (!cancelled && row && row.game) applyGame(row.game);
+        if (!cancelled && row && row.avatar) setAvatarState(row.avatar);
       }
       if (!cancelled) hydratedKey.current = KEY;
     })();
@@ -135,6 +140,12 @@ export function useGame(userId) {
     });
   }, []);
 
+  const setAvatar = useCallback((id) => {
+    setAvatarState(id);
+    AsyncStorage.setItem('alchemist_avatar_' + (userId || 'anon'), id).catch(() => {});
+    if (userId) saveUserField(userId, 'avatar', id);
+  }, [userId]);
+
   const qiPct = resources.qi / resources.qiMax;
   const doneCount = practices.filter((p) => p.today && p.done).length;
   const dayState = qiPct < 0.25 ? 'spent' : doneCount >= 1 ? 'flow' : 'calm';
@@ -147,6 +158,8 @@ export function useGame(userId) {
     streak,
     dayState,
     levelUp,
+    avatar,
+    setAvatar,
     clearLevelUp: () => setLevelUp(null),
     setDone,
     toggle,

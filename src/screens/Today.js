@@ -53,7 +53,7 @@ function AllDoneState({ dayXp }) {
 }
 
 export function TodayScreen({ ctx }) {
-  const { practices, resources, dayState, streak, stage, onToggle, onOpen, onAdd, wide, onShowHelp, userName } = ctx;
+  const { practices, resources, dayState, streak, stage, onToggle, onOpen, onAdd, wide, onShowHelp, userName, avatar, onAvatar } = ctx;
   const today = practices.filter((p) => p.today && !p.archived);
   const done = today.filter((p) => p.done);
   const pending = today.filter((p) => !p.done);
@@ -79,7 +79,7 @@ export function TodayScreen({ ctx }) {
             ) : null}
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 14, zIndex: 2 }}>
-            <Avatar flow={dayState === 'flow'} size={72} stage={stage.lvl} />
+            <Avatar flow={dayState === 'flow'} size={72} stage={stage.lvl} avatar={avatar} onPress={onAvatar} />
             <View style={{ flex: 1, paddingTop: 2, paddingRight: 92 }}>
               <Text style={[T.eyebrow, { marginBottom: 6 }]}>Стадия {stage.lvl}</Text>
               <Text accessibilityRole="header" style={[T.displayM]}>{greeting()},{'\n'}{name}</Text>

@@ -12,7 +12,7 @@ import { CharacterScreen } from './screens/Character';
 import { LibraryScreen } from './screens/Library';
 import { DiaryScreen } from './screens/Diary';
 import { JournalScreen } from './screens/Journal';
-import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast } from './overlays';
+import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast, AvatarPicker } from './overlays';
 import { KitPanel } from './kit';
 
 const WEB = Platform.OS === 'web';
@@ -36,6 +36,7 @@ export function MainApp() {
   const [daySheet, setDaySheet] = useState(null);
   const [toast, setToast] = useState(null);
   const [onboard, setOnboard] = useState(false);
+  const [avatarPicker, setAvatarPicker] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -79,6 +80,8 @@ export function MainApp() {
     onShowHelp,
     onSignOut: auth?.signOut,
     userName: auth?.user?.name,
+    avatar: game.avatar,
+    onAvatar: () => setAvatarPicker(true),
     diaryKey: 'alchemist_diary_' + (auth?.user?.id || 'anon'),
     userId: auth?.user?.id,
   };
@@ -98,6 +101,7 @@ export function MainApp() {
       {game.levelUp ? <LevelUpOverlay stage={game.levelUp} onClose={game.clearLevelUp} /> : null}
       {toast ? <Toast message={toast.message} actionLabel={toast.actionLabel} onAction={() => { if (toast.action === 'undo') game.undoArchive(); setToast(null); }} onClose={() => setToast(null)} /> : null}
       {onboard ? <Onboarding onDone={dismissOnboard} /> : null}
+      {avatarPicker ? <AvatarPicker current={game.avatar} onPick={game.setAvatar} onClose={() => setAvatarPicker(false)} /> : null}
       <FogVeil />
     </>
   );
