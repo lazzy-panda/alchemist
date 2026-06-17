@@ -92,8 +92,8 @@ export function MainApp() {
   const overlays = (
     <>
       {detail ? <PracticeDetail practice={detail} wide={wide} onComplete={onComplete} onClose={() => setDetail(null)} /> : null}
-      {editor !== undefined ? <EditorSheet practice={editor} onSave={onSave} onClose={() => setEditor(undefined)} onArchive={onArchive} existingNames={game.practices.filter((x) => !x.archived).map((x) => x.name)} /> : null}
-      {daySheet !== null ? <DayDetailSheet day={daySheet} onClose={() => setDaySheet(null)} /> : null}
+      {editor !== undefined ? <EditorSheet practice={editor} wide={wide} onSave={onSave} onClose={() => setEditor(undefined)} onArchive={onArchive} existingNames={game.practices.filter((x) => !x.archived).map((x) => x.name)} /> : null}
+      {daySheet !== null ? <DayDetailSheet day={daySheet} wide={wide} onClose={() => setDaySheet(null)} /> : null}
       {game.levelUp ? <LevelUpOverlay stage={game.levelUp} onClose={game.clearLevelUp} /> : null}
       {toast ? <Toast message={toast.message} actionLabel={toast.actionLabel} onAction={() => { if (toast.action === 'undo') game.undoArchive(); setToast(null); }} onClose={() => setToast(null)} /> : null}
       {onboard ? <Onboarding onDone={dismissOnboard} /> : null}

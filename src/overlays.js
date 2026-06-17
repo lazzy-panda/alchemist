@@ -1,6 +1,6 @@
 /* Alchemist — overlays: PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil */
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, Dimensions } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { C, FONT, shade } from './theme';
 import { CATS, STATS, PRACTICES } from './data';
 import { ascension } from './quotes';
@@ -10,11 +10,8 @@ import { CircularTimer } from './svg';
 import { PracticeCard } from './PracticeCard';
 import { KitPanel, KitClose, KitGem, KitBanner } from './kit';
 
-const SHEET_UP = { '0%': { transform: [{ translateY: 820 }] }, '100%': { transform: [{ translateY: 0 }] } };
-const SHEET_DOWN = { '0%': { transform: [{ translateY: 0 }] }, '100%': { transform: [{ translateY: 820 }] } };
-
 /* ============================================================
-   PRACTICE DETAIL (full-screen, timer)
+   PRACTICE DETAIL (full-screen page, timer)
    ============================================================ */
 export function PracticeDetail({ practice, onComplete, onClose, wide }) {
   const cat = CATS[practice.cat];
@@ -49,14 +46,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
   const rewards = Object.entries(practice.r || {});
 
   return (
-    <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: C.paper, zIndex: 200 }}>
-      <ScrollViewSafe>
-        <View style={[{ paddingHorizontal: 18, paddingTop: 20, paddingBottom: 30, minHeight: '100%' }, wide && { maxWidth: 720, width: '100%', alignSelf: 'center', paddingHorizontal: 40 }]}>
-          {/* header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-            <Btn variant="ghost" onPress={onClose} style={{ paddingVertical: 8, paddingHorizontal: 10, marginLeft: -8 }}>‹ Назад</Btn>
-            <KitClose onPress={onClose} size={34} />
-          </View>
+    <PageShell onClose={onClose} wide={wide}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 22 }}>
             <KitGem size={48} icon={cat.icon} color={cat.color} />
             <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
@@ -110,9 +100,7 @@ export function PracticeDetail({ practice, onComplete, onClose, wide }) {
             ) : null}
           </Card>
           <Text style={[T.caption, { marginTop: 8, paddingHorizontal: 2, lineHeight: 26 }]}>+N — очки характеристик · ЦИ — изменение запаса Ци{practice.mult ? ' · x' + practice.mult + ' — бонус Чжан Чжуан' : ''}</Text>
-        </View>
-      </ScrollViewSafe>
-    </View>
+    </PageShell>
   );
 }
 
@@ -124,7 +112,7 @@ function TStep({ label, onPress, disabled }) {
   );
 }
 
-/* Scroll wrapper for sheets — flex:1 fills the sheet's now-definite pixel height (set in Sheet). */
+/* Scroll wrapper for full-screen pages — flex:1 fills the PageShell's absolute-filled height. */
 function ScrollViewSafe({ children }) {
   const { ScrollView } = require('react-native');
   return (
@@ -135,25 +123,21 @@ function ScrollViewSafe({ children }) {
 }
 
 /* ============================================================
-   SHEET shell
+   PAGE shell — full-screen routed page (replaces the old modal bottom-sheet)
+   opaque, fills the content area, owns the back affordance + scroll.
    ============================================================ */
-function Sheet({ children, onClose, maxHeightPct = 90 }) {
-  const [closing, setClosing] = useState(false);
-  const close = () => {
-    setClosing(true);
-    setTimeout(() => onClose && onClose(), 280);
-  };
+function PageShell({ children, onClose, wide }) {
   return (
-    <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 150, justifyContent: 'flex-end' }}>
-      <Pressable onPress={close} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: 'rgba(35,25,12,0.45)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out, dir: closing ? 'reverse' : 'normal' })]} />
-      <View style={[{ position: 'absolute', left: 0, right: 0, bottom: 0, height: Math.round((Dimensions.get('window').height || 800) * maxHeightPct / 100) }, kf(closing ? SHEET_DOWN : SHEET_UP, closing ? 0.28 : 0.38, { ease: EASE.out, fill: 'forwards' })]}>
-        <KitPanel slice={[58, 58, 30, 58]} border={{ top: 26, right: 24, bottom: 6, left: 24 }} style={{ width: '100%', flex: 1 }} contentStyle={{ position: 'relative', flex: 1 }}>
-          <View style={{ position: 'absolute', right: 6, top: -6, zIndex: 6 }}>
-            <KitClose onPress={close} size={34} />
+    <View style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: C.paper, zIndex: 200 }, kf(KF.screenIn, 0.4, { ease: EASE.out })]}>
+      <ScrollViewSafe>
+        <View style={[{ paddingHorizontal: 18, paddingTop: 18, paddingBottom: 30, minHeight: '100%' }, wide && { maxWidth: 720, width: '100%', alignSelf: 'center', paddingHorizontal: 40 }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <Btn variant="ghost" onPress={onClose} style={{ paddingVertical: 8, paddingHorizontal: 10, marginLeft: -8 }}>‹ Назад</Btn>
+            <KitClose onPress={onClose} size={34} />
           </View>
-          {typeof children === 'function' ? children(close) : children}
-        </KitPanel>
-      </View>
+          {children}
+        </View>
+      </ScrollViewSafe>
     </View>
   );
 }
@@ -161,7 +145,7 @@ function Sheet({ children, onClose, maxHeightPct = 90 }) {
 /* ============================================================
    EDITOR SHEET
    ============================================================ */
-export function EditorSheet({ practice, onSave, onClose, onArchive, existingNames }) {
+export function EditorSheet({ practice, onSave, onClose, onArchive, existingNames, wide }) {
   const isNew = !practice;
   const [name, setName] = useState(practice?.name || '');
   const [cat, setCat] = useState(practice?.cat || 'med');
@@ -180,11 +164,8 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
   };
 
   return (
-    <Sheet onClose={onClose}>
-      {(close) => (
-        <ScrollViewSafe>
-          <View style={{ paddingHorizontal: 22, paddingTop: 8, paddingBottom: 24 }}>
-            <Text style={[T.displayM, { marginTop: 6, marginBottom: 18 }]}>{isNew ? 'Новая практика' : 'Изменить практику'}</Text>
+    <PageShell onClose={onClose} wide={wide}>
+            <Text style={[T.displayM, { marginTop: 2, marginBottom: 18 }]}>{isNew ? 'Новая практика' : 'Изменить практику'}</Text>
 
             <Field label="Название">
               <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(''); }} placeholder="напр. Утренний цигун" />
@@ -217,7 +198,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
                 <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.red, marginBottom: 12, lineHeight: 28 }}>Архивировать «{name || practice?.name}»? Можно восстановить из Библиотеки.</Text>
                 <View style={{ flexDirection: 'row', gap: 10 }}>
                   <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirmArchive(false)}>Отмена</Btn>
-                  <Btn variant="danger" style={{ flex: 1 }} onPress={() => { close(); setTimeout(() => onArchive && onArchive(practice.id), 290); }}>Архивировать</Btn>
+                  <Btn variant="danger" style={{ flex: 1 }} onPress={() => { onArchive && onArchive(practice.id); onClose && onClose(); }}>Архивировать</Btn>
                 </View>
               </View>
             ) : (
@@ -230,8 +211,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
                     if (!trimmed) { setNameError('Введите название практики'); return; }
                     const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
                     if (dup) { setNameError('Практика с таким названием уже существует'); return; }
-                    close();
-                    setTimeout(() => onSave({ id: practice?.id, name: trimmed, cat, dur, r: rewards, qi: practice?.qi ?? 2, today: practice?.today, done: practice?.done }), 290);
+                    onSave({ id: practice?.id, name: trimmed, cat, dur, r: rewards, qi: practice?.qi ?? 2, today: practice?.today, done: practice?.done });
                   }}
                 >
                   Сохранить
@@ -239,22 +219,17 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, existingName
                 {!isNew ? <Btn variant="danger" onPress={() => setConfirmArchive(true)}>Архивировать</Btn> : null}
               </View>
             )}
-          </View>
-        </ScrollViewSafe>
-      )}
-    </Sheet>
+    </PageShell>
   );
 }
 
 /* ============================================================
    DAY DETAIL SHEET
    ============================================================ */
-export function DayDetailSheet({ day, onClose }) {
+export function DayDetailSheet({ day, onClose, wide }) {
   const sample = PRACTICES.filter((p) => p.today).slice(0, 3);
   return (
-    <Sheet onClose={onClose} maxHeightPct={70}>
-      <ScrollViewSafe>
-        <View style={{ paddingHorizontal: 22, paddingTop: 8, paddingBottom: 24 }}>
+    <PageShell onClose={onClose} wide={wide}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, marginBottom: 14 }}>
             <Text style={T.displayM}>День {day + 1}</Text>
             <StateChip state="flow" />
@@ -268,9 +243,7 @@ export function DayDetailSheet({ day, onClose }) {
           <View style={{ gap: 10 }}>
             {sample.map((p) => <PracticeCard key={p.id} p={{ ...p, done: true }} compact />)}
           </View>
-        </View>
-      </ScrollViewSafe>
-    </Sheet>
+    </PageShell>
   );
 }
 
