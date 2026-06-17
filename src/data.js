@@ -35,6 +35,17 @@ export const CATS = {
   heart: { name: 'Сердце', icon: 'heart', color: '#E2A0C6' },
 };
 
+// practice measure: minutes or repetitions ("разы"). dur holds the number either way.
+export function repWord(n) {
+  const a = n % 100, b = n % 10;
+  if (a >= 11 && a <= 14) return 'раз';
+  if (b >= 2 && b <= 4) return 'раза';
+  return 'раз';
+}
+export function durLabel(p) {
+  return p && p.unit === 'reps' ? `${p.dur} ${repWord(p.dur)}` : `${p.dur} мин`;
+}
+
 // ---- practices ----
 // r: stat rewards {key:+n}; qi: Qi change (negative = cost); mult: multiplier
 let _id = 0;
@@ -47,7 +58,7 @@ export const PRACTICES = [
   P({ name: 'Цигун', cat: 'qi', dur: 15, r: { energy: 3, flex: 1 }, qi: 3, today: true }),
   P({ name: 'Самомассаж', cat: 'body', dur: 8, r: { strength: 2, energy: 1 }, qi: 1, today: true }),
   P({ name: 'Чайная церемония', cat: 'heart', dur: 10, r: { kind: 1 }, qi: 1 }),
-  P({ name: 'Дыхание Минмэнь x16', cat: 'qi', dur: 5, r: { energy: 2, sex: 2 }, qi: 3, today: true }),
+  P({ name: 'Дыхание Минмэнь', cat: 'qi', dur: 16, unit: 'reps', r: { energy: 2, sex: 2 }, qi: 3, today: true }),
   P({ name: 'Прохладный ветер', cat: 'qi', dur: 7, r: { energy: 2 }, qi: 2 }),
   P({ name: 'Сильный ветер', cat: 'qi', dur: 10, r: { strength: 3, energy: 1 }, qi: -4 }),
   P({ name: 'Изучение учения', cat: 'know', dur: 30, r: { focus: 2, kind: 3 }, qi: 2 }),

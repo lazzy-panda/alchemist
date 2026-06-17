@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT, shade } from './theme';
-import { CATS, STATS, PRACTICES, AVATARS } from './data';
+import { CATS, STATS, PRACTICES, AVATARS, repWord, durLabel } from './data';
 import { ascension } from './quotes';
 import { Card, Btn, IconBtn, Gradient, Gloss, Han, T, SectionHead, Seal, Stepper, SelChip, Field, Input, ts, kf, KF, EASE } from './ui';
 import { RewardMedal, QiTag, StateChip, MedalPill, Bar } from './badges';
@@ -60,27 +60,38 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
             {onEdit ? <Btn variant="ghost" onPress={onEdit}>Изменить</Btn> : null}
           </View>
 
-          {/* timer — native rpgui-progress + time readout */}
-          <View style={{ marginTop: 14, marginBottom: 8 }}>
-            <Text style={{ fontFamily: FONT.display, fontSize: 80, fontVariant: ['tabular-nums'], color: C.title, textAlign: 'center', marginBottom: 18, ...ts('rgba(0,0,0,0.5)', 0, 2, 2) }}>
-              {String(Math.floor(remaining / 60)).padStart(2, '0')}:{String(remaining % 60).padStart(2, '0')}
-            </Text>
-            <Bar pct={total > 0 ? (remaining / total) * 100 : 0} color="qi" />
-            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 12, marginTop: 16 }}>
-              <TStep label="−5м" onPress={() => adjust(-5)} disabled={running} />
-              <TStep label="+5м" onPress={() => adjust(5)} disabled={running} />
+          {practice.unit === 'reps' ? (
+            /* reps practice: show the count + complete (a countdown makes no sense) */
+            <View style={{ marginTop: 14, marginBottom: 8, alignItems: 'center' }}>
+              <Text style={{ fontFamily: FONT.display, fontSize: 80, fontVariant: ['tabular-nums'], color: C.title, textAlign: 'center', ...ts('rgba(0,0,0,0.5)', 0, 2, 2) }}>{practice.dur}</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 22, color: C.inkMuted, marginTop: -2, marginBottom: 22 }}>{repWord(practice.dur)}</Text>
+              <Btn variant="gold" block onPress={() => onComplete(practice)}>✦ Завершить</Btn>
             </View>
-          </View>
+          ) : (
+            <>
+              {/* timer — native rpgui-progress + time readout */}
+              <View style={{ marginTop: 14, marginBottom: 8 }}>
+                <Text style={{ fontFamily: FONT.display, fontSize: 80, fontVariant: ['tabular-nums'], color: C.title, textAlign: 'center', marginBottom: 18, ...ts('rgba(0,0,0,0.5)', 0, 2, 2) }}>
+                  {String(Math.floor(remaining / 60)).padStart(2, '0')}:{String(remaining % 60).padStart(2, '0')}
+                </Text>
+                <Bar pct={total > 0 ? (remaining / total) * 100 : 0} color="qi" />
+                <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 12, marginTop: 16 }}>
+                  <TStep label="−5м" onPress={() => adjust(-5)} disabled={running} />
+                  <TStep label="+5м" onPress={() => adjust(5)} disabled={running} />
+                </View>
+              </View>
 
-          {/* controls */}
-          <View style={{ flexDirection: 'row', gap: 10, marginTop: 14, marginBottom: 8 }}>
-            {!running && remaining > 0 && remaining === total ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Начать</Btn> : null}
-            {running ? <Btn variant="secondary" block onPress={() => setRunning(false)} style={{ flex: 1 }}>⏸ Пауза</Btn> : null}
-            {!running && remaining < total && remaining > 0 ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Продолжить</Btn> : null}
-            {remaining === 0 ? <Btn variant="gold" block onPress={() => onComplete(practice)} style={{ flex: 1 }}>✦ Завершить</Btn> : null}
-            {remaining < total && remaining > 0 ? <Btn variant="ghost" onPress={() => { setRemaining(total); setRunning(false); }}>Сброс</Btn> : null}
-          </View>
-          <Btn variant="ghost" block onPress={() => onComplete(practice)}>Отметить выполненной</Btn>
+              {/* controls */}
+              <View style={{ flexDirection: 'row', gap: 10, marginTop: 14, marginBottom: 8 }}>
+                {!running && remaining > 0 && remaining === total ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Начать</Btn> : null}
+                {running ? <Btn variant="secondary" block onPress={() => setRunning(false)} style={{ flex: 1 }}>⏸ Пауза</Btn> : null}
+                {!running && remaining < total && remaining > 0 ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Продолжить</Btn> : null}
+                {remaining === 0 ? <Btn variant="gold" block onPress={() => onComplete(practice)} style={{ flex: 1 }}>✦ Завершить</Btn> : null}
+                {remaining < total && remaining > 0 ? <Btn variant="ghost" onPress={() => { setRemaining(total); setRunning(false); }}>Сброс</Btn> : null}
+              </View>
+              <Btn variant="ghost" block onPress={() => onComplete(practice)}>Отметить выполненной</Btn>
+            </>
+          )}
 
           {/* instruction */}
           <Pressable onPress={() => setShowInstr(!showInstr)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20 }}>
@@ -157,6 +168,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
   const [dur, setDur] = useState(practice?.dur || 15);
   const [rewards, setRewards] = useState(practice?.r ? { ...practice.r } : {});
   const [icon, setIcon] = useState(practice?.icon || '');
+  const [unit, setUnit] = useState(practice?.unit === 'reps' ? 'reps' : 'min');
   const [nameError, setNameError] = useState('');
   const [confirm, setConfirm] = useState(null); // null | 'archive' | 'delete'
 
@@ -206,8 +218,17 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
               </View>
             </Field>
 
-            <Field label="Длительность">
-              <Stepper value={dur} onDec={() => setDur(Math.max(1, dur - 5))} onInc={() => setDur(Math.min(180, dur + 5))} />
+            <Field label="Мера">
+              <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
+                <SelChip on={unit === 'min'} color={C.gold} label="Минуты" onPress={() => setUnit('min')} />
+                <SelChip on={unit === 'reps'} color={C.gold} label="Разы" onPress={() => setUnit('reps')} />
+              </View>
+              <Stepper
+                value={dur}
+                onDec={() => setDur(Math.max(1, dur - (unit === 'reps' ? 1 : 5)))}
+                onInc={() => setDur(Math.min(unit === 'reps' ? 999 : 180, dur + (unit === 'reps' ? 1 : 5)))}
+                suffix={unit === 'reps' ? ' ' + repWord(dur) : ' мин'}
+              />
             </Field>
 
             <Field label="Награды-характеристики">
@@ -251,7 +272,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
                     if (!trimmed) { setNameError('Введите название практики'); return; }
                     const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
                     if (dup) { setNameError('Практика с таким названием уже существует'); return; }
-                    onSave({ id: practice?.id, name: trimmed, cat, dur, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, today: isNew ? true : practice?.today, done: practice?.done });
+                    onSave({ id: practice?.id, name: trimmed, cat, dur, unit, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, today: isNew ? true : practice?.today, done: practice?.done });
                   }}
                 >
                   Сохранить

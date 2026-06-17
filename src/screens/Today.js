@@ -4,7 +4,7 @@ import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from '../theme';
 import { ScreenScroll, PadView, WIDE_MAX } from '../layout';
 import { Gradient, Card, Btn, T, Seal, kf, KF, EASE } from '../ui';
-import { Avatar, ResourceBar, StateChip } from '../badges';
+import { Avatar, WillBar, StateChip } from '../badges';
 import { PracticeCard } from '../PracticeCard';
 import { dailyWisdom } from '../quotes';
 
@@ -85,9 +85,8 @@ export function TodayScreen({ ctx }) {
               <Text accessibilityRole="header" style={[T.displayM]}>{greeting()},{'\n'}{name}</Text>
             </View>
           </View>
-          <View style={{ gap: 12, marginTop: 18, zIndex: 2 }}>
-            <ResourceBar kind="hp" label="Здоровье" value={resources.hp} max={resources.hpMax} />
-            <ResourceBar kind="qi" label="Ци" value={resources.qi} max={resources.qiMax} glow={dayState === 'flow'} />
+          <View style={{ marginTop: 18, zIndex: 2 }}>
+            <WillBar done={done.length} total={today.length} />
           </View>
         </View>
       </Gradient>

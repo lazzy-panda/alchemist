@@ -65,6 +65,24 @@ export function ResourceBar({ kind, label, value, max, glow }) {
   );
 }
 
+/* ---------- "Воля" — single gold bar = % of today's practices done ---------- */
+export function WillBar({ done = 0, total = 0 }) {
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  return (
+    <View style={{ gap: 6 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>Воля</Text>
+        <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.inkMuted }}>{done} / {total} · {pct}%</Text>
+      </View>
+      <View style={{ height: 24, borderRadius: 4, borderWidth: 2, borderColor: C.goldLine, backgroundColor: C.frameDark, overflow: 'hidden' }}>
+        <View style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: pct + '%', backgroundColor: C.gold }}>
+          <View style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 3, backgroundColor: C.goldLight, opacity: 0.6 }} />
+        </View>
+      </View>
+    </View>
+  );
+}
+
 /* ---------- state chip ---------- */
 export const STATE_DEFS = {
   flow: { ico: 'wind', label: 'В потоке', pill: 'primary' },

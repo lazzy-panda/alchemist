@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, Pressable, Platform, Animated, PanResponder } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { C, FONT } from './theme';
-import { CATS, STAT } from './data';
+import { CATS, STAT, durLabel } from './data';
 import { KitPanel, KitCheckbox } from './kit';
 import { IconTile } from './PixelIcon';
 import { QiTag } from './badges';
@@ -84,7 +84,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
             <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontSize: 20, color: p.done ? C.jadeLight : C.ink, marginBottom: 5, lineHeight: 28, textDecorationLine: p.done ? 'line-through' : 'none', textDecorationColor: C.jadeLight }}>{p.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
               <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: cat.color }}>{cat.name}</Text>
-              <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.inkFaint }}>{p.dur} мин</Text>
+              <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.inkFaint }}>{durLabel(p)}</Text>
               {p.mult ? <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.gold }}>x{p.mult}</Text> : null}
               {compact ? <QiTag qi={p.qi} /> : null}
             </View>
