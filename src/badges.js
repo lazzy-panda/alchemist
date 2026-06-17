@@ -66,11 +66,11 @@ export function ResourceBar({ kind, label, value, max, glow }) {
 
 /* ---------- state chip ---------- */
 export const STATE_DEFS = {
-  flow: { ico: '🌀', label: 'В потоке', pill: 'primary' },
-  inspired: { ico: '✨', label: 'Вдохновение', pill: 'gold' },
-  spent: { ico: '🥀', label: 'Истощение', pill: 'danger' },
-  streak: { ico: '🔥', label: '', pill: 'primary' },
-  calm: { ico: '🌙', label: 'Покой', pill: 'blue' },
+  flow: { ico: 'potion-blue', label: 'В потоке', pill: 'primary' },
+  inspired: { ico: 'magic-slot', label: 'Вдохновение', pill: 'gold' },
+  spent: { ico: 'exclamation', label: 'Истощение', pill: 'danger' },
+  streak: { ico: 'sword', label: '', pill: 'primary' },
+  calm: { ico: 'potion-green', label: 'Покой', pill: 'blue' },
 };
 
 export function StateChip({ state, text, gold }) {
@@ -79,7 +79,7 @@ export function StateChip({ state, text, gold }) {
   const tc = { primary: C.jadeLight, gold: C.gold, danger: C.red, blue: C.blueLight }[d.pill] || C.ink;
   return (
     <KitPill color={d.pill} accessibilityLabel={text || d.label}>
-      <Text style={{ fontSize: 22 }}>{d.ico}</Text>
+      <KitGem size={22} icon={d.ico} />
       <Text style={{ fontFamily: FONT.display, fontSize: 16, color: tc }}>{text || d.label}</Text>
     </KitPill>
   );

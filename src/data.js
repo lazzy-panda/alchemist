@@ -62,15 +62,15 @@ export const PERKS = [
   { icon: 'shoes-slot', name: 'Гибкое тело', color: '#7BA84E', open: true },
   { icon: 'armor-slot', name: 'Железная рубашка', color: '#C06B3E', open: false, req: 'Сила 6' },
   { icon: 'potion-red', name: 'Открытое сердце', color: '#C77BA0', open: false, req: 'Доброта 8' },
-  { icon: 'ring-slot', name: 'Внутренний эликсир', color: '#8E5AA8', open: false, req: 'Стадия 12' },
+  { icon: 'potion-green', name: 'Внутренний эликсир', color: '#8E5AA8', open: false, req: 'Стадия 12' },
 ];
 
 // ---- relics ----
 export const RELICS = [
-  { icon: '🪷', got: true, name: 'Лотос покоя' },
-  { icon: '🫖', got: true, name: 'Чаша рассвета' },
-  { icon: '🪈', got: false },
-  { icon: '🐉', got: false },
+  { icon: 'magic-slot', got: true, name: 'Лотос покоя' },
+  { icon: 'potion-red', got: true, name: 'Чаша рассвета' },
+  { icon: 'potion-blue', got: false },
+  { icon: 'shield', got: false },
 ];
 
 // ---- journal: heatmap (28 days, intensity 0..3) ----
@@ -88,7 +88,7 @@ export const DIARY_TIMES = ['08:00', '10:30', '12:00', '15:00', '17:00', '19:00'
 export const DIARY_SETS = {
   ten: {
     name: 'Десять',
-    icon: 'exclamation',
+    icon: 'magic-slot',
     color: '#3E8C60',
     vows: [
       { t: 'Защита жизни', q: 'Защитили ли вы сегодня жизнь, пусть в малом — помогли уставшему, убрали опасность?' },
@@ -124,7 +124,7 @@ export const DIARY_SETS = {
   },
   freedom: {
     name: 'Свобода',
-    icon: 'ring-slot',
+    icon: 'shoes-slot',
     color: '#4574B5',
     vows: [
       { t: 'Не убивать', q: 'Воздержались ли вы от убийства?' },

@@ -145,7 +145,7 @@ function Perk({ p }) {
 function Relic({ r }) {
   return (
     <View style={{ flexGrow: 1, flexBasis: '22%', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, minHeight: 64, borderRadius: 8, borderWidth: 2, borderColor: C.stoneLine, backgroundColor: C.frameDark, opacity: r.got ? 1 : 0.55 }}>
-      <Text style={{ fontSize: 48, opacity: r.got ? 1 : 0.5 }}>{r.got ? r.icon : '◌'}</Text>
+      {r.got ? <KitGem size={48} icon={r.icon} /> : <Text style={{ fontSize: 44, opacity: 0.5, color: C.inkFaint }}>◌</Text>}
     </View>
   );
 }
