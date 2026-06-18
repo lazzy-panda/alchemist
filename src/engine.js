@@ -5,6 +5,13 @@ import { PRACTICES, STAT_LEVELS } from './data';
 import { clamp } from './theme';
 import { loadUserData, saveUserField } from './supabase';
 
+export const FREE_PRACTICE_CAP = 10;
+// only user-created, non-archived practices count toward the free cap (seed practices are always free)
+export function atPracticeCap(practices, isPremium) {
+  if (isPremium) return false;
+  return practices.filter((p) => p.custom && !p.archived).length >= FREE_PRACTICE_CAP;
+}
+
 // practice-day index that flips at local 03:00 (checkboxes reset at 3am, not midnight)
 function practiceDay() {
   const t = new Date(Date.now() - 3 * 3600e3);
@@ -176,7 +183,7 @@ export function useGame(userId) {
   const savePractice = useCallback((data) => {
     setPractices((ps) => {
       if (data.id) return ps.map((x) => (x.id === data.id ? { ...x, ...data } : x));
-      return [...ps, { ...data, id: 'p' + Date.now() }];
+      return [...ps, { ...data, id: 'p' + Date.now(), custom: true }];
     });
   }, []);
 

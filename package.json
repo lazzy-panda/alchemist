@@ -22,10 +22,13 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test:unit": "vitest run"
   },
   "private": true,
   "devDependencies": {
-    "babel-preset-expo": "^56.0.15"
+    "babel-preset-expo": "^56.0.15",
+    "typescript": "~6.0.3",
+    "vitest": "^4.1.9"
   }
 }

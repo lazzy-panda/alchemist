@@ -3,8 +3,11 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { View, useWindowDimensions, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { C } from './theme';
-import { useGame } from './engine';
+import { useGame, atPracticeCap } from './engine';
 import { useAuth } from './auth';
+import { usePremium } from './premium';
+import { supabase, signInWithTelegram } from './supabase';
+import { inTelegram, getInitData, openInvoice } from './telegram.web';
 import { kf, KF, EASE } from './ui';
 import { BottomNav, SideRail } from './nav';
 import { TodayScreen } from './screens/Today';
@@ -12,7 +15,7 @@ import { CharacterScreen } from './screens/Character';
 import { LibraryScreen } from './screens/Library';
 import { DiaryScreen } from './screens/Diary';
 import { JournalScreen } from './screens/Journal';
-import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast, AvatarPicker, MetricEditor } from './overlays';
+import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast, AvatarPicker, MetricEditor, Paywall } from './overlays';
 import { KitPanel } from './kit';
 
 const WEB = Platform.OS === 'web';
@@ -27,6 +30,7 @@ const SCREENS = {
 export function MainApp() {
   const auth = useAuth();
   const game = useGame(auth?.user?.id);
+  const premium = usePremium(auth?.user?.id);
   const { width } = useWindowDimensions();
   const wide = width >= 900;
 
@@ -38,6 +42,7 @@ export function MainApp() {
   const [onboard, setOnboard] = useState(false);
   const [avatarPicker, setAvatarPicker] = useState(false);
   const [metricEdit, setMetricEdit] = useState(null); // 'med' | 'qi' | 'streak' | null
+  const [paywall, setPaywall] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -50,6 +55,8 @@ export function MainApp() {
     return () => { cancelled = true; };
   }, []);
 
+  useEffect(() => { if (inTelegram()) signInWithTelegram(getInitData()); }, []);
+
   const dismissOnboard = useCallback(() => {
     setOnboard(false);
     AsyncStorage.setItem('alchemist_onboarded_v1', '1').catch(() => {});
@@ -57,7 +64,12 @@ export function MainApp() {
   const onShowHelp = useCallback(() => setOnboard(true), []);
 
   const onComplete = useCallback((p) => { game.setDone(p, true); setDetail(null); }, [game.setDone]);
-  const onSave = useCallback((data) => { game.savePractice(data); setEditor(undefined); }, [game.savePractice]);
+  const onSave = useCallback((data) => {
+    // cap + paywall apply ONLY inside the Telegram Mini App (where Stars payment exists);
+    // the standalone site stays free/unlimited per spec §5.
+    if (!data.id && inTelegram() && atPracticeCap(game.practices, premium.premium)) { setEditor(undefined); setPaywall(true); return; }
+    game.savePractice(data); setEditor(undefined);
+  }, [game.savePractice, game.practices, premium.premium]);
   const onOpen = useCallback((p) => setDetail(p), []);
   const onAdd = useCallback(() => setEditor(null), []);
   const onEdit = useCallback((p) => setEditor(p), []);
@@ -89,6 +101,8 @@ export function MainApp() {
     avatar: game.avatar,
     onAvatar: () => setAvatarPicker(true),
     onEditMetric: setMetricEdit,
+    premium: premium.premium,
+    onPaywall: () => setPaywall(true),
     diaryKey: 'alchemist_diary_' + (auth?.user?.id || 'anon'),
     userId: auth?.user?.id,
   };
@@ -110,6 +124,7 @@ export function MainApp() {
       {onboard ? <Onboarding onDone={dismissOnboard} /> : null}
       {avatarPicker ? <AvatarPicker current={game.avatar} onPick={game.setAvatar} onClose={() => setAvatarPicker(false)} /> : null}
       {metricEdit ? <MetricEditor metric={metricEdit} value={metricEdit === 'streak' ? game.streak : (game.timeMin?.[metricEdit] || 0)} onSave={(val) => { if (metricEdit === 'streak') game.setStreakValue(val); else game.setTimeMinutes(metricEdit, val); }} onClose={() => setMetricEdit(null)} /> : null}
+      {paywall ? <Paywall onClose={() => setPaywall(false)} onSubscribe={async () => { const { data } = await supabase.functions.invoke('create-subscription-invoice', { body: { uid: auth?.user?.id } }); if (data?.link) openInvoice(data.link, () => { premium.refresh(); setPaywall(false); }); else setPaywall(false); }} /> : null}
       <FogVeil />
     </>
   );

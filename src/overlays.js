@@ -485,6 +485,23 @@ export function AvatarPicker({ current, onPick, onClose }) {
 }
 
 /* ============================================================
+   PAYWALL — premium upsell overlay
+   ============================================================ */
+export function Paywall({ onSubscribe, onClose }) {
+  return (
+    <Pressable onPress={onClose} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 290, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, backgroundColor: 'rgba(35,25,12,0.6)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
+      <Pressable onPress={() => {}} style={[{ width: '100%', maxWidth: 360, padding: 22, borderRadius: 18, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.paperWarm }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <Text style={T.displayM}>Premium</Text><KitClose onPress={onClose} size={34} />
+        </View>
+        <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.ink, lineHeight: 28, marginBottom: 16 }}>Безлимит практик и полный трекер. Подписка через Telegram Stars — и ты поддерживаешь своего учителя.</Text>
+        <Btn variant="gold" block onPress={onSubscribe}>Оформить за Stars</Btn>
+      </Pressable>
+    </Pressable>
+  );
+}
+
+/* ============================================================
    TOAST — transient parchment pill with an optional action (undo)
    ============================================================ */
 export function Toast({ message, actionLabel, onAction, onClose }) {

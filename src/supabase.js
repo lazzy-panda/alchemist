@@ -31,3 +31,18 @@ export async function saveUserField(id, field, value) {
     await supabase.from('user_data').update({ [field]: value, updated_at: new Date().toISOString() }).eq('id', id);
   } catch (e) {}
 }
+
+export async function loadEntitlements(id) {
+  try {
+    const { data } = await supabase.from('entitlements').select('premium, premium_until, plan, provider').eq('id', id).maybeSingle();
+    return data || null;
+  } catch (e) { return null; }
+}
+
+// exchange validated Telegram initData (via the telegram-auth Edge Function) for a Supabase session
+export async function signInWithTelegram(initData) {
+  const { data, error } = await supabase.functions.invoke('telegram-auth', { body: { initData } });
+  if (error || !data?.access_token) return null;
+  await supabase.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token });
+  return data;
+}

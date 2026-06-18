@@ -12,6 +12,28 @@
 
 ---
 
+## Environment (hosted-only — READ FIRST; overrides any local/Docker command below)
+
+This project has **no local Supabase stack and no Docker**. Run everything against the **hosted** project.
+- Supabase CLI: **`npx supabase`** (not globally installed; already logged in via PAT). Pass
+  **`--project-ref nsaeudcqgsupzmlawkhj`** to project commands — do NOT run `supabase link` / `db reset` / `db push` / `functions serve`.
+- Deno: **`~/.deno/bin/deno`** (installed; not on PATH by default — use the full path).
+- **Migrations:** keep the `.sql` files under `supabase/migrations/` for record, but APPLY them on the
+  hosted DB via the **Management API** (python3 encodes the SQL; curl reads stdin):
+  ```bash
+  SBP="$SUPABASE_PAT"; REF=nsaeudcqgsupzmlawkhj   # export SUPABASE_PAT in your shell — NEVER commit the PAT
+  python3 -c "import json;print(json.dumps({'query':open('supabase/migrations/0001_entitlements.sql').read()}))" \
+   | curl -s -X POST -H "Authorization: Bearer $SBP" -H "Content-Type: application/json" -d @- \
+     "https://api.supabase.com/v1/projects/$REF/database/query"
+  ```
+  Expected: `[]` (no error). Verify objects with a follow-up `select` query through the same endpoint.
+- **Edge Functions:** deploy to the cloud — `npx supabase functions deploy <name> --project-ref $REF`
+  (no Docker). Test the deployed function at `https://$REF.functions.supabase.co/<name>` via `curl`.
+  Supabase **auto-injects** `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` — do NOT
+  set those as secrets.
+- **Secrets:** only custom ones — `npx supabase secrets set --project-ref $REF TELEGRAM_BOT_TOKEN=<@BotFather> TG_WEBHOOK_SECRET=<random hex>`.
+- App + E2E run locally as usual: `npx expo start --web --port 8081`; `python3 tests/<file>.py`.
+
 ## File Structure
 
 | File | Responsibility |
