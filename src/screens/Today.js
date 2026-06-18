@@ -4,8 +4,10 @@ import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from '../theme';
 import { ScreenScroll, PadView, WIDE_MAX } from '../layout';
 import { Gradient, Card, Btn, T, Seal, kf, KF, EASE } from '../ui';
-import { Avatar, WillBar, StateChip } from '../badges';
+import { Avatar, WillBar, StateChip, MetricChip } from '../badges';
 import { PracticeCard } from '../PracticeCard';
+import { DragList } from '../DragList';
+import { hoursLabel, CATS } from '../data';
 import { dailyWisdom } from '../quotes';
 
 function greeting() {
@@ -53,7 +55,7 @@ function AllDoneState({ dayXp }) {
 }
 
 export function TodayScreen({ ctx }) {
-  const { practices, resources, dayState, streak, stage, onToggle, onOpen, onAdd, wide, onShowHelp, userName, avatar, onAvatar } = ctx;
+  const { practices, resources, dayState, streak, timeMin = {}, onToggle, onOpen, onAdd, wide, onShowHelp, userName, avatar, onAvatar, onEditMetric, goRoute, reorderPractices } = ctx;
   const today = practices.filter((p) => p.today && !p.archived);
   const done = today.filter((p) => p.done);
   const pending = today.filter((p) => !p.done);
@@ -71,21 +73,24 @@ export function TodayScreen({ ctx }) {
       <Gradient colors={[C.heroBg, C.railBg]} angle={180} style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.paperDeep }}>
         <View style={[{ position: 'relative' }, wide ? { width: '100%', maxWidth: WIDE_MAX, alignSelf: 'center' } : null]}>
           <View style={{ position: 'absolute', right: 0, top: 2, alignItems: 'flex-end', gap: 8, zIndex: 3 }}>
-            <DayStateChip dayState={dayState} />
             {onShowHelp ? (
               <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontFamily: FONT.display, fontSize: 26, color: C.inkMuted }}>?</Text>
               </Pressable>
             ) : null}
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 14, zIndex: 2 }}>
-            <Avatar flow={dayState === 'flow'} size={72} stage={stage.lvl} avatar={avatar} onPress={onAvatar} />
-            <View style={{ flex: 1, paddingTop: 2, paddingRight: 92 }}>
-              <Text style={[T.eyebrow, { marginBottom: 6 }]}>Стадия {stage.lvl}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, zIndex: 2 }}>
+            <Avatar flow={dayState === 'flow'} size={144} avatar={avatar} onPress={onAvatar} />
+            <View style={{ flex: 1, paddingTop: 2, paddingRight: 12 }}>
               <Text accessibilityRole="header" style={[T.displayM]}>{greeting()},{'\n'}{name}</Text>
             </View>
           </View>
-          <View style={{ marginTop: 18, zIndex: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 8, marginTop: 16, zIndex: 2 }}>
+            <MetricChip icon="moon-stars" color={CATS.med.color} value={hoursLabel(timeMin.med)} accessibilityLabel="Часы медитации" onPress={() => onEditMetric && onEditMetric('med')} />
+            <MetricChip icon="wind" color={CATS.qi.color} value={hoursLabel(timeMin.qi)} accessibilityLabel="Часы цигун" onPress={() => onEditMetric && onEditMetric('qi')} />
+            <MetricChip icon="trending-up" color={C.gold} value={`${streak} дн.`} accessibilityLabel="Страйк 80 процентов" onPress={() => onEditMetric && onEditMetric('streak')} />
+          </View>
+          <View style={{ marginTop: 14, zIndex: 2 }}>
             <WillBar done={done.length} total={today.length} />
           </View>
         </View>
@@ -97,7 +102,6 @@ export function TodayScreen({ ctx }) {
           <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.ink }}>{done.length} <Text style={{ color: C.inkFaint }}>из {today.length}</Text></Text>
           <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>+{dayXp} XP</Text>
           <View style={{ flex: 1 }} />
-          <StateChip state="streak" text={(streakMilestone ? '✦ ' : '') + streak + ' дн.'} gold={streakMilestone} />
         </View>
       </View>
 
@@ -116,15 +120,16 @@ export function TodayScreen({ ctx }) {
           <Btn variant="primary" block onPress={onCompleteAll} style={{ marginBottom: 12 }}>{`✦ Выполнить всё (${pending.length})`}</Btn>
         ) : null}
 
-        <View style={{ gap: 14 }}>
-          {ordered.map((p, i) => (
-            <View key={p.id} style={[{ position: 'relative' }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: i * 0.06 })]}>
-              <PracticeCard p={p} onToggle={onToggle} onOpen={onOpen} locked={p.qi < 0 && resources.qi < Math.abs(p.qi)} />
-            </View>
-          ))}
-        </View>
+        <DragList
+          items={ordered}
+          locked={(p) => p.qi < 0 && resources.qi < Math.abs(p.qi)}
+          onToggle={onToggle}
+          onOpen={onOpen}
+          onReorder={reorderPractices}
+        />
 
         <Btn variant="ghost" block onPress={onAdd} style={{ marginTop: 14, minHeight: 44 }}>+ Добавить практику</Btn>
+        <Btn variant="ghost" block onPress={() => goRoute && goRoute('library')} style={{ marginTop: 10, minHeight: 44 }}>Все практики</Btn>
       </PadView>
     </ScreenScroll>
   );

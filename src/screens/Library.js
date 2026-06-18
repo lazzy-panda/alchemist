@@ -9,7 +9,7 @@ import { Mh } from '../badges';
 import { PracticeCard } from '../PracticeCard';
 
 export function LibraryScreen({ ctx }) {
-  const { practices, onEdit, onAdd, onToggle, wide, restorePractice } = ctx;
+  const { practices, onEdit, onAdd, onToggle, wide, restorePractice, goRoute } = ctx;
   const cats = Object.keys(CATS);
   const [collapsed, setCollapsed] = useState({});
   const [archiveOpen, setArchiveOpen] = useState(false);
@@ -19,6 +19,11 @@ export function LibraryScreen({ ctx }) {
   return (
     <ScreenScroll>
       <PadView wide={wide}>
+        {goRoute ? (
+          <Pressable onPress={() => goRoute('today')} accessibilityRole="button" accessibilityLabel="Назад на сегодня" hitSlop={6} style={{ marginBottom: 10, alignSelf: 'flex-start' }}>
+            <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>← Сегодня</Text>
+          </Pressable>
+        ) : null}
         {/* header */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <View>

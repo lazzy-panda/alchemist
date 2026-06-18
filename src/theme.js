@@ -103,10 +103,11 @@ export const R = {
 };
 
 export const FONT = {
-  // Pixelify Sans — blocky pixel font WITH Cyrillic (Press Start 2P has no Russian; VT323 read too soft); native keeps system default
-  display: WEB ? 'Pixelify Sans' : undefined,
-  ui: WEB ? 'Pixelify Sans' : undefined,
-  han: WEB ? 'Pixelify Sans' : undefined,
+  // Tiny5 — blocky pixel font WITH Cyrillic + clearly legible digits (replaced Pixelify Sans, whose
+  // digits read ambiguously; Press Start 2P has no Russian, VT323 read too soft); native keeps system default
+  display: WEB ? 'Tiny5' : undefined,
+  ui: WEB ? 'Tiny5' : undefined,
+  han: WEB ? 'Tiny5' : undefined,
 };
 
 // box-shadow strings (RN 0.85 + react-native-web both support boxShadow)

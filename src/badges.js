@@ -1,6 +1,6 @@
 /* Alchemist — gem medallions (RPGUI icons), resource bars, state chips, avatar. */
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { C, FONT } from './theme';
 import { STAT, AVATARS, AVATAR_BY_ID } from './data';
 import { KitBar, KitGem, KitPill, KitParchPill } from './kit';
@@ -74,11 +74,7 @@ export function WillBar({ done = 0, total = 0 }) {
         <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>Воля</Text>
         <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.inkMuted }}>{done} / {total} · {pct}%</Text>
       </View>
-      <View style={{ height: 24, borderRadius: 4, borderWidth: 2, borderColor: C.goldLine, backgroundColor: C.frameDark, overflow: 'hidden' }}>
-        <View style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: pct + '%', backgroundColor: C.gold }}>
-          <View style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 3, backgroundColor: C.goldLight, opacity: 0.6 }} />
-        </View>
-      </View>
+      <KitBar pct={pct} color="green" />
     </View>
   );
 }
@@ -104,12 +100,42 @@ export function StateChip({ state, text, gold }) {
   );
 }
 
+/* ---------- header metric chip (icon + value, tappable to edit) ---------- */
+export function MetricChip({ icon, color, value, onPress, accessibilityLabel }) {
+  const inner = (
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, paddingVertical: 7, paddingHorizontal: 8, borderRadius: 6, borderWidth: 2, borderColor: C.goldLine, backgroundColor: C.frameDark }}>
+      <PixelIcon name={icon} size={18} color={color} />
+      <Text numberOfLines={1} style={{ fontFamily: FONT.display, fontSize: 17, color: C.ink }}>{value}</Text>
+    </View>
+  );
+  if (!onPress) return <View style={{ flex: 1, minWidth: 0 }}>{inner}</View>;
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibilityLabel} style={{ flex: 1, minWidth: 0 }}>
+      {inner}
+    </Pressable>
+  );
+}
+
+/* ---------- avatar art — pixel portrait (image) when the archetype has one, else the icon tile ---------- */
+export function AvatarArt({ av, size = 88, style }) {
+  if (av && av.img) {
+    return (
+      <Image
+        source={av.img}
+        resizeMode="cover"
+        style={[{ width: size, height: size, borderRadius: 8, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.frameDark }, style]}
+      />
+    );
+  }
+  return <IconTile name={av.icon} color={av.color} size={size} style={style} />;
+}
+
 /* ---------- avatar — chosen pixel portrait + stage badge (tappable to change) ---------- */
 export function Avatar({ flow, size = 96, stage, avatar, onPress }) {
   const av = AVATAR_BY_ID[avatar] || AVATARS[0];
   const inner = (
     <View style={{ width: size, height: size, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
-      <IconTile name={av.icon} color={av.color} size={size} style={{ borderRadius: 8, borderWidth: 3 }} />
+      <AvatarArt av={av} size={size} style={{ borderRadius: 8, borderWidth: 3 }} />
       {stage != null ? (
         <View pointerEvents="none" style={{ position: 'absolute', right: -3, bottom: -3, minWidth: 22, height: 20, paddingHorizontal: 5, backgroundColor: C.gold, borderWidth: 2, borderColor: C.goldLine, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: FONT.display, fontSize: 16, color: C.kitGoldText }}>{stage}</Text>

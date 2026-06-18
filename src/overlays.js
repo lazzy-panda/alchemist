@@ -2,10 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT, shade } from './theme';
-import { CATS, STATS, PRACTICES, AVATARS, repWord, durLabel } from './data';
+import { CATS, STATS, PRACTICES, AVATARS, repWord, durLabel, hoursLabel } from './data';
 import { ascension } from './quotes';
 import { Card, Btn, IconBtn, Gradient, Gloss, Han, T, SectionHead, Seal, Stepper, SelChip, Field, Input, ts, kf, KF, EASE } from './ui';
-import { RewardMedal, QiTag, StateChip, MedalPill, Bar } from './badges';
+import { RewardMedal, QiTag, StateChip, MedalPill, Bar, AvatarArt } from './badges';
 import { CircularTimer } from './svg';
 import { PracticeCard } from './PracticeCard';
 import { KitPanel, KitClose, KitGem, KitBanner } from './kit';
@@ -76,8 +76,8 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
                 </Text>
                 <Bar pct={total > 0 ? (remaining / total) * 100 : 0} color="qi" />
                 <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 12, marginTop: 16 }}>
-                  <TStep label="−5м" onPress={() => adjust(-5)} disabled={running} />
-                  <TStep label="+5м" onPress={() => adjust(5)} disabled={running} />
+                  <TStep label="−1м" onPress={() => adjust(-1)} disabled={running} />
+                  <TStep label="+1м" onPress={() => adjust(1)} disabled={running} />
                 </View>
               </View>
 
@@ -95,7 +95,7 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
 
           {/* instruction */}
           <Pressable onPress={() => setShowInstr(!showInstr)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20 }}>
-            <Text style={{ color: C.inkMuted, fontSize: 28, transform: showInstr ? [{ rotate: '90deg' }] : [] }}>›</Text>
+            <Text style={{ fontFamily: FONT.ui, color: C.inkMuted, fontSize: 28, transform: showInstr ? [{ rotate: '90deg' }] : [] }}>›</Text>
             <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.inkMuted }}>Инструкция</Text>
           </Pressable>
           {showInstr ? (
@@ -169,6 +169,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
   const [rewards, setRewards] = useState(practice?.r ? { ...practice.r } : {});
   const [icon, setIcon] = useState(practice?.icon || '');
   const [unit, setUnit] = useState(practice?.unit === 'reps' ? 'reps' : 'min');
+  const [today, setToday] = useState(practice ? !!practice.today : true);
   const [nameError, setNameError] = useState('');
   const [confirm, setConfirm] = useState(null); // null | 'archive' | 'delete'
 
@@ -231,6 +232,13 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
               />
             </Field>
 
+            <Field label="Показывать на «Сегодня»">
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                <SelChip on={today} color={C.gold} label="Да" onPress={() => setToday(true)} />
+                <SelChip on={!today} color={C.gold} label="Нет" onPress={() => setToday(false)} />
+              </View>
+            </Field>
+
             <Field label="Награды-характеристики">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {STATS.map((s) => (
@@ -272,7 +280,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
                     if (!trimmed) { setNameError('Введите название практики'); return; }
                     const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
                     if (dup) { setNameError('Практика с таким названием уже существует'); return; }
-                    onSave({ id: practice?.id, name: trimmed, cat, dur, unit, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, today: isNew ? true : practice?.today, done: practice?.done });
+                    onSave({ id: practice?.id, name: trimmed, cat, dur, unit, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, today, done: practice?.done });
                   }}
                 >
                   Сохранить
@@ -402,6 +410,42 @@ export function Onboarding({ onDone }) {
 }
 
 /* ============================================================
+   METRIC EDITOR — small popover to correct a header metric
+   ============================================================ */
+const METRIC_META = {
+  med: { name: 'Часы медитации', unit: 'min', icon: 'moon-stars' },
+  qi: { name: 'Часы цигун', unit: 'min', icon: 'wind' },
+  streak: { name: 'Страйк · дни ≥80%', unit: 'day', icon: 'trending-up' },
+};
+export function MetricEditor({ metric, value, onSave, onClose }) {
+  const meta = METRIC_META[metric] || METRIC_META.med;
+  const isMin = meta.unit === 'min';
+  const step = isMin ? 15 : 1;
+  const [v, setV] = useState(Math.max(0, Math.round(value || 0)));
+  return (
+    <Pressable
+      onPress={onClose}
+      style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 280, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, backgroundColor: 'rgba(35,25,12,0.6)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}
+    >
+      <Pressable
+        onPress={() => {}}
+        style={[{ width: '100%', maxWidth: 340, padding: 22, borderRadius: 18, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.paperWarm }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <Text style={T.displayM}>{meta.name}</Text>
+          <KitClose onPress={onClose} size={34} />
+        </View>
+        <View style={{ alignItems: 'center', gap: 10 }}>
+          <Stepper value={v} onDec={() => setV(Math.max(0, v - step))} onInc={() => setV(v + step)} suffix={isMin ? ' мин' : ' дн.'} />
+          {isMin ? <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.inkMuted }}>≈ {hoursLabel(v)}</Text> : null}
+        </View>
+        <Btn variant="gold" block onPress={() => { onSave(v); onClose(); }} style={{ marginTop: 18 }}>Сохранить</Btn>
+      </Pressable>
+    </Pressable>
+  );
+}
+
+/* ============================================================
    AVATAR PICKER — choose your portrait (Baldur's Gate-style grid)
    ============================================================ */
 export function AvatarPicker({ current, onPick, onClose }) {
@@ -430,7 +474,7 @@ export function AvatarPicker({ current, onPick, onClose }) {
                 accessibilityState={{ selected: sel }}
                 style={{ padding: 3, borderRadius: 12, borderWidth: 3, borderColor: sel ? C.gold : 'transparent' }}
               >
-                <IconTile name={a.icon} color={a.color} size={88} style={{ borderRadius: 8 }} />
+                <AvatarArt av={a} size={88} style={{ borderRadius: 8 }} />
               </Pressable>
             );
           })}

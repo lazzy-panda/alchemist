@@ -5,12 +5,21 @@ import { PRACTICES, STAT_LEVELS } from './data';
 import { clamp } from './theme';
 import { loadUserData, saveUserField } from './supabase';
 
+// practice-day index that flips at local 03:00 (checkboxes reset at 3am, not midnight)
+function practiceDay() {
+  const t = new Date(Date.now() - 3 * 3600e3);
+  t.setHours(0, 0, 0, 0);
+  return Math.round(t.getTime() / 864e5);
+}
+
 export function useGame(userId) {
   const [practices, setPractices] = useState(() => PRACTICES.map((p) => ({ ...p })));
   const [statLevels, setStatLevels] = useState(() => JSON.parse(JSON.stringify(STAT_LEVELS)));
   const [resources, setResources] = useState({ hp: 86, hpMax: 100, qi: 64, qiMax: 100 });
   const [stage, setStage] = useState({ lvl: 8, xp: 60, next: 100 });
-  const [streak] = useState(14);
+  const [timeMin, setTimeMin] = useState({ med: 0, qi: 0 }); // accumulated practice minutes per category
+  const [streak, setStreak] = useState(0); // consecutive days with >=80% of the day's practices done
+  const [dayStamp, setDayStamp] = useState(null); // practice-day index the `done` flags belong to
   const [levelUp, setLevelUp] = useState(null);
   const [lastArchived, setLastArchived] = useState(null);
   const [avatar, setAvatarState] = useState(null);
@@ -21,14 +30,35 @@ export function useGame(userId) {
   const AVATAR_KEY = 'alchemist_avatar_' + (userId || 'anon');
   const hydratedKey = useRef(null);
   const cloudTimer = useRef(null);
+  const stateRef = useRef({});
+  stateRef.current = { practices, dayStamp, streak };
+  // apply a loaded snapshot AND bake in the 03:00 daily rollover deterministically (no effect-timing
+  // race): if the loaded data belongs to an earlier practice-day — or predates the dayStamp system —
+  // clear the checkboxes here, before they ever render, and (for a real day flip) score the streak.
   const applyGame = (s) => {
     if (!s) return;
+    const cur = practiceDay();
     // migrate the removed 'zhan' (Стояние) category into 'qi' (Цигун) for legacy saves
-    if (Array.isArray(s.practices)) setPractices(s.practices.map((p) => (p.cat === 'zhan' ? { ...p, cat: 'qi' } : p)));
+    let ps = Array.isArray(s.practices) ? s.practices.map((p) => (p.cat === 'zhan' ? { ...p, cat: 'qi' } : p)) : null;
+    let stamp = typeof s.dayStamp === 'number' ? s.dayStamp : null;
+    let strk = typeof s.streak === 'number' ? s.streak : 0;
+    const crossed = stamp == null || cur > stamp; // legacy (no stamp) OR a new day → reset checkboxes
+    if (ps && crossed) {
+      if (stamp != null) {
+        const td = ps.filter((p) => p.today && !p.archived);
+        const pct = td.length ? td.filter((p) => p.done).length / td.length : 0;
+        strk = pct >= 0.8 ? (cur - stamp === 1 ? strk + 1 : 1) : 0;
+      }
+      ps = ps.map((p) => (p.done ? { ...p, done: false } : p));
+    }
+    if (ps) setPractices(ps);
     // merge over seed defaults so a legacy/partial save can't crash the Character screen
     if (s.statLevels) setStatLevels({ ...JSON.parse(JSON.stringify(STAT_LEVELS)), ...s.statLevels });
     if (s.resources) setResources(s.resources);
     if (s.stage) setStage(s.stage);
+    if (s.timeMin) setTimeMin({ med: 0, qi: 0, ...s.timeMin });
+    setStreak(strk);
+    setDayStamp(cur);
   };
   useEffect(() => {
     let cancelled = false;
@@ -45,19 +75,39 @@ export function useGame(userId) {
         if (!cancelled && row && row.game) applyGame(row.game);
         if (!cancelled && row && row.avatar) setAvatarState(row.avatar);
       }
-      if (!cancelled) hydratedKey.current = KEY;
+      if (!cancelled) { hydratedKey.current = KEY; setDayStamp((d) => (d == null ? practiceDay() : d)); }
     })();
     return () => { cancelled = true; };
   }, [KEY]);
   useEffect(() => {
     if (hydratedKey.current !== KEY) return; // don't persist until this key is hydrated
-    const snap = { practices, statLevels, resources, stage };
+    const snap = { practices, statLevels, resources, stage, timeMin, streak, dayStamp };
     AsyncStorage.setItem(KEY, JSON.stringify(snap)).catch(() => {});
     if (userId) {
       clearTimeout(cloudTimer.current);
       cloudTimer.current = setTimeout(() => saveUserField(userId, 'game', snap), 600); // debounce cloud writes
     }
-  }, [practices, statLevels, resources, stage, KEY]);
+  }, [practices, statLevels, resources, stage, timeMin, streak, dayStamp, KEY]);
+
+  // daily rollover at 03:00: evaluate prev-day 80% → streak, clear checkboxes, advance dayStamp
+  const maybeRollover = useCallback(() => {
+    const cur = practiceDay();
+    const { practices: ps, dayStamp: prevStamp } = stateRef.current;
+    if (prevStamp == null) { stateRef.current.dayStamp = cur; setDayStamp(cur); return; }
+    if (cur <= prevStamp) return;
+    const todayP = (ps || []).filter((p) => p.today && !p.archived);
+    const pct = todayP.length ? todayP.filter((p) => p.done).length / todayP.length : 0;
+    stateRef.current.dayStamp = cur; // guard re-entrancy before the re-render lands
+    setStreak((s) => (pct >= 0.8 ? (cur - prevStamp === 1 ? s + 1 : 1) : 0));
+    setPractices((arr) => arr.map((p) => (p.done ? { ...p, done: false } : p)));
+    setDayStamp(cur);
+  }, []);
+  useEffect(() => {
+    const id = setInterval(() => { if (hydratedKey.current === KEY) maybeRollover(); }, 60000);
+    const onVis = () => { if (hydratedKey.current === KEY) maybeRollover(); };
+    if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onVis);
+    return () => { clearInterval(id); if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', onVis); };
+  }, [KEY, maybeRollover]);
 
   const setDone = useCallback((target, value) => {
     setPractices((curr) => {
@@ -95,6 +145,11 @@ export function useGame(userId) {
         const dh = sign * 3;
         return { ...prev, qi: clamp(prev.qi + dq, 0, prev.qiMax), hp: clamp(prev.hp + dh, 0, prev.hpMax) };
       });
+
+      // accumulated practice minutes per category (minutes practices only; reps have no time)
+      if (p.unit !== 'reps' && p.dur) {
+        setTimeMin((prev) => ({ ...prev, [p.cat]: Math.max(0, (prev[p.cat] || 0) + sign * p.dur) }));
+      }
 
       // stage progress
       if (value) {
@@ -146,6 +201,25 @@ export function useGame(userId) {
     setLastArchived((cur) => (cur === id ? null : cur));
   }, []);
 
+  // reorder by moving `fromId` into the slot currently held by `toId` (persisted via array order)
+  const reorderPractices = useCallback((fromId, toId) => {
+    setPractices((ps) => {
+      const from = ps.findIndex((x) => x.id === fromId);
+      const to = ps.findIndex((x) => x.id === toId);
+      if (from < 0 || to < 0 || from === to) return ps;
+      const next = ps.slice();
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
+  }, []);
+
+  // header-metric editors (clamped, integer)
+  const setTimeMinutes = useCallback((cat, minutes) => {
+    setTimeMin((prev) => ({ ...prev, [cat]: Math.max(0, Math.round(minutes || 0)) }));
+  }, []);
+  const setStreakValue = useCallback((n) => setStreak(Math.max(0, Math.round(n || 0))), []);
+
   const setAvatar = useCallback((id) => {
     setAvatarState(id);
     AsyncStorage.setItem('alchemist_avatar_' + (userId || 'anon'), id).catch(() => {});
@@ -161,6 +235,7 @@ export function useGame(userId) {
     statLevels,
     resources,
     stage,
+    timeMin,
     streak,
     dayState,
     levelUp,
@@ -174,6 +249,9 @@ export function useGame(userId) {
     restorePractice,
     undoArchive,
     deletePractice,
+    reorderPractices,
+    setTimeMinutes,
+    setStreakValue,
     lastArchived,
   };
 }

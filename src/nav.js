@@ -10,7 +10,6 @@ import { PixelIcon } from './PixelIcon';
 export const NAV = [
   { key: 'today', label: 'Сегодня' },
   { key: 'character', label: 'Герой' },
-  { key: 'library', label: 'Практики' },
   { key: 'diary', label: 'Дневник' },
 ];
 
@@ -65,13 +64,6 @@ export function SideRail({ route, setRoute, stage, onSignOut, userName }) {
         );
       })}
       <View style={{ flex: 1 }} />
-      <View style={{ padding: 12, backgroundColor: C.paperWarm, borderWidth: 2, borderColor: C.paperDeep, borderRadius: 6 }}>
-        <Text style={{ fontFamily: FONT.ui, fontSize: 16, letterSpacing: 1, textTransform: 'uppercase', color: C.inkFaint, marginBottom: 6 }}>Стадия</Text>
-        <Text style={{ fontFamily: FONT.display, fontSize: 40, color: C.gold }}>{stage.lvl}</Text>
-        <View style={{ marginTop: 8 }}>
-          <ProgressBar pct={(stage.xp / stage.next) * 100} color="xp" />
-        </View>
-      </View>
       <Pressable onPress={onSignOut} accessibilityRole="button" accessibilityLabel="Выход" style={{ marginTop: 10, paddingVertical: 8, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ fontFamily: FONT.ui, fontSize: 16, color: C.inkMuted }}>↩ Выход{userName ? ' · ' + userName : ''}</Text>
       </Pressable>

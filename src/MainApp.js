@@ -12,7 +12,7 @@ import { CharacterScreen } from './screens/Character';
 import { LibraryScreen } from './screens/Library';
 import { DiaryScreen } from './screens/Diary';
 import { JournalScreen } from './screens/Journal';
-import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast, AvatarPicker } from './overlays';
+import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast, AvatarPicker, MetricEditor } from './overlays';
 import { KitPanel } from './kit';
 
 const WEB = Platform.OS === 'web';
@@ -37,6 +37,7 @@ export function MainApp() {
   const [toast, setToast] = useState(null);
   const [onboard, setOnboard] = useState(false);
   const [avatarPicker, setAvatarPicker] = useState(false);
+  const [metricEdit, setMetricEdit] = useState(null); // 'med' | 'qi' | 'streak' | null
 
   useEffect(() => {
     let cancelled = false;
@@ -73,6 +74,7 @@ export function MainApp() {
   const ctx = {
     ...game,
     route,
+    goRoute: setRoute,
     wide,
     onToggle: game.toggle,
     onOpen,
@@ -86,6 +88,7 @@ export function MainApp() {
     userName: auth?.user?.name,
     avatar: game.avatar,
     onAvatar: () => setAvatarPicker(true),
+    onEditMetric: setMetricEdit,
     diaryKey: 'alchemist_diary_' + (auth?.user?.id || 'anon'),
     userId: auth?.user?.id,
   };
@@ -106,6 +109,7 @@ export function MainApp() {
       {toast ? <Toast message={toast.message} actionLabel={toast.actionLabel} onAction={() => { if (toast.action === 'undo') game.undoArchive(); setToast(null); }} onClose={() => setToast(null)} /> : null}
       {onboard ? <Onboarding onDone={dismissOnboard} /> : null}
       {avatarPicker ? <AvatarPicker current={game.avatar} onPick={game.setAvatar} onClose={() => setAvatarPicker(false)} /> : null}
+      {metricEdit ? <MetricEditor metric={metricEdit} value={metricEdit === 'streak' ? game.streak : (game.timeMin?.[metricEdit] || 0)} onSave={(val) => { if (metricEdit === 'streak') game.setStreakValue(val); else game.setTimeMinutes(metricEdit, val); }} onClose={() => setMetricEdit(null)} /> : null}
       <FogVeil />
     </>
   );

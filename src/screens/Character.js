@@ -61,7 +61,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
 }
 
 export function CharacterScreen({ ctx }) {
-  const { statLevels, resources, stage, wide, onShowHelp, onSignOut, userName } = ctx;
+  const { statLevels, resources, wide, onShowHelp, onSignOut, userName } = ctx;
   const [expanded, setExpanded] = useState(null);
   const radarValues = {};
   STATS.forEach((s) => {
@@ -76,7 +76,7 @@ export function CharacterScreen({ ctx }) {
       <PadView wide={wide}>
         <View style={{ alignItems: 'center' }}>
           <Text style={[T.eyebrow, { marginBottom: 6 }]}>Свиток мастера</Text>
-          <Text accessibilityRole="header" style={[T.displayL, { marginBottom: 16 }]}>Стадия {stage.lvl}</Text>
+          <Text accessibilityRole="header" style={[T.displayL, { marginBottom: 16 }]}>Путь мастера</Text>
           <Card style={{ alignSelf: 'stretch' }}>
             <Text style={[T.caption, { marginBottom: 12 }]}>Грани мастерства</Text>
             {STATS.map((s, i) => {

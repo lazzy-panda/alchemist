@@ -15,15 +15,15 @@ export const STAT = Object.fromEntries(STATS.map((s) => [s.key, s]));
 
 // ---- avatars (pick-your-archetype portrait grid, BG2-style) ----
 export const AVATARS = [
-  { id: 'sage', icon: 'moon-stars', color: '#7AA6E0' },
-  { id: 'alchemist', icon: 'drop-full', color: '#BC8AD8' },
-  { id: 'monk', icon: 'human-handsup', color: '#A6D173' },
-  { id: 'scholar', icon: 'book', color: '#E0B05C' },
-  { id: 'guardian', icon: 'shield', color: '#E0905C' },
-  { id: 'healer', icon: 'heart', color: '#E2A0C6' },
-  { id: 'wanderer', icon: 'human-run', color: '#5BC2AD' },
-  { id: 'mystic', icon: 'lightbulb', color: '#6FB5D9' },
-  { id: 'hermit', icon: 'moon', color: '#B0A48C' },
+  { id: 'sage', icon: 'moon-stars', color: '#7AA6E0', img: require('../assets/avatars/sage.png') },
+  { id: 'alchemist', icon: 'drop-full', color: '#BC8AD8', img: require('../assets/avatars/alchemist.png') },
+  { id: 'monk', icon: 'human-handsup', color: '#A6D173', img: require('../assets/avatars/monk.png') },
+  { id: 'scholar', icon: 'book', color: '#E0B05C', img: require('../assets/avatars/scholar.png') },
+  { id: 'guardian', icon: 'shield', color: '#E0905C', img: require('../assets/avatars/guardian.png') },
+  { id: 'healer', icon: 'heart', color: '#E2A0C6', img: require('../assets/avatars/healer.png') },
+  { id: 'wanderer', icon: 'human-run', color: '#5BC2AD', img: require('../assets/avatars/wanderer.png') },
+  { id: 'mystic', icon: 'lightbulb', color: '#6FB5D9', img: require('../assets/avatars/mystic.png') },
+  { id: 'hermit', icon: 'moon', color: '#B0A48C', img: require('../assets/avatars/hermit.png') },
 ];
 export const AVATAR_BY_ID = Object.fromEntries(AVATARS.map((a) => [a.id, a]));
 
@@ -45,6 +45,14 @@ export function repWord(n) {
 }
 export function durLabel(p) {
   return p && p.unit === 'reps' ? `${p.dur} ${repWord(p.dur)}` : `${p.dur} мин`;
+}
+
+// accumulated-time label for the header metrics: minutes under an hour, else hours (1 decimal, comma)
+export function hoursLabel(min) {
+  const m = Math.max(0, Math.round(min || 0));
+  if (m < 60) return `${m}м`;
+  const h = m / 60;
+  return Number.isInteger(h) ? `${h}ч` : `${h.toFixed(1).replace('.', ',')}ч`;
 }
 
 // ---- practices ----
