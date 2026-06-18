@@ -1,27 +1,31 @@
-// src/screens/Teacher.js — teacher-ambassador surface: enable mode, share link, dashboard, rev-share
+// src/screens/Teacher.js — teacher-ambassador surface: enable mode, share link, dashboard, rev-share.
+// Uses the app's standard screen layout (ScreenScroll + PadView + SectionHead + grey Card) so it
+// matches every other screen; the bare golden KitPanel was overflowing its frame.
 import React, { useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from '../theme';
-import { KitPanel } from '../kit';
-import { Btn } from '../ui';
+import { ScreenScroll, PadView } from '../layout';
+import { Card, Btn, SectionHead } from '../ui';
 import { useTeacher, revshareEstimateRub, weekPctLabel } from '../teacher';
 
 const BOT = 'helper_28052025_bot'; // @BotFather bot username
 const APP = 'Alchemist';           // Mini App short_name (BotFather /newapp) — direct-link host
 
-function Row({ r }) {
+// one student row in the dashboard: name · today done/total · streak · week% · paid
+function Row({ r, last }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: C.paperDeep }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 11, borderBottomWidth: last ? 0 : 1, borderBottomColor: 'rgba(120,96,52,0.28)' }}>
       <Text style={{ fontFamily: FONT.ui, fontSize: 16, color: C.ink, flex: 1 }} numberOfLines={1}>{r.student_label}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 14, color: C.inkMuted, width: 64, textAlign: 'right' }}>{r.today_done}/{r.today_total}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 14, color: C.gold, width: 52, textAlign: 'right' }}>🔥{r.streak}</Text>
-      <Text style={{ fontFamily: FONT.display, fontSize: 14, color: C.inkMuted, width: 56, textAlign: 'right' }}>{weekPctLabel(r.week_pct)}</Text>
-      <Text style={{ fontSize: 16, width: 36, textAlign: 'right' }}>{r.paid ? '💎' : '·'}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 14, color: C.inkMuted, width: 58, textAlign: 'right' }}>{r.today_done}/{r.today_total}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 14, color: C.gold, width: 48, textAlign: 'right' }}>🔥{r.streak}</Text>
+      <Text style={{ fontFamily: FONT.display, fontSize: 14, color: C.inkMuted, width: 50, textAlign: 'right' }}>{weekPctLabel(r.week_pct)}</Text>
+      <Text style={{ fontSize: 16, width: 30, textAlign: 'right' }}>{r.paid ? '💎' : '·'}</Text>
     </View>
   );
 }
 
 export function TeacherScreen({ ctx }) {
+  const { wide } = ctx;
   const { teacher, rows, paying, loading, enable, refresh } = useTeacher(ctx.userId);
   const [copied, setCopied] = useState(false);
   const link = teacher ? `https://t.me/${BOT}/${APP}?startapp=${teacher.referral_code}` : '';
@@ -35,43 +39,56 @@ export function TeacherScreen({ ctx }) {
 
   if (!teacher) {
     return (
-      <ScrollView contentContainerStyle={{ padding: 18 }}>
-        <KitPanel>
-          <Text style={{ fontFamily: FONT.display, fontSize: 24, color: C.gold, marginBottom: 10 }}>Режим учителя</Text>
-          <Text style={{ fontFamily: FONT.ui, fontSize: 16, color: C.ink, lineHeight: 26, marginBottom: 16 }}>
-            Включи режим учителя — получишь личную ссылку для учеников и приватный дашборд их практики.
-            Ученики, пришедшие по ссылке, закрепляются за тобой.
-          </Text>
-          <Btn variant="gold" block onPress={onEnable}>Включить режим учителя</Btn>
-        </KitPanel>
-      </ScrollView>
+      <ScreenScroll>
+        <PadView wide={wide}>
+          <SectionHead title="Режим учителя" />
+          <Card frame="grey">
+            <Text style={{ fontFamily: FONT.ui, fontSize: 16, color: C.ink, lineHeight: 26, marginBottom: 18 }}>
+              Включи режим учителя — получишь личную ссылку для учеников и приватный дашборд их практики.
+              Ученики, пришедшие по ссылке, закрепляются за тобой.
+            </Text>
+            <Btn variant="gold" block onPress={onEnable}>Включить режим учителя</Btn>
+          </Card>
+        </PadView>
+      </ScreenScroll>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 18, gap: 14 }}>
-      <KitPanel>
-        <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold, marginBottom: 8 }}>Твоя ссылка</Text>
-        <Text selectable style={{ fontFamily: FONT.ui, fontSize: 14, color: C.inkMuted, marginBottom: 10 }}>{link}</Text>
-        <Btn variant="gold" block onPress={copy}>{copied ? 'Скопировано ✓' : 'Скопировать ссылку'}</Btn>
-      </KitPanel>
+    <ScreenScroll>
+      <PadView wide={wide}>
+        <SectionHead title="Твоя ссылка" />
+        <Card frame="grey">
+          <Text selectable style={{ fontFamily: FONT.ui, fontSize: 14, color: C.inkMuted, lineHeight: 20, marginBottom: 14 }}>{link}</Text>
+          <Btn variant="gold" block onPress={copy}>{copied ? 'Скопировано ✓' : 'Скопировать ссылку'}</Btn>
+        </Card>
 
-      <KitPanel>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
-          <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>Ученики</Text>
-          <Pressable onPress={refresh}><Text style={{ fontFamily: FONT.ui, fontSize: 14, color: C.inkMuted }}>{loading ? '…' : '⟳'}</Text></Pressable>
-        </View>
-        {rows.length === 0
-          ? <Text style={{ fontFamily: FONT.ui, fontSize: 15, color: C.inkFaint, paddingVertical: 8 }}>Пока никто не присоединился. Поделись ссылкой выше.</Text>
-          : rows.map((r) => <Row key={r.student_id} r={r} />)}
-      </KitPanel>
+        <SectionHead
+          title="Ученики"
+          right={(
+            <Pressable onPress={refresh} hitSlop={10} accessibilityRole="button" accessibilityLabel="Обновить">
+              <Text style={{ fontFamily: FONT.display, fontSize: 20, color: C.inkMuted }}>{loading ? '…' : '⟳'}</Text>
+            </Pressable>
+          )}
+        />
+        <Card frame="grey">
+          {rows.length === 0 ? (
+            <Text style={{ fontFamily: FONT.ui, fontSize: 15, color: C.inkFaint, lineHeight: 22, paddingVertical: 4 }}>
+              Пока никто не присоединился. Поделись ссылкой выше — ученики, открывшие её, появятся здесь.
+            </Text>
+          ) : (
+            rows.map((r, i) => <Row key={r.student_id} r={r} last={i === rows.length - 1} />)
+          )}
+        </Card>
 
-      <KitPanel>
-        <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold, marginBottom: 6 }}>Доход (оценка)</Text>
-        <Text style={{ fontFamily: FONT.ui, fontSize: 15, color: C.ink }}>
-          Платящих учеников: {paying}. Примерно ≈ {revshareEstimateRub(paying)}₽/мес (rev-share).
-        </Text>
-      </KitPanel>
-    </ScrollView>
+        <SectionHead title="Доход (оценка)" />
+        <Card frame="grey">
+          <Text style={{ fontFamily: FONT.ui, fontSize: 15, color: C.ink, lineHeight: 24 }}>
+            Платящих учеников: <Text style={{ color: C.gold }}>{paying}</Text>.{'\n'}
+            Примерный доход ≈ <Text style={{ color: C.gold }}>{revshareEstimateRub(paying)}₽/мес</Text> (rev-share).
+          </Text>
+        </Card>
+      </PadView>
+    </ScreenScroll>
   );
 }
