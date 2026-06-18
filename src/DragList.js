@@ -8,6 +8,8 @@ import { C } from './theme';
 import { PixelIcon } from './PixelIcon';
 import { PracticeCard } from './PracticeCard';
 
+const GAP = 14; // vertical gap between cards (matches the container's gap)
+
 export function DragList({ items, locked, onToggle, onOpen, onReorder }) {
   const [dragId, setDragId] = useState(null);
   const pan = useRef(new Animated.Value(0)).current;
@@ -57,16 +59,30 @@ export function DragList({ items, locked, onToggle, onOpen, onReorder }) {
 
   return (
     <View style={{ gap: 14 }}>
-      {items.map((p) => {
+      {items.map((p, idx) => {
         const isDrag = dragId === p.id;
         const r = ensureResponder(p.id);
+        // live "make room": as the dragged card's center passes a neighbour's midpoint, that
+        // neighbour slides one slot (stride) to open the gap where the card will land.
+        let shiftStyle = null;
+        if (dragId && !isDrag) {
+          const dl = layouts.current[dragId];
+          const me = layouts.current[p.id];
+          const dragIdx = orderRef.current.indexOf(dragId);
+          if (dl && me && dragIdx >= 0) {
+            const stride = dl.h + GAP;
+            const cross = (me.y + me.h / 2) - (dl.y + dl.h / 2); // dy at which the dragged center reaches my midpoint
+            if (idx > dragIdx) shiftStyle = { transform: [{ translateY: pan.interpolate({ inputRange: [cross - 14, cross + 14], outputRange: [0, -stride], extrapolate: 'clamp' }) }] };
+            else if (idx < dragIdx) shiftStyle = { transform: [{ translateY: pan.interpolate({ inputRange: [cross - 14, cross + 14], outputRange: [stride, 0], extrapolate: 'clamp' }) }] };
+          }
+        }
         return (
           <Animated.View
             key={p.id}
             onLayout={(e) => { const { y, height } = e.nativeEvent.layout; layouts.current[p.id] = { y, h: height }; }}
             style={[
               { flexDirection: 'row', alignItems: 'stretch', gap: 8 },
-              isDrag ? { transform: [{ translateY: pan }, { scale: 1.03 }], zIndex: 50, opacity: 0.97 } : null,
+              isDrag ? { transform: [{ translateY: pan }, { scale: 1.03 }], zIndex: 50, opacity: 0.97 } : shiftStyle,
             ]}
           >
             <View
