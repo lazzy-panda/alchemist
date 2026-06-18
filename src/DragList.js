@@ -76,7 +76,7 @@ export function DragList({ items, locked, onToggle, onOpen, onReorder }) {
   return (
     <View style={{ gap: 14, position: 'relative' }}>
       {dragId && dropY != null ? (
-        <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: dropY, height: 3, borderRadius: 2, backgroundColor: C.gold, zIndex: 40 }} />
+        <View pointerEvents="none" style={{ position: 'absolute', left: -2, right: -2, top: dropY, height: 4, borderRadius: 3, backgroundColor: C.gold, zIndex: 60, boxShadow: '0px 0px 7px rgba(255,205,95,0.95), 0px 1px 3px rgba(0,0,0,0.55)' }} />
       ) : null}
       {items.map((p) => {
         const isDrag = dragId === p.id;
