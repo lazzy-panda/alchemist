@@ -6,7 +6,8 @@ import { KitPanel } from '../kit';
 import { Btn } from '../ui';
 import { useTeacher, revshareEstimateRub, weekPctLabel } from '../teacher';
 
-const BOT = 'helper_28052025_bot'; // @BotFather bot username (deep-link host)
+const BOT = 'helper_28052025_bot'; // @BotFather bot username
+const APP = 'Alchemist';           // Mini App short_name (BotFather /newapp) — direct-link host
 
 function Row({ r }) {
   return (
@@ -23,7 +24,7 @@ function Row({ r }) {
 export function TeacherScreen({ ctx }) {
   const { teacher, rows, paying, loading, enable, refresh } = useTeacher(ctx.userId);
   const [copied, setCopied] = useState(false);
-  const link = teacher ? `https://t.me/${BOT}?startapp=${teacher.referral_code}` : '';
+  const link = teacher ? `https://t.me/${BOT}/${APP}?startapp=${teacher.referral_code}` : '';
 
   const copy = () => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) navigator.clipboard.writeText(link).catch(() => {});
