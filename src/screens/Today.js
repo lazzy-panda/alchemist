@@ -135,7 +135,6 @@ export function TodayScreen({ ctx }) {
         />
 
         <Btn variant="ghost" block onPress={onAdd} style={{ marginTop: 14, minHeight: 44 }}>+ Добавить практику</Btn>
-        <Btn variant="ghost" block onPress={() => goRoute && goRoute('library')} style={{ marginTop: 10, minHeight: 44 }}>Все практики</Btn>
       </PadView>
     </ScreenScroll>
   );

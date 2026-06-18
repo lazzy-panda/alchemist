@@ -232,13 +232,6 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
               />
             </Field>
 
-            <Field label="Показывать на «Сегодня»">
-              <View style={{ flexDirection: 'row', gap: 8 }}>
-                <SelChip on={today} color={C.gold} label="Да" onPress={() => setToday(true)} />
-                <SelChip on={!today} color={C.gold} label="Нет" onPress={() => setToday(false)} />
-              </View>
-            </Field>
-
             <Field label="Награды-характеристики">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {STATS.map((s) => (
@@ -253,7 +246,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
                 <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.red, marginBottom: 12, lineHeight: 28 }}>
                   {confirm === 'delete'
                     ? `Удалить «${name || practice?.name}» навсегда? Это действие необратимо.`
-                    : `Архивировать «${name || practice?.name}»? Можно восстановить из Библиотеки.`}
+                    : `Архивировать «${name || practice?.name}»? Она скроется из списка.`}
                 </Text>
                 <View style={{ flexDirection: 'row', gap: 10 }}>
                   <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirm(null)}>Отмена</Btn>
@@ -280,7 +273,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
                     if (!trimmed) { setNameError('Введите название практики'); return; }
                     const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
                     if (dup) { setNameError('Практика с таким названием уже существует'); return; }
-                    onSave({ id: practice?.id, name: trimmed, cat, dur, unit, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, today, done: practice?.done });
+                    onSave({ id: practice?.id, name: trimmed, cat, dur, unit, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, today: true, done: practice?.done });
                   }}
                 >
                   Сохранить

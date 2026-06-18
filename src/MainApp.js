@@ -12,7 +12,6 @@ import { kf, KF, EASE } from './ui';
 import { BottomNav, SideRail } from './nav';
 import { TodayScreen } from './screens/Today';
 import { CharacterScreen } from './screens/Character';
-import { LibraryScreen } from './screens/Library';
 import { DiaryScreen } from './screens/Diary';
 import { JournalScreen } from './screens/Journal';
 import { TeacherScreen } from './screens/Teacher';
@@ -23,7 +22,6 @@ const WEB = Platform.OS === 'web';
 const SCREENS = {
   today: TodayScreen,
   character: CharacterScreen,
-  library: LibraryScreen,
   diary: DiaryScreen,
   journal: JournalScreen,
   teacher: TeacherScreen,
