@@ -10,6 +10,8 @@ import { PracticeCard } from './PracticeCard';
 
 export function DragList({ items, locked, onToggle, onOpen, onReorder }) {
   const [dragId, setDragId] = useState(null);
+  const [dropY, setDropY] = useState(null); // y of the gold "drop here" line (null = hidden)
+  const dropYRef = useRef(null);
   const pan = useRef(new Animated.Value(0)).current;
   const layouts = useRef({}); // id -> { y, h } (offset within this list)
   const responders = useRef({});
@@ -36,28 +38,46 @@ export function DragList({ items, locked, onToggle, onOpen, onReorder }) {
     return null; // below every midpoint → append at the end
   };
 
+  // position the gold "drop here" line at the gap where the card will land (hidden if it wouldn't move)
+  const updateDropLine = (id, dy) => {
+    const ids = orderRef.current;
+    const L = layouts.current;
+    const toId = targetFor(id, dy);
+    const rest = ids.filter((x) => x !== id);
+    const to = toId == null ? rest.length : rest.indexOf(toId);
+    const next = [...rest.slice(0, to), id, ...rest.slice(to)];
+    let y = null;
+    if (next.join('|') !== ids.join('|')) {
+      if (toId == null) { const last = L[ids[ids.length - 1]]; if (last) y = last.y + last.h + 6; }
+      else { const t = L[toId]; if (t) y = Math.max(1, t.y - 8); }
+    }
+    if (y !== dropYRef.current) { dropYRef.current = y; setDropY(y); }
+  };
+
   const ensureResponder = (id) => {
     if (!responders.current[id]) {
       responders.current[id] = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onMoveShouldSetPanResponder: () => false, // grab on press only — never hand the drag to a sibling grip mid-gesture
         onPanResponderTerminationRequest: () => false, // and refuse to yield it once granted (prevents responder theft on web)
-        onPanResponderGrant: () => { pan.setValue(0); setDragId(id); },
-        onPanResponderMove: (e, g) => pan.setValue(g.dy),
+        onPanResponderGrant: () => { pan.setValue(0); dropYRef.current = null; setDropY(null); setDragId(id); },
+        onPanResponderMove: (e, g) => { pan.setValue(g.dy); updateDropLine(id, g.dy); },
         onPanResponderRelease: (e, g) => {
           const toId = targetFor(id, g.dy);
-          pan.setValue(0);
-          setDragId(null);
+          pan.setValue(0); dropYRef.current = null; setDropY(null); setDragId(null);
           if (toId !== id) onReorderRef.current && onReorderRef.current(id, toId);
         },
-        onPanResponderTerminate: () => { pan.setValue(0); setDragId(null); },
+        onPanResponderTerminate: () => { pan.setValue(0); dropYRef.current = null; setDropY(null); setDragId(null); },
       });
     }
     return responders.current[id];
   };
 
   return (
-    <View style={{ gap: 14 }}>
+    <View style={{ gap: 14, position: 'relative' }}>
+      {dragId && dropY != null ? (
+        <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: dropY, height: 3, borderRadius: 2, backgroundColor: C.gold, zIndex: 40 }} />
+      ) : null}
       {items.map((p) => {
         const isDrag = dragId === p.id;
         const r = ensureResponder(p.id);
