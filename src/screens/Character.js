@@ -61,7 +61,7 @@ function StatRow({ s, sl, open, onToggle, last }) {
 }
 
 export function CharacterScreen({ ctx }) {
-  const { statLevels, resources, wide, onShowHelp, onSignOut, userName } = ctx;
+  const { statLevels, resources, wide, onShowHelp, onSignOut, userName, goRoute } = ctx;
   const [expanded, setExpanded] = useState(null);
   const radarValues = {};
   STATS.forEach((s) => {
@@ -127,6 +127,11 @@ export function CharacterScreen({ ctx }) {
         <View style={{ height: 2, backgroundColor: C.goldLine, opacity: 0.4, marginTop: 28, marginBottom: 6 }} />
         <JournalSections ctx={ctx} />
 
+        {goRoute ? (
+          <Pressable onPress={() => goRoute('teacher')} accessibilityRole="button" accessibilityLabel="Кабинет учителя" style={{ marginTop: 22, marginBottom: 4, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: FONT.ui, fontSize: 15, color: C.inkFaint }}>Кабинет учителя</Text>
+          </Pressable>
+        ) : null}
         {!wide && onSignOut ? (
           <Pressable onPress={onSignOut} accessibilityRole="button" accessibilityLabel="Выйти" style={{ marginTop: 28, marginBottom: 4, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.inkMuted }}>↩ Выйти{userName ? ' · ' + userName : ''}</Text>

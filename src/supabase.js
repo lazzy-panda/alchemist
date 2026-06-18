@@ -46,3 +46,60 @@ export async function signInWithTelegram(initData) {
   await supabase.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token });
   return data;
 }
+
+/* ---- teacher-ambassador layer (Stage 2) ---- */
+export async function enableTeacherMode() {
+  try {
+    const { data } = await supabase.rpc('enable_teacher_mode');
+    return data || null; // returns the referral_code
+  } catch (e) { return null; }
+}
+export async function loadTeacher(id) {
+  try {
+    const { data } = await supabase.from('teachers').select('referral_code, program').eq('id', id).maybeSingle();
+    return data || null;
+  } catch (e) { return null; }
+}
+export async function saveTeacherProgram(program) {
+  try {
+    const { data: u } = await supabase.auth.getUser();
+    if (!u?.user?.id) return;
+    await supabase.from('teachers').update({ program, updated_at: new Date().toISOString() }).eq('id', u.user.id);
+  } catch (e) {}
+}
+export async function attributeToTeacher(code) {
+  try { const { data } = await supabase.rpc('attribute_to_teacher', { p_code: code }); return data || null; }
+  catch (e) { return null; }
+}
+export async function getMyTeacherProgram() {
+  try { const { data } = await supabase.rpc('get_my_teacher_program'); return data || []; }
+  catch (e) { return []; }
+}
+export async function saveAdherence({ teacherId, date, done, total, streak }) {
+  try {
+    const { data: u } = await supabase.auth.getUser();
+    if (!u?.user?.id || !teacherId) return;
+    await supabase.from('group_adherence').upsert(
+      { student_id: u.user.id, teacher_id: teacherId, date, done, total, streak, updated_at: new Date().toISOString() },
+      { onConflict: 'student_id,date' },
+    );
+  } catch (e) {}
+}
+export async function loadTeacherDashboard() {
+  try {
+    const { data } = await supabase.rpc('get_teacher_dashboard');
+    return data || [];
+  } catch (e) { return []; }
+}
+export async function loadRevshareEstimate() {
+  try {
+    const { data } = await supabase.rpc('get_revshare_estimate');
+    return data || 0;
+  } catch (e) { return 0; }
+}
+export async function loadReferredBy(id) {
+  try {
+    const { data } = await supabase.from('user_data').select('referred_by_teacher').eq('id', id).maybeSingle();
+    return data?.referred_by_teacher || null;
+  } catch (e) { return null; }
+}

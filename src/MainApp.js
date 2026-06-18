@@ -3,11 +3,11 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { View, useWindowDimensions, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { C } from './theme';
-import { useGame, atPracticeCap } from './engine';
+import { useGame, atPracticeCap, todayCounts } from './engine';
 import { useAuth } from './auth';
 import { usePremium } from './premium';
-import { supabase, signInWithTelegram } from './supabase';
-import { inTelegram, getInitData, openInvoice } from './telegram.web';
+import { supabase, signInWithTelegram, attributeToTeacher, getMyTeacherProgram, loadReferredBy, saveAdherence, loadTeacher } from './supabase';
+import { inTelegram, getInitData, openInvoice, getStartParam } from './telegram.web';
 import { kf, KF, EASE } from './ui';
 import { BottomNav, SideRail } from './nav';
 import { TodayScreen } from './screens/Today';
@@ -15,6 +15,7 @@ import { CharacterScreen } from './screens/Character';
 import { LibraryScreen } from './screens/Library';
 import { DiaryScreen } from './screens/Diary';
 import { JournalScreen } from './screens/Journal';
+import { TeacherScreen } from './screens/Teacher';
 import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast, AvatarPicker, MetricEditor, Paywall } from './overlays';
 import { KitPanel } from './kit';
 
@@ -25,6 +26,7 @@ const SCREENS = {
   library: LibraryScreen,
   diary: DiaryScreen,
   journal: JournalScreen,
+  teacher: TeacherScreen,
 };
 
 export function MainApp() {
@@ -43,6 +45,12 @@ export function MainApp() {
   const [avatarPicker, setAvatarPicker] = useState(false);
   const [metricEdit, setMetricEdit] = useState(null); // 'med' | 'qi' | 'streak' | null
   const [paywall, setPaywall] = useState(false);
+  const [isTeacher, setIsTeacher] = useState(false);
+
+  useEffect(() => {
+    const uid = auth?.user?.id;
+    if (uid) loadTeacher(uid).then((t) => setIsTeacher(!!t));
+  }, [auth?.user?.id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,6 +64,48 @@ export function MainApp() {
   }, []);
 
   useEffect(() => { if (inTelegram()) signInWithTelegram(getInitData()); }, []);
+
+  // attribution + program injection: runs once the user id is known
+  useEffect(() => {
+    const uid = auth?.user?.id;
+    if (!uid) return;
+    let cancelled = false;
+    (async () => {
+      const code = getStartParam();
+      let teacherId = await loadReferredBy(uid);
+      let program = [];
+      if (!teacherId && code) {
+        const res = await attributeToTeacher(code);   // returns { teacher_id, program } | null
+        if (res) { teacherId = res.teacher_id; program = res.program || []; }
+      } else if (teacherId) {
+        program = await getMyTeacherProgram();
+      }
+      if (cancelled || !teacherId || !program.length) return;
+      // stable ids so re-entry never duplicates; mark source for UI grouping
+      const items = program.map((p, i) => ({
+        ...p, id: `tp:${teacherId}:${p.id || i}`, today: true, custom: false, fromTeacher: teacherId,
+      }));
+      game.injectPractices(items);
+    })();
+    return () => { cancelled = true; };
+  }, [auth?.user?.id, game.injectPractices]);
+
+  // write a numbers-only daily adherence summary for attributed students (debounced)
+  const adhTimer = React.useRef(null);
+  useEffect(() => {
+    const uid = auth?.user?.id;
+    if (!uid) return;
+    let cancelled = false;
+    clearTimeout(adhTimer.current);
+    adhTimer.current = setTimeout(async () => {
+      const teacherId = await loadReferredBy(uid);
+      if (cancelled || !teacherId) return;
+      const { done, total } = todayCounts(game.practices);
+      const date = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); // local practice-day (03:00 cutoff)
+      await saveAdherence({ teacherId, date, done, total, streak: game.streak });
+    }, 1500);
+    return () => { cancelled = true; clearTimeout(adhTimer.current); };
+  }, [auth?.user?.id, game.practices, game.streak]);
 
   const dismissOnboard = useCallback(() => {
     setOnboard(false);
@@ -103,6 +153,7 @@ export function MainApp() {
     onEditMetric: setMetricEdit,
     premium: premium.premium,
     onPaywall: () => setPaywall(true),
+    onBecameTeacher: () => setIsTeacher(true), // reveal the «Учитель» tab right after enabling (no reload)
     diaryKey: 'alchemist_diary_' + (auth?.user?.id || 'anon'),
     userId: auth?.user?.id,
   };
@@ -132,7 +183,7 @@ export function MainApp() {
   if (wide) {
     return (
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: C.paper }}>
-        <SideRail route={route} setRoute={setRoute} stage={game.stage} onSignOut={auth?.signOut} userName={auth?.user?.name} />
+        <SideRail route={route} setRoute={setRoute} stage={game.stage} onSignOut={auth?.signOut} userName={auth?.user?.name} isTeacher={isTeacher} />
         <View style={{ flex: 1, position: 'relative' }}>
           {screen}
           {overlays}
@@ -144,7 +195,7 @@ export function MainApp() {
   return (
     <View style={{ flex: 1, backgroundColor: C.paper }}>
       <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>{screen}</View>
-      <BottomNav route={route} setRoute={setRoute} />
+      <BottomNav route={route} setRoute={setRoute} isTeacher={isTeacher} />
       {overlays}
     </View>
   );

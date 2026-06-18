@@ -12,20 +12,23 @@ export const NAV = [
   { key: 'character', label: 'Герой' },
   { key: 'diary', label: 'Дневник' },
 ];
+export const TEACHER_NAV = { key: 'teacher', label: 'Учитель' };
+export function navFor(isTeacher) { return isTeacher ? [...NAV, TEACHER_NAV] : NAV; }
 
 /* ---- pixel-art nav icons (Pixelarticons), tinted gold when active ---- */
-const NAV_ICON = { today: 'sun', character: 'user', library: 'list-box', diary: 'notes', journal: 'script-text' };
+const NAV_ICON = { today: 'sun', character: 'user', library: 'list-box', diary: 'notes', journal: 'script-text', teacher: 'users' };
 function NavIcon({ name, size = 22, on }) {
   return <PixelIcon name={NAV_ICON[name] || 'circle'} size={size} color={on ? C.gold : C.inkFaint} />;
 }
 
 /* ---- bottom footer (mobile) ---- */
-export function BottomNav({ route, setRoute }) {
+export function BottomNav({ route, setRoute, isTeacher }) {
+  const items = navFor(isTeacher);
   return (
     <View style={{ position: 'relative', flexDirection: 'row', alignItems: 'flex-end', paddingTop: 9, paddingBottom: 8, paddingHorizontal: 4, backgroundColor: C.railBg, borderTopWidth: 2, borderTopColor: C.goldLine }}>
       {/* carved top highlight above the gold rule */}
       <View pointerEvents="none" style={{ position: 'absolute', top: 1, left: 0, right: 0, height: 1, backgroundColor: 'rgba(255,225,160,0.14)' }} />
-      {NAV.map((n) => {
+      {items.map((n) => {
         const on = route === n.key;
         return (
           <Pressable key={n.key} onPress={() => setRoute(n.key)} accessibilityRole="button" accessibilityLabel={n.label} accessibilityState={{ selected: on }} style={{ flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'flex-end' }}>
@@ -47,14 +50,15 @@ export function BottomNav({ route, setRoute }) {
 }
 
 /* ---- side rail (desktop) — same icon language, gold-framed active row ---- */
-export function SideRail({ route, setRoute, stage, onSignOut, userName }) {
+export function SideRail({ route, setRoute, stage, onSignOut, userName, isTeacher }) {
+  const items = navFor(isTeacher);
   return (
     <View style={{ width: 240, paddingVertical: 22, paddingHorizontal: 14, backgroundColor: C.railBg, borderRightWidth: 3, borderRightColor: C.paperDeep }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 22, marginHorizontal: 4 }}>
         <Text style={{ fontSize: 48 }}>⚗️</Text>
         <Text style={{ fontFamily: FONT.display, fontSize: 26, color: C.gold }}>Алхимик</Text>
       </View>
-      {NAV.map((n) => {
+      {items.map((n) => {
         const on = route === n.key;
         return (
           <Pressable key={n.key} onPress={() => setRoute(n.key)} accessibilityRole="button" accessibilityLabel={n.label} accessibilityState={{ selected: on }} style={{ flexDirection: 'row', alignItems: 'center', gap: 11, paddingVertical: 10, paddingHorizontal: 11, marginBottom: 4, borderRadius: 6, minHeight: 44, borderWidth: 2, borderColor: on ? C.goldLine : 'transparent', backgroundColor: on ? C.frameGoldBg : 'transparent' }}>

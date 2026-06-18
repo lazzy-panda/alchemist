@@ -12,6 +12,12 @@ export function atPracticeCap(practices, isPremium) {
   return practices.filter((p) => p.custom && !p.archived).length >= FREE_PRACTICE_CAP;
 }
 
+// done/total over the day's visible practices (today, not archived) — used for adherence + dashboard
+export function todayCounts(practices) {
+  const today = (practices || []).filter((p) => p.today && !p.archived);
+  return { done: today.filter((p) => p.done).length, total: today.length };
+}
+
 // practice-day index that flips at local 03:00 (checkboxes reset at 3am, not midnight)
 function practiceDay() {
   const t = new Date(Date.now() - 3 * 3600e3);
@@ -208,6 +214,16 @@ export function useGame(userId) {
     setLastArchived((cur) => (cur === id ? null : cur));
   }, []);
 
+  // add teacher-program practices once (idempotent by stable id `tp:<teacherId>:<srcId>`)
+  const injectPractices = useCallback((items) => {
+    if (!Array.isArray(items) || !items.length) return;
+    setPractices((ps) => {
+      const have = new Set(ps.map((x) => x.id));
+      const fresh = items.filter((it) => !have.has(it.id));
+      return fresh.length ? [...ps, ...fresh] : ps;
+    });
+  }, []);
+
   // reorder by moving `fromId` into the slot currently held by `toId` (persisted via array order)
   const reorderPractices = useCallback((fromId, toId) => {
     setPractices((ps) => {
@@ -260,5 +276,6 @@ export function useGame(userId) {
     setTimeMinutes,
     setStreakValue,
     lastArchived,
+    injectPractices,
   };
 }
