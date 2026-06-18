@@ -2,10 +2,13 @@
    Icons are crisp monochrome SVG (no emoji) so the footer reads as part of the pixel skin;
    the active item rises into a gold "equipped slot". */
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, ImageBackground } from 'react-native';
 import { C, FONT } from './theme';
 import { Bar as ProgressBar } from './badges';
 import { PixelIcon } from './PixelIcon';
+
+// dark slate texture for the mobile footer (from Design/footer.jpg)
+const FOOTER_TEX = require('../assets/textures/footer.jpg');
 
 export const NAV = [
   { key: 'today', label: 'Сегодня' },
@@ -25,7 +28,7 @@ function NavIcon({ name, size = 22, on }) {
 export function BottomNav({ route, setRoute, isTeacher }) {
   const items = navFor(isTeacher);
   return (
-    <View style={{ position: 'relative', flexDirection: 'row', alignItems: 'flex-end', paddingTop: 9, paddingBottom: 8, paddingHorizontal: 4, backgroundColor: C.railBg, borderTopWidth: 2, borderTopColor: C.goldLine }}>
+    <ImageBackground source={FOOTER_TEX} resizeMode="cover" style={{ position: 'relative', flexDirection: 'row', alignItems: 'flex-end', paddingTop: 9, paddingBottom: 8, paddingHorizontal: 4, backgroundColor: C.railBg, borderTopWidth: 2, borderTopColor: C.goldLine }}>
       {/* carved top highlight above the gold rule */}
       <View pointerEvents="none" style={{ position: 'absolute', top: 1, left: 0, right: 0, height: 1, backgroundColor: 'rgba(255,225,160,0.14)' }} />
       {items.map((n) => {
@@ -45,7 +48,7 @@ export function BottomNav({ route, setRoute, isTeacher }) {
           </Pressable>
         );
       })}
-    </View>
+    </ImageBackground>
   );
 }
 
