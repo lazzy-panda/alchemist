@@ -92,8 +92,8 @@ export function TodayScreen({ ctx }) {
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 8, marginTop: 16, zIndex: 2 }}>
-            <MetricChip icon="moon-stars" color={CATS.med.color} value={hoursLabel(timeMin.med)} accessibilityLabel="Часы медитации" onPress={() => onEditMetric && onEditMetric('med')} />
-            <MetricChip icon="wind" color={CATS.qi.color} value={hoursLabel(timeMin.qi)} accessibilityLabel="Часы цигун" onPress={() => onEditMetric && onEditMetric('qi')} />
+            <MetricChip icon={CATS.med.icon} color={CATS.med.color} value={hoursLabel(timeMin.med)} accessibilityLabel="Часы медитации" onPress={() => onEditMetric && onEditMetric('med')} />
+            <MetricChip icon={CATS.qi.icon} color={CATS.qi.color} value={hoursLabel(timeMin.qi)} accessibilityLabel="Часы цигун" onPress={() => onEditMetric && onEditMetric('qi')} />
             <MetricChip icon="trending-up" color={C.gold} value={`${streak} дн.`} accessibilityLabel="Страйк 80 процентов" onPress={() => onEditMetric && onEditMetric('streak')} />
           </View>
           <View style={{ marginTop: 14, zIndex: 2 }}>

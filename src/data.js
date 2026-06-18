@@ -29,8 +29,8 @@ export const AVATAR_BY_ID = Object.fromEntries(AVATARS.map((a) => [a.id, a]));
 
 // ---- categories ----
 export const CATS = {
-  med: { name: 'Медитация', icon: 'moon-stars', color: '#7AA6E0' },
-  qi: { name: 'Цигун', icon: 'wind', color: '#5BC2AD' },
+  med: { name: 'Медитация', icon: 'brain', color: '#7AA6E0' },
+  qi: { name: 'Цигун', icon: 'zap', color: '#5BC2AD' },
   body: { name: 'Тело', icon: 'human-run', color: '#E0905C' },
   know: { name: 'Знание', icon: 'book', color: '#BC8AD8' },
   heart: { name: 'Сердце', icon: 'heart', color: '#E2A0C6' },
@@ -47,10 +47,9 @@ export function durLabel(p) {
   return p && p.unit === 'reps' ? `${p.dur} ${repWord(p.dur)}` : `${p.dur} мин`;
 }
 
-// accumulated-time label for the header metrics: minutes under an hour, else hours (1 decimal, comma)
+// accumulated-time label for the header metrics: ALWAYS in hours (1 decimal, comma), all-time total
 export function hoursLabel(min) {
   const m = Math.max(0, Math.round(min || 0));
-  if (m < 60) return `${m}м`;
   const h = m / 60;
   return Number.isInteger(h) ? `${h}ч` : `${h.toFixed(1).replace('.', ',')}ч`;
 }

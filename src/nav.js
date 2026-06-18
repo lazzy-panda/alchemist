@@ -13,7 +13,7 @@ export const NAV = [
   { key: 'diary', label: 'Дневник' },
 ];
 export const TEACHER_NAV = { key: 'teacher', label: 'Учитель' };
-export function navFor(isTeacher) { return isTeacher ? [...NAV, TEACHER_NAV] : NAV; }
+export function navFor() { return NAV; } // teacher access lives in the hamburger menu, not the footer
 
 /* ---- pixel-art nav icons (Pixelarticons), tinted gold when active ---- */
 const NAV_ICON = { today: 'sun', character: 'user', library: 'list-box', diary: 'notes', journal: 'script-text', teacher: 'users' };
