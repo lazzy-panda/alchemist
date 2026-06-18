@@ -42,7 +42,8 @@ export function DragList({ items, locked, onToggle, onOpen, onReorder }) {
     if (!responders.current[id]) {
       responders.current[id] = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => false, // grab on press only — never hand the drag to a sibling grip mid-gesture
+        onPanResponderTerminationRequest: () => false, // and refuse to yield it once granted (prevents responder theft on web)
         onPanResponderGrant: () => { pan.setValue(0); setDragId(id); },
         onPanResponderMove: (e, g) => pan.setValue(g.dy),
         onPanResponderRelease: (e, g) => {
