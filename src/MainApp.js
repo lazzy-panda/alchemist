@@ -16,7 +16,7 @@ import { LibraryScreen } from './screens/Library';
 import { DiaryScreen } from './screens/Diary';
 import { JournalScreen } from './screens/Journal';
 import { TeacherScreen } from './screens/Teacher';
-import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast, AvatarPicker, MetricEditor, Paywall } from './overlays';
+import { PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil, Onboarding, Toast, AvatarPicker, MetricEditor, Paywall, HeaderMenu } from './overlays';
 import { KitPanel } from './kit';
 
 const WEB = Platform.OS === 'web';
@@ -45,6 +45,7 @@ export function MainApp() {
   const [avatarPicker, setAvatarPicker] = useState(false);
   const [metricEdit, setMetricEdit] = useState(null); // 'med' | 'qi' | 'streak' | null
   const [paywall, setPaywall] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [isTeacher, setIsTeacher] = useState(false);
 
   useEffect(() => {
@@ -146,6 +147,7 @@ export function MainApp() {
     onSave,
     onOpenDay,
     onShowHelp,
+    onMenu: () => setMenuOpen(true),
     onSignOut: auth?.signOut,
     userName: auth?.user?.name,
     avatar: game.avatar,
@@ -176,6 +178,7 @@ export function MainApp() {
       {avatarPicker ? <AvatarPicker current={game.avatar} onPick={game.setAvatar} onClose={() => setAvatarPicker(false)} /> : null}
       {metricEdit ? <MetricEditor metric={metricEdit} value={metricEdit === 'streak' ? game.streak : (game.timeMin?.[metricEdit] || 0)} onSave={(val) => { if (metricEdit === 'streak') game.setStreakValue(val); else game.setTimeMinutes(metricEdit, val); }} onClose={() => setMetricEdit(null)} /> : null}
       {paywall ? <Paywall onClose={() => setPaywall(false)} onSubscribe={async () => { const { data } = await supabase.functions.invoke('create-subscription-invoice', { body: { uid: auth?.user?.id } }); if (data?.link) openInvoice(data.link, () => { premium.refresh(); setPaywall(false); }); else setPaywall(false); }} /> : null}
+      {menuOpen ? <HeaderMenu items={[{ key: 'teacher', icon: 'users', label: 'Кабинет учителя', onPress: () => setRoute('teacher') }]} onClose={() => setMenuOpen(false)} /> : null}
       <FogVeil />
     </>
   );

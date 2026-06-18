@@ -6,6 +6,7 @@ import { ScreenScroll, PadView, WIDE_MAX } from '../layout';
 import { Gradient, Card, Btn, T, Seal, kf, KF, EASE } from '../ui';
 import { Avatar, WillBar, StateChip, MetricChip } from '../badges';
 import { PracticeCard } from '../PracticeCard';
+import { PixelIcon } from '../PixelIcon';
 import { DragList } from '../DragList';
 import { hoursLabel, CATS } from '../data';
 import { dailyWisdom } from '../quotes';
@@ -55,7 +56,7 @@ function AllDoneState({ dayXp }) {
 }
 
 export function TodayScreen({ ctx }) {
-  const { practices, resources, dayState, streak, timeMin = {}, onToggle, onOpen, onAdd, wide, onShowHelp, userName, avatar, onAvatar, onEditMetric, goRoute, reorderPractices } = ctx;
+  const { practices, resources, dayState, streak, timeMin = {}, onToggle, onOpen, onAdd, wide, onShowHelp, userName, avatar, onAvatar, onEditMetric, onMenu, goRoute, reorderPractices } = ctx;
   const today = practices.filter((p) => p.today && !p.archived);
   const done = today.filter((p) => p.done);
   const pending = today.filter((p) => !p.done);
@@ -72,7 +73,12 @@ export function TodayScreen({ ctx }) {
       {/* hero */}
       <Gradient colors={[C.heroBg, C.railBg]} angle={180} style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.paperDeep }}>
         <View style={[{ position: 'relative' }, wide ? { width: '100%', maxWidth: WIDE_MAX, alignSelf: 'center' } : null]}>
-          <View style={{ position: 'absolute', right: 0, top: 2, alignItems: 'flex-end', gap: 8, zIndex: 3 }}>
+          <View style={{ position: 'absolute', right: 0, top: 2, flexDirection: 'row', alignItems: 'center', gap: 8, zIndex: 3 }}>
+            {onMenu ? (
+              <Pressable onPress={onMenu} hitSlop={10} accessibilityRole="button" accessibilityLabel="Меню" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
+                <PixelIcon name="menu" size={15} color={C.inkMuted} />
+              </Pressable>
+            ) : null}
             {onShowHelp ? (
               <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontFamily: FONT.display, fontSize: 26, color: C.inkMuted }}>?</Text>

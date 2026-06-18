@@ -485,6 +485,30 @@ export function AvatarPicker({ current, onPick, onClose }) {
 }
 
 /* ============================================================
+   HEADER MENU — hamburger dropdown (top-right); holds the teacher entry
+   ============================================================ */
+export function HeaderMenu({ items, onClose }) {
+  return (
+    <Pressable onPress={onClose} accessibilityLabel="Закрыть меню" style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 300 }}>
+      <View style={[{ position: 'absolute', right: 14, top: 56, minWidth: 214, borderWidth: 3, borderColor: C.goldLine, borderRadius: 12, backgroundColor: C.paperWarm, paddingVertical: 6, boxShadow: '0px 4px 0px rgba(20,12,0,0.28)' }, kf(KF.popIn, 0.3, { ease: EASE.overshoot })]}>
+        {items.map((it) => (
+          <Pressable
+            key={it.key}
+            onPress={() => { onClose(); it.onPress(); }}
+            accessibilityRole="button"
+            accessibilityLabel={it.label}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 16, minHeight: 46 }}
+          >
+            <PixelIcon name={it.icon} size={20} color={C.gold} />
+            <Text style={{ fontFamily: FONT.ui, fontSize: 17, color: C.ink }}>{it.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+    </Pressable>
+  );
+}
+
+/* ============================================================
    PAYWALL — premium upsell overlay
    ============================================================ */
 export function Paywall({ onSubscribe, onClose }) {
