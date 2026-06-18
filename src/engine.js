@@ -224,14 +224,18 @@ export function useGame(userId) {
     });
   }, []);
 
-  // reorder by moving `fromId` into the slot currently held by `toId` (persisted via array order)
+  // reorder: drop `fromId` ONTO `toId` → the dragged practice takes the target's slot and the
+  // target shifts after it (insert BEFORE the target, recomputing its index after removal so the
+  // direction doesn't matter). `toId == null` means dropped past the last item → move to the end.
   const reorderPractices = useCallback((fromId, toId) => {
     setPractices((ps) => {
       const from = ps.findIndex((x) => x.id === fromId);
-      const to = ps.findIndex((x) => x.id === toId);
-      if (from < 0 || to < 0 || from === to) return ps;
+      if (from < 0 || fromId === toId) return ps;
       const next = ps.slice();
       const [moved] = next.splice(from, 1);
+      if (toId == null) { next.push(moved); return next; }
+      const to = next.findIndex((x) => x.id === toId);
+      if (to < 0) return ps;
       next.splice(to, 0, moved);
       return next;
     });

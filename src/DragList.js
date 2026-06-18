@@ -19,21 +19,21 @@ export function DragList({ items, locked, onToggle, onOpen, onReorder }) {
   const orderRef = useRef([]);
   orderRef.current = items.map((p) => p.id);
 
+  // which item should the dragged card land BEFORE? returns that item's id, or null to drop at the
+  // very end. Threshold is each item's vertical midpoint, so the dragged card swaps into a slot as
+  // its center crosses the neighbour's middle (smooth, predictable in both directions).
   const targetFor = (startId, dy) => {
     const ids = orderRef.current;
     const L = layouts.current;
     const start = L[startId];
     if (!start) return startId;
     const center = start.y + start.h / 2 + dy;
-    let ti = ids.indexOf(startId);
     for (let i = 0; i < ids.length; i++) {
       const l = L[ids[i]];
       if (!l) continue;
-      if (center >= l.y && center < l.y + l.h) { ti = i; break; }
-      if (i === 0 && center < l.y) { ti = 0; break; }
-      if (i === ids.length - 1 && center >= l.y + l.h) ti = i;
+      if (center < l.y + l.h / 2) return ids[i];
     }
-    return ids[ti];
+    return null; // below every midpoint → append at the end
   };
 
   const ensureResponder = (id) => {
@@ -47,7 +47,7 @@ export function DragList({ items, locked, onToggle, onOpen, onReorder }) {
           const toId = targetFor(id, g.dy);
           pan.setValue(0);
           setDragId(null);
-          if (toId && toId !== id) onReorderRef.current && onReorderRef.current(id, toId);
+          if (toId !== id) onReorderRef.current && onReorderRef.current(id, toId);
         },
         onPanResponderTerminate: () => { pan.setValue(0); setDragId(null); },
       });
