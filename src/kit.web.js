@@ -157,8 +157,9 @@ export function KitRound({ size = 230, style, children }) {
 }
 
 /* ---- gem / medallion → RPGUI icon ---- */
-export function KitGem({ size = 54, icon = 'empty-slot', color, style }) {
+export function KitGem({ size = 54, icon = 'empty-slot', color, style, nativeID }) {
   return h('div', {
+    id: nativeID,
     className: 'rpgui-icon ' + icon,
     style: [{ width: size, height: size, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', margin: 0 }, style],
   });

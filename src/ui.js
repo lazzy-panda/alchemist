@@ -193,9 +193,9 @@ function StepBtn({ label, onPress, accessibilityLabel }) {
     </Pressable>
   );
 }
-export function Stepper({ value, onDec, onInc, suffix = ' мин' }) {
+export function Stepper({ value, onDec, onInc, suffix = ' мин', nativeID }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 12 }}>
+    <View nativeID={nativeID} style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 12 }}>
       <StepBtn label="−" onPress={onDec} accessibilityLabel="Уменьшить" />
       <Text style={{ minWidth: 64, textAlign: 'center', fontFamily: FONT.display, fontSize: 20, fontVariant: ['tabular-nums'], color: C.ink }}>{value}{suffix}</Text>
       <StepBtn label="+" onPress={onInc} accessibilityLabel="Увеличить" />
@@ -204,10 +204,11 @@ export function Stepper({ value, onDec, onInc, suffix = ' мин' }) {
 }
 
 /* ---------- selectable chip — genuine RPGUI radio (single) / checkbox (multi) + gem + label ---------- */
-export function SelChip({ on, color, icon, label, onPress, multi }) {
+export function SelChip({ on, color, icon, label, onPress, multi, nativeID }) {
   const Indicator = multi ? KitCheckbox : KitRadio;
   return (
     <Pressable
+      nativeID={nativeID}
       onPress={onPress}
       accessibilityRole={multi ? 'checkbox' : 'radio'}
       accessibilityLabel={label}
