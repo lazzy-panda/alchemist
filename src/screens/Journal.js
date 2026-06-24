@@ -14,9 +14,9 @@ const MONTH = (() => { try { return new Date().toLocaleString('ru-RU', { month: 
 const MONTH_PREP = /[ьй]$/.test(MONTH) ? MONTH.slice(0, -1) + 'е' : MONTH + 'е';
 
 // each day is a native RPGUI checkbox: checked = practiced, unchecked = rest day
-function HeatCell({ v, n, today, onPress, delay }) {
+function HeatCell({ v, n, today, onPress, delay, nativeID }) {
   return (
-    <Pressable style={{ flex: 1, alignItems: 'center' }} onPress={onPress} accessibilityRole="button" accessibilityState={{ checked: v > 0 }} accessibilityLabel={`День ${n}${v > 0 ? ', занимался' : ', отдых'}`}>
+    <Pressable nativeID={nativeID} style={{ flex: 1, alignItems: 'center' }} onPress={onPress} accessibilityRole="button" accessibilityState={{ checked: v > 0 }} accessibilityLabel={`День ${n}${v > 0 ? ', занимался' : ', отдых'}`}>
       <View style={[{ aspectRatio: 1, width: '100%', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: today ? C.gold : 'transparent', borderRadius: 3 }, kf(KF.fadeUp, 0.4, { ease: EASE.out, delay })]}>
         <KitCheckbox on={v > 0} size={30} />
       </View>
@@ -32,7 +32,7 @@ function GrowthRow({ k }) {
   const cur = arr[arr.length - 1] ?? 0;
   const delta = cur - (arr[0] ?? 0);
   return (
-    <View style={{ marginBottom: 14 }}>
+    <View nativeID={`journal-growth-${k}`} style={{ marginBottom: 14 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
         <Text style={{ fontFamily: FONT.display, fontSize: 18, color: s.color }}>{s.name}</Text>
         <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -78,7 +78,7 @@ export function JournalSections({ ctx }) {
         {/* ---- month hero: dominant metric + streak + month progress ---- */}
         <Text style={[T.eyebrow, kf(KF.fadeUp, 0.4, { ease: EASE.out })]}>Хроника Пути</Text>
         <Text accessibilityRole="header" style={[T.displayM, { marginTop: 6, marginBottom: 12 }, kf(KF.fadeUp, 0.45, { ease: EASE.out, delay: 0.04 })]}>Летопись · {MONTH}</Text>
-        <Card frame="grey" style={[{ marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.08 })]}>
+        <Card nativeID="journal-hero" frame="grey" style={[{ marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.08 })]}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <View style={{ flex: 1, minWidth: 0 }}>
               <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
@@ -96,8 +96,8 @@ export function JournalSections({ ctx }) {
         </Card>
 
         {/* ---- kindle grid (native checkboxes) ---- */}
-        <SectionHead title="Карта горения" right={`${active}/${total}`} style={{ marginTop: 0 }} />
-        <Card style={[{ padding: 16, marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.12 })]}>
+        <SectionHead nativeID="journal-heatmap-head" title="Карта горения" right={`${active}/${total}`} style={{ marginTop: 0 }} />
+        <Card nativeID="journal-heatmap" style={[{ padding: 16, marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.12 })]}>
           <View style={{ flexDirection: 'row', gap: 5, marginBottom: 8 }}>
             {weekdays.map((w) => (
               <Text key={w} style={{ flex: 1, textAlign: 'center', fontFamily: FONT.display, fontSize: 16, color: C.inkFaint }}>{w}</Text>
@@ -108,7 +108,7 @@ export function JournalSections({ ctx }) {
               <View key={ri} style={{ flexDirection: 'row', gap: 5 }}>
                 {row.map((v, ci) => {
                   const idx = ri * 7 + ci;
-                  return <HeatCell key={idx} v={v} n={idx + 1} today={idx === todayIdx} delay={idx * 0.015} onPress={() => onOpenDay(idx)} />;
+                  return <HeatCell key={idx} nativeID={`journal-day-${idx}`} v={v} n={idx + 1} today={idx === todayIdx} delay={idx * 0.015} onPress={() => onOpenDay(idx)} />;
                 })}
                 {row.length < 7 ? Array.from({ length: 7 - row.length }).map((_, k) => <View key={'pad' + k} style={{ flex: 1 }} />) : null}
               </View>
@@ -118,14 +118,14 @@ export function JournalSections({ ctx }) {
         </Card>
 
         {/* ---- stat growth (native progress bars) ---- */}
-        <SectionHead title="Рост характеристик" style={{ marginTop: 0 }} />
-        <Card style={[{ padding: 16, marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.16 })]}>
+        <SectionHead nativeID="journal-growth-head" title="Рост характеристик" style={{ marginTop: 0 }} />
+        <Card nativeID="journal-growth" style={[{ padding: 16, marginBottom: 18 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.16 })]}>
           {growKeys.map((k) => <GrowthRow key={k} k={k} />)}
         </Card>
 
         {/* ---- scroll of deeds ---- */}
-        <SectionHead title="За месяц" style={{ marginTop: 0 }} />
-        <Card style={[{ paddingHorizontal: 16, paddingVertical: 4, marginBottom: 8 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.2 })]}>
+        <SectionHead nativeID="journal-deeds-head" title="За месяц" style={{ marginTop: 0 }} />
+        <Card nativeID="journal-deeds" style={[{ paddingHorizontal: 16, paddingVertical: 4, marginBottom: 8 }, kf(KF.fadeUp, 0.5, { ease: EASE.out, delay: 0.2 })]}>
           <DeedRow glyph="⏳" label="Минут в практике" value={minutes} color={C.jadeLight} />
           <DeedRow glyph="🔥" label="Лучшая серия дней" value={streak} color={C.gold} />
           <DeedRow glyph="💠" label="Реликвий обретено" value={`${relicsGot}/${RELICS.length}`} color={C.cEnergy} />
@@ -137,7 +137,7 @@ export function JournalSections({ ctx }) {
 
 export function JournalScreen({ ctx }) {
   return (
-    <ScreenScroll>
+    <ScreenScroll nativeID="screen-journal">
       <PadView wide={ctx.wide}>
         <JournalSections ctx={ctx} />
       </PadView>
