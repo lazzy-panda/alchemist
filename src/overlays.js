@@ -50,14 +50,14 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
   const rewards = Object.entries(practice.r || {});
 
   return (
-    <PageShell onClose={onClose} wide={wide}>
+    <PageShell nativeID="detail-root" onClose={onClose} wide={wide}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 22 }}>
             <IconTile name={practice.icon || cat.icon} color={cat.color} size={48} />
             <View style={{ flex: 1, minWidth: 0, gap: 5 }}>
               <Text style={[T.displayM, { fontSize: 26, lineHeight: 36 }]}>{practice.name}</Text>
               <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: cat.color }}>{cat.name}{practice.mult ? ' · x' + practice.mult : ''}</Text>
             </View>
-            {onEdit ? <Btn variant="ghost" onPress={onEdit}>Изменить</Btn> : null}
+            {onEdit ? <Btn nativeID="detail-edit" variant="ghost" onPress={onEdit}>Изменить</Btn> : null}
           </View>
 
           {practice.unit === 'reps' ? (
@@ -65,7 +65,7 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
             <View style={{ marginTop: 14, marginBottom: 8, alignItems: 'center' }}>
               <Text style={{ fontFamily: FONT.display, fontSize: 80, fontVariant: ['tabular-nums'], color: C.title, textAlign: 'center', ...ts('rgba(0,0,0,0.5)', 0, 2, 2) }}>{practice.dur}</Text>
               <Text style={{ fontFamily: FONT.ui, fontSize: 22, color: C.inkMuted, marginTop: -2, marginBottom: 22 }}>{repWord(practice.dur)}</Text>
-              <Btn variant="gold" block onPress={() => onComplete(practice)}>✦ Завершить</Btn>
+              <Btn nativeID="detail-complete" variant="gold" block onPress={() => onComplete(practice)}>✦ Завершить</Btn>
             </View>
           ) : (
             <>
@@ -76,25 +76,25 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
                 </Text>
                 <Bar pct={total > 0 ? (remaining / total) * 100 : 0} color="qi" />
                 <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 12, marginTop: 16 }}>
-                  <TStep label="−1м" onPress={() => adjust(-1)} disabled={running} />
-                  <TStep label="+1м" onPress={() => adjust(1)} disabled={running} />
+                  <TStep nativeID="detail-timer-minus" label="−1м" onPress={() => adjust(-1)} disabled={running} />
+                  <TStep nativeID="detail-timer-plus" label="+1м" onPress={() => adjust(1)} disabled={running} />
                 </View>
               </View>
 
               {/* controls */}
               <View style={{ flexDirection: 'row', gap: 10, marginTop: 14, marginBottom: 8 }}>
-                {!running && remaining > 0 && remaining === total ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Начать</Btn> : null}
-                {running ? <Btn variant="secondary" block onPress={() => setRunning(false)} style={{ flex: 1 }}>⏸ Пауза</Btn> : null}
-                {!running && remaining < total && remaining > 0 ? <Btn variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Продолжить</Btn> : null}
-                {remaining === 0 ? <Btn variant="gold" block onPress={() => onComplete(practice)} style={{ flex: 1 }}>✦ Завершить</Btn> : null}
-                {remaining < total && remaining > 0 ? <Btn variant="ghost" onPress={() => { setRemaining(total); setRunning(false); }}>Сброс</Btn> : null}
+                {!running && remaining > 0 && remaining === total ? <Btn nativeID="detail-start" variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Начать</Btn> : null}
+                {running ? <Btn nativeID="detail-pause" variant="secondary" block onPress={() => setRunning(false)} style={{ flex: 1 }}>⏸ Пауза</Btn> : null}
+                {!running && remaining < total && remaining > 0 ? <Btn nativeID="detail-resume" variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Продолжить</Btn> : null}
+                {remaining === 0 ? <Btn nativeID="detail-complete" variant="gold" block onPress={() => onComplete(practice)} style={{ flex: 1 }}>✦ Завершить</Btn> : null}
+                {remaining < total && remaining > 0 ? <Btn nativeID="detail-reset" variant="ghost" onPress={() => { setRemaining(total); setRunning(false); }}>Сброс</Btn> : null}
               </View>
-              <Btn variant="ghost" block onPress={() => onComplete(practice)}>Отметить выполненной</Btn>
+              <Btn nativeID="detail-mark-done" variant="ghost" block onPress={() => onComplete(practice)}>Отметить выполненной</Btn>
             </>
           )}
 
           {/* instruction */}
-          <Pressable onPress={() => setShowInstr(!showInstr)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20 }}>
+          <Pressable nativeID="detail-instr-toggle" onPress={() => setShowInstr(!showInstr)} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20 }}>
             <Text style={{ fontFamily: FONT.ui, color: C.inkMuted, fontSize: 28, transform: showInstr ? [{ rotate: '90deg' }] : [] }}>›</Text>
             <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.inkMuted }}>Инструкция</Text>
           </Pressable>
@@ -105,8 +105,8 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
           ) : null}
 
           {/* rewards */}
-          <SectionHead title="Награды" />
-          <Card style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+          <SectionHead nativeID="detail-rewards-head" title="Награды" />
+          <Card nativeID="detail-rewards-card" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
             {rewards.map(([k, v]) => <RewardMedal key={k} stat={k} value={practice.mult ? Math.round(v * practice.mult) : v} />)}
             <QiTag qi={practice.qi} />
             {practice.mult ? (
@@ -120,9 +120,9 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
   );
 }
 
-function TStep({ label, onPress, disabled }) {
+function TStep({ label, onPress, disabled, nativeID }) {
   return (
-    <Btn variant="blue" onPress={disabled ? undefined : onPress} disabled={disabled} style={{ flex: 1 }}>
+    <Btn nativeID={nativeID} variant="blue" onPress={disabled ? undefined : onPress} disabled={disabled} style={{ flex: 1 }}>
       {label}
     </Btn>
   );
@@ -142,9 +142,9 @@ function ScrollViewSafe({ children }) {
    PAGE shell — full-screen routed page (replaces the old modal bottom-sheet)
    opaque, fills the content area, owns the back affordance + scroll.
    ============================================================ */
-function PageShell({ children, onClose, wide }) {
+function PageShell({ children, onClose, wide, nativeID }) {
   return (
-    <View style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: C.paper, zIndex: 200 }, kf(KF.screenIn, 0.4, { ease: EASE.out })]}>
+    <View nativeID={nativeID} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: C.paper, zIndex: 200 }, kf(KF.screenIn, 0.4, { ease: EASE.out })]}>
       <ScrollViewSafe>
         <View style={[{ paddingHorizontal: 18, paddingTop: 18, paddingBottom: 30, minHeight: '100%' }, wide && { maxWidth: 720, width: '100%', alignSelf: 'center', paddingHorizontal: 40 }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
@@ -183,29 +183,30 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
   };
 
   return (
-    <PageShell onClose={onClose} wide={wide}>
+    <PageShell nativeID="editor-root" onClose={onClose} wide={wide}>
             <Text style={[T.displayM, { marginTop: 2, marginBottom: 18 }]}>{isNew ? 'Новая практика' : 'Изменить практику'}</Text>
 
-            <Field label="Название">
-              <Input value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(''); }} placeholder="напр. Утренний цигун" />
+            <Field nativeID="editor-name-field" label="Название">
+              <Input nativeID="editor-name-input" value={name} onChangeText={(t) => { setName(t); if (nameError) setNameError(''); }} placeholder="напр. Утренний цигун" />
             </Field>
             {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.red, fontFamily: FONT.ui, fontSize: 18 }}>{nameError}</Text> : null}
 
-            <Field label="Категория">
+            <Field nativeID="editor-cat-field" label="Категория">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {Object.keys(CATS).map((ck) => (
-                  <SelChip key={ck} on={cat === ck} color={CATS[ck].color} icon={CATS[ck].icon} label={CATS[ck].name} onPress={() => setCat(ck)} />
+                  <SelChip nativeID={`editor-cat-${ck}`} key={ck} on={cat === ck} color={CATS[ck].color} icon={CATS[ck].icon} label={CATS[ck].name} onPress={() => setCat(ck)} />
                 ))}
               </View>
             </Field>
 
-            <Field label="Иконка">
+            <Field nativeID="editor-icon-field" label="Иконка">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {ICON_CHOICES.map((ic) => {
                   const sel = (icon || CATS[cat].icon) === ic;
                   return (
                     <Pressable
                       key={ic}
+                      nativeID={`editor-icon-${ic}`}
                       onPress={() => setIcon(ic)}
                       accessibilityRole="button"
                       accessibilityLabel={'Иконка ' + ic}
@@ -219,12 +220,13 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
               </View>
             </Field>
 
-            <Field label="Мера">
+            <Field nativeID="editor-unit-field" label="Мера">
               <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
-                <SelChip on={unit === 'min'} color={C.gold} label="Минуты" onPress={() => setUnit('min')} />
-                <SelChip on={unit === 'reps'} color={C.gold} label="Разы" onPress={() => setUnit('reps')} />
+                <SelChip nativeID="editor-unit-min" on={unit === 'min'} color={C.gold} label="Минуты" onPress={() => setUnit('min')} />
+                <SelChip nativeID="editor-unit-reps" on={unit === 'reps'} color={C.gold} label="Разы" onPress={() => setUnit('reps')} />
               </View>
               <Stepper
+                nativeID="editor-dur-stepper"
                 value={dur}
                 onDec={() => setDur(Math.max(1, dur - 1))}
                 onInc={() => setDur(Math.min(unit === 'reps' ? 999 : 180, dur + 1))}
@@ -232,25 +234,26 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
               />
             </Field>
 
-            <Field label="Награды-характеристики">
+            <Field nativeID="editor-rewards-field" label="Награды-характеристики">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {STATS.map((s) => (
-                  <SelChip key={s.key} multi on={!!rewards[s.key]} color={s.color} icon={s.icon} label={s.name + (rewards[s.key] ? ' +' + rewards[s.key] : '')} onPress={() => toggleReward(s.key)} />
+                  <SelChip nativeID={`editor-reward-${s.key}`} key={s.key} multi on={!!rewards[s.key]} color={s.color} icon={s.icon} label={s.name + (rewards[s.key] ? ' +' + rewards[s.key] : '')} onPress={() => toggleReward(s.key)} />
                 ))}
               </View>
             </Field>
             {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 18, lineHeight: 28 }}>Совет: привяжите хотя бы одну характеристику, чтобы практика давала очки.</Text> : null}
 
             {confirm ? (
-              <View style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
+              <View nativeID="editor-confirm-panel" style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
                 <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.red, marginBottom: 12, lineHeight: 28 }}>
                   {confirm === 'delete'
                     ? `Удалить «${name || practice?.name}» навсегда? Это действие необратимо.`
                     : `Архивировать «${name || practice?.name}»? Она скроется из списка.`}
                 </Text>
                 <View style={{ flexDirection: 'row', gap: 10 }}>
-                  <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirm(null)}>Отмена</Btn>
+                  <Btn nativeID="editor-confirm-cancel" variant="secondary" style={{ flex: 1 }} onPress={() => setConfirm(null)}>Отмена</Btn>
                   <Btn
+                    nativeID="editor-confirm-ok"
                     variant="danger"
                     style={{ flex: 1 }}
                     onPress={() => {
@@ -266,6 +269,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
             ) : (
               <View style={{ marginTop: 22 }}>
                 <Btn
+                  nativeID="editor-save"
                   variant="primary"
                   block
                   onPress={() => {
@@ -280,8 +284,8 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
                 </Btn>
                 {!isNew ? (
                   <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-                    <Btn variant="secondary" style={{ flex: 1 }} onPress={() => setConfirm('archive')}>Архивировать</Btn>
-                    <Btn variant="danger" style={{ flex: 1 }} onPress={() => setConfirm('delete')}>Удалить</Btn>
+                    <Btn nativeID="editor-archive" variant="secondary" style={{ flex: 1 }} onPress={() => setConfirm('archive')}>Архивировать</Btn>
+                    <Btn nativeID="editor-delete" variant="danger" style={{ flex: 1 }} onPress={() => setConfirm('delete')}>Удалить</Btn>
                   </View>
                 ) : null}
               </View>
@@ -296,7 +300,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
 export function DayDetailSheet({ day, onClose, wide }) {
   const sample = PRACTICES.filter((p) => p.today).slice(0, 3);
   return (
-    <PageShell onClose={onClose} wide={wide}>
+    <PageShell nativeID="day-sheet-root" onClose={onClose} wide={wide}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, marginBottom: 14 }}>
             <Text style={T.displayM}>День {day + 1}</Text>
             <StateChip state="flow" />
@@ -334,9 +338,9 @@ export function LevelUpOverlay({ stage, onClose }) {
     return () => clearTimeout(t);
   }, []);
   return (
-    <Pressable onPress={onClose} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 250, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(35,25,12,0.5)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
+    <Pressable nativeID="levelup-root" onPress={onClose} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 250, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(35,25,12,0.5)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
       <View pointerEvents="none" style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: 'rgba(246,214,133,0.25)' }, kf(KF.goldBurst, 0.9, { ease: EASE.out, fill: 'forwards' })]} />
-      <View style={[{ width: '84%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 30, paddingBottom: 26, borderRadius: 26, borderWidth: 4, borderColor: C.stoneDark, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(0,0,0,0.4)` }, kf(KF.popIn, 0.5, { ease: EASE.overshoot })]}>
+      <View nativeID="levelup-card" style={[{ width: '84%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 30, paddingBottom: 26, borderRadius: 26, borderWidth: 4, borderColor: C.stoneDark, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(0,0,0,0.4)` }, kf(KF.popIn, 0.5, { ease: EASE.overshoot })]}>
         {/* real kit LEVEL UP! winged banner */}
         <KitBanner width={270} style={{ marginTop: -36, marginBottom: 6 }} />
         <Gradient colors={[C.goldLight, C.gold]} angle={180} style={{ width: 82, height: 82, borderRadius: 41, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: 3, borderColor: C.goldLine, marginBottom: 12, boxShadow: `inset 0px 3px 0px rgba(255,255,255,0.6), 0px 5px 0px ${C.goldLine}, 0px 9px 16px rgba(154,98,18,0.4)` }}>
@@ -362,6 +366,7 @@ export function FogVeil() {
   if (gone) return null;
   return (
     <View
+      nativeID="fog-root"
       pointerEvents="none"
       style={[
         { position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 300, backgroundColor: 'rgba(241,228,195,0.97)' },
@@ -385,8 +390,8 @@ export function Onboarding({ onDone }) {
   const last = step === ONBOARD_STEPS.length - 1;
   const s = ONBOARD_STEPS[step];
   return (
-    <View style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 280, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 26, backgroundColor: 'rgba(35,25,12,0.55)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
-      <View key={step} style={[{ width: '100%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 30, paddingBottom: 22, borderRadius: 26, borderWidth: 4, borderColor: C.stoneDark, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(0,0,0,0.4)` }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}>
+    <View nativeID="onboarding-root" style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 280, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 26, backgroundColor: 'rgba(35,25,12,0.55)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
+      <View nativeID="onboarding-card" key={step} style={[{ width: '100%', maxWidth: 340, alignItems: 'center', paddingHorizontal: 26, paddingTop: 30, paddingBottom: 22, borderRadius: 26, borderWidth: 4, borderColor: C.stoneDark, backgroundColor: C.paperLight, boxShadow: `inset 0px 0px 0px 3px ${C.gold}, 0px 14px 34px rgba(0,0,0,0.4)` }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}>
         <IconTile name={s.icon} color={s.color} size={64} />
         <Text style={[T.displayM, { marginTop: 14, marginBottom: 10, textAlign: 'center' }]}>{s.title}</Text>
         <Text style={[T.body, { color: C.inkMuted, textAlign: 'center', marginBottom: 18 }]}>{s.body}</Text>
@@ -395,8 +400,8 @@ export function Onboarding({ onDone }) {
             <View key={i} style={{ width: i === step ? 18 : 7, height: 7, borderRadius: 4, backgroundColor: i === step ? C.gold : C.paperDeep }} />
           ))}
         </View>
-        <Btn variant="primary" block onPress={() => (last ? onDone() : setStep(step + 1))}>{last ? 'Начать' : 'Далее'}</Btn>
-        {!last ? <Btn variant="ghost" onPress={onDone} style={{ marginTop: 2 }}>Пропустить</Btn> : null}
+        <Btn nativeID="onboarding-next" variant="primary" block onPress={() => (last ? onDone() : setStep(step + 1))}>{last ? 'Начать' : 'Далее'}</Btn>
+        {!last ? <Btn nativeID="onboarding-skip" variant="ghost" onPress={onDone} style={{ marginTop: 2 }}>Пропустить</Btn> : null}
       </View>
     </View>
   );
@@ -417,22 +422,24 @@ export function MetricEditor({ metric, value, onSave, onClose }) {
   const [v, setV] = useState(Math.max(0, Math.round(value || 0)));
   return (
     <Pressable
+      nativeID="metric-edit-root"
       onPress={onClose}
       style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 280, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, backgroundColor: 'rgba(35,25,12,0.6)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}
     >
       <Pressable
+        nativeID="metric-edit-panel"
         onPress={() => {}}
         style={[{ width: '100%', maxWidth: 340, padding: 22, borderRadius: 18, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.paperWarm }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <Text style={T.displayM}>{meta.name}</Text>
-          <KitClose onPress={onClose} size={34} />
+          <KitClose nativeID="metric-edit-close" onPress={onClose} size={34} />
         </View>
         <View style={{ alignItems: 'center', gap: 10 }}>
-          <Stepper value={v} onDec={() => setV(Math.max(0, v - step))} onInc={() => setV(v + step)} suffix={isMin ? ' мин' : ' дн.'} />
+          <Stepper nativeID="metric-edit-stepper" value={v} onDec={() => setV(Math.max(0, v - step))} onInc={() => setV(v + step)} suffix={isMin ? ' мин' : ' дн.'} />
           {isMin ? <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.inkMuted }}>≈ {hoursLabel(v)}</Text> : null}
         </View>
-        <Btn variant="gold" block onPress={() => { onSave(v); onClose(); }} style={{ marginTop: 18 }}>Сохранить</Btn>
+        <Btn nativeID="metric-edit-save" variant="gold" block onPress={() => { onSave(v); onClose(); }} style={{ marginTop: 18 }}>Сохранить</Btn>
       </Pressable>
     </Pressable>
   );
@@ -444,16 +451,18 @@ export function MetricEditor({ metric, value, onSave, onClose }) {
 export function AvatarPicker({ current, onPick, onClose }) {
   return (
     <Pressable
+      nativeID="avatar-picker-root"
       onPress={onClose}
       style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 270, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, backgroundColor: 'rgba(35,25,12,0.6)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}
     >
       <Pressable
+        nativeID="avatar-picker-panel"
         onPress={() => {}}
         style={[{ width: '100%', maxWidth: 380, padding: 22, borderRadius: 18, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.paperWarm }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <Text style={T.displayM}>Выберите образ</Text>
-          <KitClose onPress={onClose} size={34} />
+          <KitClose nativeID="avatar-picker-close" onPress={onClose} size={34} />
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
           {AVATARS.map((a) => {
@@ -461,6 +470,7 @@ export function AvatarPicker({ current, onPick, onClose }) {
             return (
               <Pressable
                 key={a.id}
+                nativeID={`avatar-${a.id}`}
                 onPress={() => { onPick && onPick(a.id); onClose && onClose(); }}
                 accessibilityRole="button"
                 accessibilityLabel={'Образ ' + a.id}
@@ -482,11 +492,12 @@ export function AvatarPicker({ current, onPick, onClose }) {
    ============================================================ */
 export function HeaderMenu({ items, onClose }) {
   return (
-    <Pressable onPress={onClose} accessibilityLabel="Закрыть меню" style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 300 }}>
-      <View style={[{ position: 'absolute', right: 14, top: 56, minWidth: 214, borderWidth: 3, borderColor: C.goldLine, borderRadius: 12, backgroundColor: C.paperWarm, paddingVertical: 6, boxShadow: '0px 4px 0px rgba(20,12,0,0.28)' }, kf(KF.popIn, 0.3, { ease: EASE.overshoot })]}>
+    <Pressable nativeID="menu-root" onPress={onClose} accessibilityLabel="Закрыть меню" style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 300 }}>
+      <View nativeID="menu-panel" style={[{ position: 'absolute', right: 14, top: 56, minWidth: 214, borderWidth: 3, borderColor: C.goldLine, borderRadius: 12, backgroundColor: C.paperWarm, paddingVertical: 6, boxShadow: '0px 4px 0px rgba(20,12,0,0.28)' }, kf(KF.popIn, 0.3, { ease: EASE.overshoot })]}>
         {items.map((it) => (
           <Pressable
             key={it.key}
+            nativeID={`menu-item-${it.key}`}
             onPress={() => { onClose(); it.onPress(); }}
             accessibilityRole="button"
             accessibilityLabel={it.label}
@@ -506,13 +517,13 @@ export function HeaderMenu({ items, onClose }) {
    ============================================================ */
 export function Paywall({ onSubscribe, onClose }) {
   return (
-    <Pressable onPress={onClose} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 290, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, backgroundColor: 'rgba(35,25,12,0.6)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
-      <Pressable onPress={() => {}} style={[{ width: '100%', maxWidth: 360, padding: 22, borderRadius: 18, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.paperWarm }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}>
+    <Pressable nativeID="paywall-root" onPress={onClose} style={[{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 290, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, backgroundColor: 'rgba(35,25,12,0.6)' }, kf(KF.fadeIn, 0.3, { ease: EASE.out })]}>
+      <Pressable nativeID="paywall-panel" onPress={() => {}} style={[{ width: '100%', maxWidth: 360, padding: 22, borderRadius: 18, borderWidth: 3, borderColor: C.goldLine, backgroundColor: C.paperWarm }, kf(KF.popIn, 0.42, { ease: EASE.overshoot })]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <Text style={T.displayM}>Premium</Text><KitClose onPress={onClose} size={34} />
+          <Text style={T.displayM}>Premium</Text><KitClose nativeID="paywall-close" onPress={onClose} size={34} />
         </View>
         <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.ink, lineHeight: 28, marginBottom: 16 }}>Безлимит практик и полный трекер. Подписка через Telegram Stars — и ты поддерживаешь своего учителя.</Text>
-        <Btn variant="gold" block onPress={onSubscribe}>Оформить за Stars</Btn>
+        <Btn nativeID="paywall-subscribe" variant="gold" block onPress={onSubscribe}>Оформить за Stars</Btn>
       </Pressable>
     </Pressable>
   );
@@ -528,10 +539,10 @@ export function Toast({ message, actionLabel, onAction, onClose }) {
   }, [message]);
   return (
     <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, bottom: 92, alignItems: 'center', paddingHorizontal: 18, zIndex: 260 }}>
-      <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 14, width: '100%', maxWidth: 420, paddingVertical: 12, paddingLeft: 16, paddingRight: 12, borderRadius: 16, borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: C.paperLight, boxShadow: '0px 8px 22px rgba(40,28,12,0.4)' }, kf(KF.fadeUp, 0.4, { ease: EASE.out })]}>
+      <View nativeID="toast-root" style={[{ flexDirection: 'row', alignItems: 'center', gap: 14, width: '100%', maxWidth: 420, paddingVertical: 12, paddingLeft: 16, paddingRight: 12, borderRadius: 16, borderWidth: 2.5, borderColor: C.stoneLine, backgroundColor: C.paperLight, boxShadow: '0px 8px 22px rgba(40,28,12,0.4)' }, kf(KF.fadeUp, 0.4, { ease: EASE.out })]}>
         <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 18, lineHeight: 28, color: C.ink }}>{message}</Text>
         {actionLabel ? (
-          <Pressable onPress={onAction} hitSlop={8} accessibilityRole="button" accessibilityLabel={actionLabel}>
+          <Pressable nativeID="toast-action" onPress={onAction} hitSlop={8} accessibilityRole="button" accessibilityLabel={actionLabel}>
             <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>{actionLabel}</Text>
           </Pressable>
         ) : null}
