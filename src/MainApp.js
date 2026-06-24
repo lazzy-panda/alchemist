@@ -160,13 +160,13 @@ export function MainApp() {
 
   const Screen = SCREENS[route];
   const screen = (
-    <View key={route} style={[{ flex: 1 }, kf(KF.screenIn, 0.42, { ease: EASE.out }), game.dayState === 'spent' && WEB ? { filter: 'saturate(0.55) brightness(0.99)' } : null]}>
+    <View key={route} nativeID={'app-screen-' + route} style={[{ flex: 1 }, kf(KF.screenIn, 0.42, { ease: EASE.out }), game.dayState === 'spent' && WEB ? { filter: 'saturate(0.55) brightness(0.99)' } : null]}>
       <Screen ctx={ctx} />
     </View>
   );
 
   const overlays = (
-    <>
+    <View nativeID="app-overlays" style={{ position: 'absolute', inset: 0 }} pointerEvents="box-none">
       {detail ? <PracticeDetail practice={detail} wide={wide} onComplete={onComplete} onClose={() => setDetail(null)} onEdit={() => { const p = detail; setDetail(null); setEditor(p); }} /> : null}
       {editor !== undefined ? <EditorSheet practice={editor} wide={wide} onSave={onSave} onClose={() => setEditor(undefined)} onArchive={onArchive} onDelete={onDelete} existingNames={game.practices.filter((x) => !x.archived).map((x) => x.name)} /> : null}
       {daySheet !== null ? <DayDetailSheet day={daySheet} wide={wide} onClose={() => setDaySheet(null)} /> : null}
@@ -178,12 +178,12 @@ export function MainApp() {
       {paywall ? <Paywall onClose={() => setPaywall(false)} onSubscribe={async () => { const { data } = await supabase.functions.invoke('create-subscription-invoice', { body: { uid: auth?.user?.id } }); if (data?.link) openInvoice(data.link, () => { premium.refresh(); setPaywall(false); }); else setPaywall(false); }} /> : null}
       {menuOpen ? <HeaderMenu items={[{ key: 'teacher', icon: 'users', label: 'Кабинет учителя', onPress: () => setRoute('teacher') }]} onClose={() => setMenuOpen(false)} /> : null}
       <FogVeil />
-    </>
+    </View>
   );
 
   if (wide) {
     return (
-      <View style={{ flex: 1, flexDirection: 'row', backgroundColor: C.paper }}>
+      <View nativeID="app-root" style={{ flex: 1, flexDirection: 'row', backgroundColor: C.paper }}>
         <SideRail route={route} setRoute={setRoute} stage={game.stage} onSignOut={auth?.signOut} userName={auth?.user?.name} isTeacher={isTeacher} />
         <View style={{ flex: 1, position: 'relative' }}>
           {screen}
@@ -194,7 +194,7 @@ export function MainApp() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: C.paper }}>
+    <View nativeID="app-root" style={{ flex: 1, backgroundColor: C.paper }}>
       <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>{screen}</View>
       <BottomNav route={route} setRoute={setRoute} isTeacher={isTeacher} />
       {overlays}

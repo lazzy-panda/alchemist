@@ -37,10 +37,10 @@ function PmtRow({ badge, kind, label, value, onChange, mini, placeholder }) {
   );
 }
 
-function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChange }) {
+function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChange, slotNativeID }) {
   return (
     <>
-      <Pressable onPress={onHeaderPress} accessibilityRole="button" accessibilityLabel={`${v.n}. ${v.t}`} accessibilityState={{ expanded: isOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14 }}>
+      <Pressable nativeID={slotNativeID ? `${slotNativeID}-header` : undefined} onPress={onHeaderPress} accessibilityRole="button" accessibilityLabel={`${v.n}. ${v.t}`} accessibilityState={{ expanded: isOpen }} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14 }}>
         <GoldPill>{time}</GoldPill>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Text style={{ fontFamily: FONT.display, fontSize: 18, lineHeight: 28, color: C.ink }}>{v.n}. {v.t}</Text>
@@ -54,7 +54,7 @@ function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChan
           <PmtRow badge="＋" kind="plus" label="Плюс — доброе дело" value={c.plus} onChange={(val) => onChange('plus', val)} />
           <PmtRow badge="－" kind="minus" label="Минус — вред себе или другим" value={c.minus} onChange={(val) => onChange('minus', val)} />
           <PmtRow badge="✓" kind="todo" label="Сделать — на ближайшие часы" value={c.todo} onChange={(val) => onChange('todo', val)} />
-          <Pressable onPress={onComplete} accessibilityRole="button" accessibilityLabel={c.done ? 'Обновить' : 'Отметить'}>
+          <Pressable nativeID={slotNativeID ? `${slotNativeID}-complete` : undefined} onPress={onComplete} accessibilityRole="button" accessibilityLabel={c.done ? 'Обновить' : 'Отметить'}>
             {({ pressed }) => (
               <Gradient colors={c.done ? ['#48433a', '#36322b'] : [C.jadeLight, C.jade]} angle={180} style={{ marginTop: 12, paddingVertical: 11, borderRadius: 8, alignItems: 'center', borderWidth: 2.5, borderColor: c.done ? '#5a5346' : C.jadeLine, transform: pressed ? [{ translateY: 2 }] : [] }}>
                 <Text style={{ fontFamily: FONT.display, fontSize: 18, color: '#fff' }}>{c.done ? '✓ Обновить' : 'Отметить'}</Text>
@@ -67,11 +67,11 @@ function DiaryCheckInner({ v, c, isOpen, onHeaderPress, onComplete, time, onChan
   );
 }
 
-function DiaryCheck({ v, c, isOpen, onHeaderPress, onComplete, time, onChange, refSet }) {
+function DiaryCheck({ v, c, isOpen, onHeaderPress, onComplete, time, onChange, refSet, nativeID }) {
   return (
-    <View ref={refSet}>
+    <View nativeID={nativeID} ref={refSet}>
       <Card frame="grey">
-        <DiaryCheckInner v={v} c={c} isOpen={isOpen} onHeaderPress={onHeaderPress} onComplete={onComplete} time={time} onChange={onChange} />
+        <DiaryCheckInner v={v} c={c} isOpen={isOpen} onHeaderPress={onHeaderPress} onComplete={onComplete} time={time} onChange={onChange} slotNativeID={nativeID} />
       </Card>
     </View>
   );
@@ -152,7 +152,7 @@ export function DiaryScreen({ ctx }) {
   };
 
   return (
-    <ScreenScroll>
+    <ScreenScroll nativeID="screen-diary">
       <PadView wide={wide}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <View style={{ flex: 1 }}>
@@ -173,14 +173,14 @@ export function DiaryScreen({ ctx }) {
         ) : null}
 
         {/* set chooser */}
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+        <View nativeID="diary-set-chooser" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
           {Object.keys(SETS).map((k) => (
-            <SelChip key={k} on={setKey === k} color={SETS[k].color} icon={SETS[k].icon} label={SETS[k].name} onPress={() => chooseSet(k)} />
+            <SelChip nativeID={`diary-set-${k}`} key={k} on={setKey === k} color={SETS[k].color} icon={SETS[k].icon} label={SETS[k].name} onPress={() => chooseSet(k)} />
           ))}
         </View>
 
         {/* progress */}
-        <Card frame="grey" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+        <Card nativeID="diary-progress" frame="grey" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
           <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.ink }}>{doneCount} <Text style={{ color: C.inkFaint }}>из 6 проверок</Text></Text>
           <View style={{ flex: 1, flexDirection: 'row', gap: 7, justifyContent: 'flex-end' }}>
             {data.checks.map((c, i) => <CheckDot key={i} on={c.done} />)}
@@ -188,9 +188,10 @@ export function DiaryScreen({ ctx }) {
         </Card>
 
         {/* checks */}
-        <View style={{ gap: 12 }}>
+        <View nativeID="diary-checks" style={{ gap: 12 }}>
           {todays.map((v, i) => (
             <DiaryCheck
+              nativeID={`diary-check-${i}`}
               key={i}
               refSet={(el) => (refs.current[i] = el)}
               v={v}
@@ -205,14 +206,14 @@ export function DiaryScreen({ ctx }) {
         </View>
 
         {/* day totals */}
-        <SectionHead title="Итоги дня" />
-        <Card frame="grey">
+        <SectionHead nativeID="diary-totals" title="Итоги дня" />
+        <Card nativeID="diary-totals-card" frame="grey">
           <Text style={[T.label, { color: C.jadeLight, marginBottom: 8 }]}>Три лучших дела</Text>
           {data.best.map((v, i) => <PmtRow key={'b' + i} badge="＋" kind="plus" mini value={v} onChange={(val) => updList('best', i, val)} placeholder={'Лучшее №' + (i + 1)} />)}
           <Text style={[T.label, { color: C.red, marginTop: 14, marginBottom: 8 }]}>Три худших дела</Text>
           {data.worst.map((v, i) => <PmtRow key={'w' + i} badge="－" kind="minus" mini value={v} onChange={(val) => updList('worst', i, val)} placeholder={'Худшее №' + (i + 1)} />)}
           <Text style={[T.label, { marginTop: 14, marginBottom: 8 }]}>🌙 Заметка о медитации</Text>
-          <DiaryInput value={data.note} onChangeText={(val) => setData((d) => ({ ...d, note: val }))} placeholder="Как прошла медитация, что вы заметили…" multiline numberOfLines={2} style={{ minHeight: 56, textAlignVertical: 'top' }} />
+          <DiaryInput nativeID="diary-note" value={data.note} onChangeText={(val) => setData((d) => ({ ...d, note: val }))} placeholder="Как прошла медитация, что вы заметили…" multiline numberOfLines={2} style={{ minHeight: 56, textAlignVertical: 'top' }} />
         </Card>
 
         <Text style={[T.caption, { textAlign: 'center', marginTop: 18, fontStyle: 'italic', lineHeight: 28 }]}>
