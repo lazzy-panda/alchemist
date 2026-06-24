@@ -166,7 +166,7 @@ export function MainApp() {
   );
 
   const overlays = (
-    <View nativeID="app-overlays" style={{ position: 'absolute', inset: 0 }} pointerEvents="box-none">
+    <View nativeID="app-overlays" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} pointerEvents="box-none">
       {detail ? <PracticeDetail practice={detail} wide={wide} onComplete={onComplete} onClose={() => setDetail(null)} onEdit={() => { const p = detail; setDetail(null); setEditor(p); }} /> : null}
       {editor !== undefined ? <EditorSheet practice={editor} wide={wide} onSave={onSave} onClose={() => setEditor(undefined)} onArchive={onArchive} onDelete={onDelete} existingNames={game.practices.filter((x) => !x.archived).map((x) => x.name)} /> : null}
       {daySheet !== null ? <DayDetailSheet day={daySheet} wide={wide} onClose={() => setDaySheet(null)} /> : null}
