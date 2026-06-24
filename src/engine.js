@@ -43,6 +43,7 @@ export function useGame(userId) {
   const AVATAR_KEY = 'alchemist_avatar_' + (userId || 'anon');
   const hydratedKey = useRef(null);
   const cloudTimer = useRef(null);
+  const latestSnap = useRef(null); // newest game snapshot — for an immediate flush on app hide/close
   const stateRef = useRef({});
   stateRef.current = { practices, dayStamp, streak };
   // apply a loaded snapshot AND bake in the 03:00 daily rollover deterministically (no effect-timing
@@ -95,12 +96,33 @@ export function useGame(userId) {
   useEffect(() => {
     if (hydratedKey.current !== KEY) return; // don't persist until this key is hydrated
     const snap = { practices, statLevels, resources, stage, timeMin, streak, dayStamp };
+    latestSnap.current = snap;
     AsyncStorage.setItem(KEY, JSON.stringify(snap)).catch(() => {});
     if (userId) {
       clearTimeout(cloudTimer.current);
       cloudTimer.current = setTimeout(() => saveUserField(userId, 'game', snap), 600); // debounce cloud writes
     }
   }, [practices, statLevels, resources, stage, timeMin, streak, dayStamp, KEY]);
+
+  // Flush the debounced cloud save when the app is hidden/closed (Telegram Mini App close, tab switch,
+  // reload). Without this, the user's LAST action before closing — typically ticking practices, which
+  // bumps the accumulated time — fell inside the 600ms debounce window and was dropped, so the all-time
+  // med/qi totals appeared to reset each session while structure (saved earlier) persisted.
+  useEffect(() => {
+    if (!userId) return;
+    const flush = () => {
+      if (hydratedKey.current !== KEY || !latestSnap.current) return;
+      clearTimeout(cloudTimer.current);
+      saveUserField(userId, 'game', latestSnap.current);
+    };
+    const onVis = () => { if (typeof document !== 'undefined' && document.visibilityState === 'hidden') flush(); };
+    if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onVis);
+    if (typeof window !== 'undefined') window.addEventListener('pagehide', flush);
+    return () => {
+      if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', onVis);
+      if (typeof window !== 'undefined') window.removeEventListener('pagehide', flush);
+    };
+  }, [userId, KEY]);
 
   // daily rollover at 03:00: evaluate prev-day 80% → streak, clear checkboxes, advance dayStamp
   const maybeRollover = useCallback(() => {
