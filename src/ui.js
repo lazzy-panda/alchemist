@@ -77,9 +77,9 @@ export function Han({ style, children, ...rest }) {
   );
 }
 
-export function SectionHead({ title, right, style }) {
+export function SectionHead({ title, right, style, nativeID }) {
   return (
-    <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 26, marginBottom: 13, marginHorizontal: 2 }, style]}>
+    <View nativeID={nativeID} style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 26, marginBottom: 13, marginHorizontal: 2 }, style]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Text style={{ fontSize: 16, color: C.gold }}>◆</Text>
         <Text accessibilityRole="header" style={{ fontFamily: FONT.display, fontSize: 22, textTransform: 'uppercase', color: C.title }}>{title}</Text>
@@ -90,8 +90,8 @@ export function SectionHead({ title, right, style }) {
 }
 
 /* ---------- card (real kit parchment texture) ---------- */
-export function Card({ style, children, warm, frame = 'grey', ...rest }) {
-  return <KitPanel frame={frame} style={style}>{children}</KitPanel>;
+export function Card({ style, children, warm, frame = 'grey', nativeID, ...rest }) {
+  return <KitPanel frame={frame} style={style} nativeID={nativeID}>{children}</KitPanel>;
 }
 
 /* ---------- buttons — glossy candy ---------- */
@@ -118,11 +118,12 @@ const BTN_VARIANTS = {
   },
 };
 
-export function Btn({ variant = 'primary', onPress, children, style, textStyle, block, disabled, accessibilityLabel }) {
+export function Btn({ variant = 'primary', onPress, children, style, textStyle, block, disabled, accessibilityLabel, nativeID }) {
   const a11yLabel = accessibilityLabel || (typeof children === 'string' ? children : undefined);
   if (variant === 'ghost') {
     return (
       <Pressable
+        nativeID={nativeID}
         onPress={disabled ? undefined : onPress}
         disabled={disabled}
         accessibilityRole="button"
@@ -141,7 +142,7 @@ export function Btn({ variant = 'primary', onPress, children, style, textStyle, 
   }
   // every non-ghost variant renders as a native rpgui-button (secondary = the grey stock button)
   return (
-    <KitButton variant={variant} onPress={onPress} block={block} style={style} textStyle={textStyle} disabled={disabled} accessibilityLabel={a11yLabel}>
+    <KitButton variant={variant} onPress={onPress} block={block} style={style} textStyle={textStyle} disabled={disabled} accessibilityLabel={a11yLabel} nativeID={nativeID}>
       {children}
     </KitButton>
   );

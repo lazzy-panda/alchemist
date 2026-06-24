@@ -31,7 +31,7 @@ export function BottomNav({ route, setRoute, isTeacher }) {
       {items.map((n) => {
         const on = route === n.key;
         return (
-          <Pressable key={n.key} onPress={() => setRoute(n.key)} accessibilityRole="button" accessibilityLabel={n.label} accessibilityState={{ selected: on }} style={{ flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'flex-end' }}>
+          <Pressable key={n.key} nativeID={'nav-tab-' + n.key} onPress={() => setRoute(n.key)} accessibilityRole="button" accessibilityLabel={n.label} accessibilityState={{ selected: on }} style={{ flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'flex-end' }}>
             <View
               style={[
                 // transparent 2px border on every item keeps sizing stable between states
@@ -61,7 +61,7 @@ export function SideRail({ route, setRoute, stage, onSignOut, userName, isTeache
       {items.map((n) => {
         const on = route === n.key;
         return (
-          <Pressable key={n.key} onPress={() => setRoute(n.key)} accessibilityRole="button" accessibilityLabel={n.label} accessibilityState={{ selected: on }} style={{ flexDirection: 'row', alignItems: 'center', gap: 11, paddingVertical: 10, paddingHorizontal: 11, marginBottom: 4, borderRadius: 6, minHeight: 44, borderWidth: 2, borderColor: on ? C.goldLine : 'transparent', backgroundColor: on ? C.frameGoldBg : 'transparent' }}>
+          <Pressable key={n.key} nativeID={'nav-tab-' + n.key} onPress={() => setRoute(n.key)} accessibilityRole="button" accessibilityLabel={n.label} accessibilityState={{ selected: on }} style={{ flexDirection: 'row', alignItems: 'center', gap: 11, paddingVertical: 10, paddingHorizontal: 11, marginBottom: 4, borderRadius: 6, minHeight: 44, borderWidth: 2, borderColor: on ? C.goldLine : 'transparent', backgroundColor: on ? C.frameGoldBg : 'transparent' }}>
             <NavIcon name={n.key} size={20} on={on} />
             <Text style={{ fontFamily: FONT.display, fontSize: 18, color: on ? C.gold : C.inkMuted }}>{n.label}</Text>
           </Pressable>

@@ -74,7 +74,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
 
   const inner = (
     <View ref={cardRef} style={[{ position: 'relative' }, active ? kf(KF.breathe, 3.2, { ease: EASE.soft, iter: 'infinite' }) : null, shake ? kf(KF.shakeNo, 0.42, { ease: EASE.soft }) : null]}>
-      <Pressable onPress={() => onOpen && onOpen(p)} disabled={locked} accessibilityRole="button" accessibilityLabel={p.name + (locked ? ', заблокировано' : '')}>
+      <Pressable nativeID={'practice-card-' + p.id} onPress={() => onOpen && onOpen(p)} disabled={locked} accessibilityRole="button" accessibilityLabel={p.name + (locked ? ', заблокировано' : '')}>
         <CardBase
           done={p.done}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingRight: 56, opacity: locked ? 0.6 : 1 }}
@@ -98,7 +98,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
         </View>
       ) : (
         <View ref={checkRef} style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
-          <Pressable onPress={handleCheck} hitSlop={8} accessibilityRole="button" accessibilityState={{ checked: !!p.done }} accessibilityLabel={(p.done ? 'Отменить: ' : 'Выполнить: ') + p.name}>
+          <Pressable nativeID={'practice-check-' + p.id} onPress={handleCheck} hitSlop={8} accessibilityRole="button" accessibilityState={{ checked: !!p.done }} accessibilityLabel={(p.done ? 'Отменить: ' : 'Выполнить: ') + p.name}>
             {({ pressed }) => <KitCheckbox on={p.done} size={30} style={pressed ? { transform: [{ scale: 1.1 }] } : null} />}
           </Pressable>
         </View>

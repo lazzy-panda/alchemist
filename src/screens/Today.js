@@ -69,41 +69,41 @@ export function TodayScreen({ ctx }) {
   const streakMilestone = streak >= 7 && streak % 7 === 0;
 
   return (
-    <ScreenScroll>
+    <ScreenScroll nativeID="screen-today">
       {/* hero */}
-      <Gradient colors={[C.heroBg, C.railBg]} angle={180} style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.paperDeep }}>
+      <Gradient nativeID="today-hero" colors={[C.heroBg, C.railBg]} angle={180} style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.paperDeep }}>
         <View style={[{ position: 'relative' }, wide ? { width: '100%', maxWidth: WIDE_MAX, alignSelf: 'center' } : null]}>
           <View style={{ position: 'absolute', right: 0, top: 2, flexDirection: 'row', alignItems: 'center', gap: 8, zIndex: 3 }}>
             {onMenu ? (
-              <Pressable onPress={onMenu} hitSlop={10} accessibilityRole="button" accessibilityLabel="Меню" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
+              <Pressable nativeID="today-menu" onPress={onMenu} hitSlop={10} accessibilityRole="button" accessibilityLabel="Меню" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
                 <PixelIcon name="menu" size={15} color={C.inkMuted} />
               </Pressable>
             ) : null}
             {onShowHelp ? (
-              <Pressable onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
+              <Pressable nativeID="today-help" onPress={onShowHelp} hitSlop={10} accessibilityRole="button" accessibilityLabel="Как это работает" style={{ width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: C.stoneMid, backgroundColor: C.paperWarm, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontFamily: FONT.display, fontSize: 26, color: C.inkMuted }}>?</Text>
               </Pressable>
             ) : null}
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, zIndex: 2 }}>
-            <Avatar flow={dayState === 'flow'} size={144} avatar={avatar} onPress={onAvatar} />
+            <Avatar nativeID="today-avatar" flow={dayState === 'flow'} size={144} avatar={avatar} onPress={onAvatar} />
             <View style={{ flex: 1, paddingTop: 2, paddingRight: 12 }}>
               <Text accessibilityRole="header" style={[T.displayM]}>{greeting()},{'\n'}{name}</Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 8, marginTop: 16, zIndex: 2 }}>
-            <MetricChip icon={CATS.med.icon} color={CATS.med.color} value={hoursLabel(timeMin.med)} accessibilityLabel="Часы медитации" onPress={() => onEditMetric && onEditMetric('med')} />
-            <MetricChip icon={CATS.qi.icon} color={CATS.qi.color} value={hoursLabel(timeMin.qi)} accessibilityLabel="Часы цигун" onPress={() => onEditMetric && onEditMetric('qi')} />
-            <MetricChip icon="trending-up" color={C.gold} value={`${streak} дн.`} accessibilityLabel="Страйк 80 процентов" onPress={() => onEditMetric && onEditMetric('streak')} />
+            <MetricChip nativeID="today-chip-med" icon={CATS.med.icon} color={CATS.med.color} value={hoursLabel(timeMin.med)} accessibilityLabel="Часы медитации" onPress={() => onEditMetric && onEditMetric('med')} />
+            <MetricChip nativeID="today-chip-qi" icon={CATS.qi.icon} color={CATS.qi.color} value={hoursLabel(timeMin.qi)} accessibilityLabel="Часы цигун" onPress={() => onEditMetric && onEditMetric('qi')} />
+            <MetricChip nativeID="today-chip-streak" icon="trending-up" color={C.gold} value={`${streak} дн.`} accessibilityLabel="Страйк 80 процентов" onPress={() => onEditMetric && onEditMetric('streak')} />
           </View>
           <View style={{ marginTop: 14, zIndex: 2 }}>
-            <WillBar done={done.length} total={today.length} />
+            <WillBar nativeID="today-will" done={done.length} total={today.length} />
           </View>
         </View>
       </Gradient>
 
       {/* summary ribbon */}
-      <View style={{ backgroundColor: C.paperWarm }}>
+      <View nativeID="today-summary" style={{ backgroundColor: C.paperWarm }}>
         <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 18, paddingVertical: 12 }, wide ? { maxWidth: WIDE_MAX, width: '100%', alignSelf: 'center' } : null]}>
           <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.ink }}>{done.length} <Text style={{ color: C.inkFaint }}>из {today.length}</Text></Text>
           <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>+{dayXp} XP</Text>
@@ -123,7 +123,7 @@ export function TodayScreen({ ctx }) {
         {today.length === 0 ? <EmptyDay onAdd={onAdd} /> : allDone ? <AllDoneState dayXp={dayXp} /> : null}
 
         {!allDone && pending.length > 0 && pending.length <= 2 ? (
-          <Btn variant="primary" block onPress={onCompleteAll} style={{ marginBottom: 12 }}>{`✦ Выполнить всё (${pending.length})`}</Btn>
+          <Btn nativeID="today-complete-all" variant="primary" block onPress={onCompleteAll} style={{ marginBottom: 12 }}>{`✦ Выполнить всё (${pending.length})`}</Btn>
         ) : null}
 
         <DragList
@@ -134,7 +134,7 @@ export function TodayScreen({ ctx }) {
           onReorder={reorderPractices}
         />
 
-        <Btn variant="ghost" block onPress={onAdd} style={{ marginTop: 14, minHeight: 44 }}>+ Добавить практику</Btn>
+        <Btn nativeID="today-add-practice" variant="ghost" block onPress={onAdd} style={{ marginTop: 14, minHeight: 44 }}>+ Добавить практику</Btn>
       </PadView>
     </ScreenScroll>
   );

@@ -6,9 +6,10 @@ import { C } from './theme';
 // comfortable single-column reading width on desktop (shared by PadView + full-bleed banners)
 export const WIDE_MAX = 760;
 
-export function ScreenScroll({ children, style, contentStyle }) {
+export function ScreenScroll({ children, style, contentStyle, nativeID }) {
   return (
     <ScrollView
+      nativeID={nativeID}
       style={[{ flex: 1, backgroundColor: C.paper }, style]}
       contentContainerStyle={contentStyle}
       showsVerticalScrollIndicator={false}
@@ -18,9 +19,10 @@ export function ScreenScroll({ children, style, contentStyle }) {
   );
 }
 
-export function PadView({ wide, children, style }) {
+export function PadView({ wide, children, style, nativeID }) {
   return (
     <View
+      nativeID={nativeID}
       style={[
         wide
           ? { paddingHorizontal: 20, paddingTop: 28, paddingBottom: 40, maxWidth: WIDE_MAX, width: '100%', alignSelf: 'center' }

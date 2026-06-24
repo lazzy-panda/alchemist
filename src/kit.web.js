@@ -71,12 +71,13 @@ export function NineSlice({ style, children, frame }) {
 }
 
 /* ---- candy button → rpgui-button ---- */
-export function KitButton({ variant = 'primary', onPress, children, block, style, textStyle, disabled, accessibilityLabel }) {
+export function KitButton({ variant = 'primary', onPress, children, block, style, textStyle, disabled, accessibilityLabel, nativeID }) {
   // golden end-caps (:before/:after) bleed on small inline buttons → golden only for full-width CTAs
   const golden = (variant === 'primary' || variant === 'gold') && block;
   return h(
     'button',
     {
+      id: nativeID,
       className: 'rpgui-button' + (golden ? ' golden' : ''),
       disabled: !!disabled,
       onClick: disabled ? undefined : onPress,
@@ -88,27 +89,27 @@ export function KitButton({ variant = 'primary', onPress, children, block, style
 }
 
 /* ---- framed container / panel ---- */
-export function KitPanel({ style, children, contentStyle, frame = 'golden' }) {
+export function KitPanel({ style, children, contentStyle, frame = 'golden', nativeID }) {
   const cls = 'rpgui-container ' + (frame === 'grey' ? 'framed-grey' : frame === 'plain' ? 'framed' : 'framed-golden');
-  return h('div', { className: cls, style: [FLEX_COL, style] }, contentStyle ? h('div', { style: [FLEX_COL, contentStyle] }, children) : children);
+  return h('div', { id: nativeID, className: cls, style: [FLEX_COL, style] }, contentStyle ? h('div', { style: [FLEX_COL, contentStyle] }, children) : children);
 }
 
 /* ---- close button ---- */
-export function KitClose({ onPress, size = 34, style }) {
+export function KitClose({ onPress, size = 34, style, nativeID }) {
   return h(
     'button',
-    { className: 'rpgui-button', onClick: onPress, 'aria-label': 'Закрыть', style: [{ margin: 0, minWidth: size + 14, padding: '0 8px' }, style] },
+    { id: nativeID, className: 'rpgui-button', onClick: onPress, 'aria-label': 'Закрыть', style: [{ margin: 0, minWidth: size + 14, padding: '0 8px' }, style] },
     h('p', { style: { margin: 0 } }, '✕')
   );
 }
 
 /* ---- progress bar (exact RPGUI structure: container > track > fill + edges) ---- */
-export function KitBar({ pct, color = 'green', height, style }) {
+export function KitBar({ pct, color = 'green', height, style, nativeID }) {
   const cc = barColor(color);
   const w = Math.max(0, Math.min(100, pct || 0));
   return h(
     'div',
-    { className: 'rpgui-progress' + (cc ? ' ' + cc : ''), style },
+    { id: nativeID, className: 'rpgui-progress' + (cc ? ' ' + cc : ''), style },
     h('div', { className: 'rpgui-progress-track' }, h('div', { className: 'rpgui-progress-fill' + (cc ? ' ' + cc : ''), style: { left: 0, width: w + '%' } })),
     h('div', { className: 'rpgui-progress-left-edge' }),
     h('div', { className: 'rpgui-progress-right-edge' })
@@ -116,8 +117,9 @@ export function KitBar({ pct, color = 'green', height, style }) {
 }
 
 /* ---- genuine RPGUI checkbox (golden sprite) ---- */
-export function KitCheckbox({ on, size = 28, style }) {
+export function KitCheckbox({ on, size = 28, style, nativeID }) {
   return h('img', {
+    id: nativeID,
     src: srcUri(on ? CHECKBOX_ON : CHECKBOX_OFF),
     alt: on ? 'checked' : 'unchecked',
     draggable: false,

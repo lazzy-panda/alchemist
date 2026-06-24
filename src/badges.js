@@ -66,10 +66,10 @@ export function ResourceBar({ kind, label, value, max, glow }) {
 }
 
 /* ---------- "Воля" — single gold bar = % of today's practices done ---------- */
-export function WillBar({ done = 0, total = 0 }) {
+export function WillBar({ done = 0, total = 0, nativeID }) {
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   return (
-    <View style={{ gap: 6 }}>
+    <View nativeID={nativeID} style={{ gap: 6 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>Воля</Text>
         <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.inkMuted }}>{done} / {total} · {pct}%</Text>
@@ -101,16 +101,16 @@ export function StateChip({ state, text, gold }) {
 }
 
 /* ---------- header metric chip (icon + value, tappable to edit) ---------- */
-export function MetricChip({ icon, color, value, onPress, accessibilityLabel }) {
+export function MetricChip({ icon, color, value, onPress, accessibilityLabel, nativeID }) {
   const inner = (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, paddingVertical: 7, paddingHorizontal: 8, borderRadius: 6, borderWidth: 2, borderColor: C.goldLine, backgroundColor: C.frameDark }}>
       <PixelIcon name={icon} size={18} color={color} />
       <Text numberOfLines={1} style={{ fontFamily: FONT.display, fontSize: 17, color: C.ink }}>{value}</Text>
     </View>
   );
-  if (!onPress) return <View style={{ flex: 1, minWidth: 0 }}>{inner}</View>;
+  if (!onPress) return <View nativeID={nativeID} style={{ flex: 1, minWidth: 0 }}>{inner}</View>;
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibilityLabel} style={{ flex: 1, minWidth: 0 }}>
+    <Pressable nativeID={nativeID} onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibilityLabel} style={{ flex: 1, minWidth: 0 }}>
       {inner}
     </Pressable>
   );
@@ -131,10 +131,10 @@ export function AvatarArt({ av, size = 88, style }) {
 }
 
 /* ---------- avatar — chosen pixel portrait + stage badge (tappable to change) ---------- */
-export function Avatar({ flow, size = 96, stage, avatar, onPress }) {
+export function Avatar({ flow, size = 96, stage, avatar, onPress, nativeID }) {
   const av = AVATAR_BY_ID[avatar] || AVATARS[0];
   const inner = (
-    <View style={{ width: size, height: size, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
+    <View nativeID={onPress ? undefined : nativeID} style={{ width: size, height: size, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
       <AvatarArt av={av} size={size} style={{ borderRadius: 8, borderWidth: 3 }} />
       {stage != null ? (
         <View pointerEvents="none" style={{ position: 'absolute', right: -3, bottom: -3, minWidth: 22, height: 20, paddingHorizontal: 5, backgroundColor: C.gold, borderWidth: 2, borderColor: C.goldLine, alignItems: 'center', justifyContent: 'center' }}>
@@ -145,7 +145,7 @@ export function Avatar({ flow, size = 96, stage, avatar, onPress }) {
   );
   if (!onPress) return inner;
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel="Сменить образ">
+    <Pressable nativeID={nativeID} onPress={onPress} accessibilityRole="button" accessibilityLabel="Сменить образ">
       {inner}
     </Pressable>
   );
