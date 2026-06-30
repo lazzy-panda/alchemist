@@ -18,6 +18,19 @@ export function todayCounts(practices) {
   return { done: today.filter((p) => p.done).length, total: today.length };
 }
 
+// Normalize a loaded practices snapshot before it ever renders:
+//  • remap the retired 'zhan' (Стояние) category to 'qi' (Цигун) for legacy saves
+//  • drop orphaned seeds — the old library-only practices that carry no `today` flag and were
+//    never user- or teacher-made. With the Библиотека screen unwired they appear on no screen,
+//    yet still populated the duplicate-name guard and the Character feeders. Keep everything the
+//    user can actually reach: today's plan, the archive, and anything they or their teacher made.
+export function migratePractices(practices) {
+  if (!Array.isArray(practices)) return null;
+  return practices
+    .map((p) => (p.cat === 'zhan' ? { ...p, cat: 'qi' } : p))
+    .filter((p) => p.today || p.archived || p.custom || p.fromTeacher);
+}
+
 // practice-day index that flips at local 03:00 (checkboxes reset at 3am, not midnight)
 function practiceDay() {
   const t = new Date(Date.now() - 3 * 3600e3);
@@ -31,7 +44,7 @@ export function useGame(userId) {
   const [resources, setResources] = useState({ hp: 86, hpMax: 100, qi: 64, qiMax: 100 });
   const [stage, setStage] = useState({ lvl: 8, xp: 60, next: 100 });
   const [timeMin, setTimeMin] = useState({ med: 0, qi: 0 }); // accumulated practice minutes per category
-  const [streak, setStreak] = useState(0); // consecutive days with >=80% of the day's practices done
+  const [streak, setStreak] = useState(0); // consecutive days with >=85% of the day's practices done
   const [dayStamp, setDayStamp] = useState(null); // practice-day index the `done` flags belong to
   const [levelUp, setLevelUp] = useState(null);
   const [lastArchived, setLastArchived] = useState(null);
@@ -52,8 +65,7 @@ export function useGame(userId) {
   const applyGame = (s) => {
     if (!s) return;
     const cur = practiceDay();
-    // migrate the removed 'zhan' (Стояние) category into 'qi' (Цигун) for legacy saves
-    let ps = Array.isArray(s.practices) ? s.practices.map((p) => (p.cat === 'zhan' ? { ...p, cat: 'qi' } : p)) : null;
+    let ps = migratePractices(s.practices);
     let stamp = typeof s.dayStamp === 'number' ? s.dayStamp : null;
     let strk = typeof s.streak === 'number' ? s.streak : 0;
     const crossed = stamp == null || cur > stamp; // legacy (no stamp) OR a new day → reset checkboxes
@@ -61,7 +73,7 @@ export function useGame(userId) {
       if (stamp != null) {
         const td = ps.filter((p) => p.today && !p.archived);
         const pct = td.length ? td.filter((p) => p.done).length / td.length : 0;
-        strk = pct >= 0.8 ? (cur - stamp === 1 ? strk + 1 : 1) : 0;
+        strk = pct >= 0.85 ? (cur - stamp === 1 ? strk + 1 : 1) : 0;
       }
       ps = ps.map((p) => (p.done ? { ...p, done: false } : p));
     }
@@ -124,7 +136,7 @@ export function useGame(userId) {
     };
   }, [userId, KEY]);
 
-  // daily rollover at 03:00: evaluate prev-day 80% → streak, clear checkboxes, advance dayStamp
+  // daily rollover at 03:00: evaluate prev-day 85% → streak, clear checkboxes, advance dayStamp
   const maybeRollover = useCallback(() => {
     const cur = practiceDay();
     const { practices: ps, dayStamp: prevStamp } = stateRef.current;
@@ -133,7 +145,7 @@ export function useGame(userId) {
     const todayP = (ps || []).filter((p) => p.today && !p.archived);
     const pct = todayP.length ? todayP.filter((p) => p.done).length / todayP.length : 0;
     stateRef.current.dayStamp = cur; // guard re-entrancy before the re-render lands
-    setStreak((s) => (pct >= 0.8 ? (cur - prevStamp === 1 ? s + 1 : 1) : 0));
+    setStreak((s) => (pct >= 0.85 ? (cur - prevStamp === 1 ? s + 1 : 1) : 0));
     setPractices((arr) => arr.map((p) => (p.done ? { ...p, done: false } : p)));
     setDayStamp(cur);
   }, []);

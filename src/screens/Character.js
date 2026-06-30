@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { C, FONT } from '../theme';
-import { STATS, CATS, PRACTICES, PERKS, RELICS } from '../data';
+import { STATS, CATS, PERKS, RELICS } from '../data';
 import { ScreenScroll, PadView } from '../layout';
 import { Card, T, kf, KF, EASE } from '../ui';
 import { ResourceBar, StatMedal, Bar, Mh } from '../badges';
@@ -28,8 +28,8 @@ function Section({ title, right, defaultOpen = false, nativeID, children }) {
   );
 }
 
-function StatRow({ s, sl, open, onToggle, last, nativeID }) {
-  const feeders = PRACTICES.filter((p) => (p.r || {})[s.key]).slice(0, 4);
+function StatRow({ s, sl, open, onToggle, last, nativeID, practices }) {
+  const feeders = (practices || []).filter((p) => !p.archived && (p.r || {})[s.key]).slice(0, 4);
   return (
     <View style={{ borderBottomWidth: last ? 0 : 1, borderBottomColor: 'rgba(255,255,255,0.08)' }}>
       <Pressable nativeID={nativeID} onPress={onToggle} accessibilityRole="button" accessibilityLabel={s.name} accessibilityHint="Показать практики, что её развивают" accessibilityState={{ expanded: open }} style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 12 }, pressed && { backgroundColor: 'rgba(255,255,255,0.05)' }]}>
@@ -49,7 +49,7 @@ function StatRow({ s, sl, open, onToggle, last, nativeID }) {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {feeders.map((f) => (
               <View key={f.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 5, paddingLeft: 5, paddingRight: 10, borderRadius: 6, borderWidth: 2, borderColor: s.color, backgroundColor: 'rgba(255,255,255,0.05)' }}>
-                <Mh size={18} icon={CATS[f.cat].icon} color={CATS[f.cat].color} />
+                <Mh size={18} icon={(CATS[f.cat] || {}).icon || 'flag'} color={(CATS[f.cat] || {}).color || C.inkMuted} />
                 <Text style={{ fontFamily: FONT.display, fontSize: 16, color: s.color }}>{f.name}</Text>
               </View>
             ))}
@@ -61,7 +61,7 @@ function StatRow({ s, sl, open, onToggle, last, nativeID }) {
 }
 
 export function CharacterScreen({ ctx }) {
-  const { statLevels, resources, wide, onShowHelp, onSignOut, userName, goRoute } = ctx;
+  const { statLevels, resources, wide, onShowHelp, onSignOut, userName, goRoute, practices } = ctx;
   const [expanded, setExpanded] = useState(null);
   const radarValues = {};
   STATS.forEach((s) => {
@@ -106,7 +106,7 @@ export function CharacterScreen({ ctx }) {
         <Section nativeID="character-section-stats" title="Характеристики" defaultOpen>
           <Card nativeID="character-stats" style={{ overflow: 'hidden' }}>
             {STATS.map((s, i) => (
-              <StatRow nativeID={`character-stat-${s.key}`} key={s.key} s={s} sl={statLevels[s.key] || { lvl: 1, xp: 0, next: 100 }} open={expanded === s.key} onToggle={() => setExpanded(expanded === s.key ? null : s.key)} last={i === STATS.length - 1} />
+              <StatRow nativeID={`character-stat-${s.key}`} key={s.key} s={s} sl={statLevels[s.key] || { lvl: 1, xp: 0, next: 100 }} open={expanded === s.key} onToggle={() => setExpanded(expanded === s.key ? null : s.key)} last={i === STATS.length - 1} practices={practices} />
             ))}
           </Card>
         </Section>
