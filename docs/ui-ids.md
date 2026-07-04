@@ -25,7 +25,7 @@ are also clickable selectors (verified: `#nav-tab-character`, `#today-add-practi
 
 ## Today (`screen-today`)
 - `today-hero` · `today-avatar` · `today-menu` (☰) · `today-help` (?)
-- `today-chip-med` · `today-chip-qi` · `today-chip-streak` — the three header metric chips
+- `today-chip-med` · `today-chip-qi` · `today-chip-know` · `today-chip-body` · `today-chip-streak` — the five header metric chips
 - `today-will` — the «Воля» bar · `today-summary` — the «N из M / +XP» ribbon
 - `today-complete-all` — «Выполнить всё» · `today-add-practice` — «+ Добавить практику»
 - `practice-card-<practiceId>` — a practice row · `practice-check-<practiceId>` — its checkbox

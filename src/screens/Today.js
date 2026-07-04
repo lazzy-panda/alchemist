@@ -91,10 +91,12 @@ export function TodayScreen({ ctx }) {
               <Text accessibilityRole="header" style={[T.displayM]}>{greeting()},{'\n'}{name}</Text>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 8, marginTop: 16, zIndex: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 6, marginTop: 16, zIndex: 2 }}>
             <MetricChip nativeID="today-chip-med" icon={CATS.med.icon} color={CATS.med.color} value={hoursLabel(timeMin.med)} accessibilityLabel="Часы медитации" onPress={() => onEditMetric && onEditMetric('med')} />
             <MetricChip nativeID="today-chip-qi" icon={CATS.qi.icon} color={CATS.qi.color} value={hoursLabel(timeMin.qi)} accessibilityLabel="Часы цигун" onPress={() => onEditMetric && onEditMetric('qi')} />
-            <MetricChip nativeID="today-chip-streak" icon="trending-up" color={C.gold} value={`${streak} дн.`} accessibilityLabel="Страйк 80 процентов" onPress={() => onEditMetric && onEditMetric('streak')} />
+            <MetricChip nativeID="today-chip-know" icon={CATS.know.icon} color={CATS.know.color} value={hoursLabel(timeMin.know)} accessibilityLabel="Часы знания" onPress={() => onEditMetric && onEditMetric('know')} />
+            <MetricChip nativeID="today-chip-body" icon={CATS.body.icon} color={CATS.body.color} value={hoursLabel(timeMin.body)} accessibilityLabel="Часы тела" onPress={() => onEditMetric && onEditMetric('body')} />
+            <MetricChip nativeID="today-chip-streak" icon="trending-up" color={C.gold} value={`${streak}д`} accessibilityLabel="Страйк 85 процентов" onPress={() => onEditMetric && onEditMetric('streak')} />
           </View>
           <View style={{ marginTop: 14, zIndex: 2 }}>
             <WillBar nativeID="today-will" done={done.length} total={today.length} />

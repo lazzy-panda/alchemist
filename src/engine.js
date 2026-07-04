@@ -43,7 +43,7 @@ export function useGame(userId) {
   const [statLevels, setStatLevels] = useState(() => JSON.parse(JSON.stringify(STAT_LEVELS)));
   const [resources, setResources] = useState({ hp: 86, hpMax: 100, qi: 64, qiMax: 100 });
   const [stage, setStage] = useState({ lvl: 8, xp: 60, next: 100 });
-  const [timeMin, setTimeMin] = useState({ med: 0, qi: 0 }); // accumulated practice minutes per category
+  const [timeMin, setTimeMin] = useState({ med: 0, qi: 0, know: 0, body: 0 }); // accumulated practice minutes per category
   const [streak, setStreak] = useState(0); // consecutive days with >=85% of the day's practices done
   const [dayStamp, setDayStamp] = useState(null); // practice-day index the `done` flags belong to
   const [levelUp, setLevelUp] = useState(null);
@@ -82,7 +82,7 @@ export function useGame(userId) {
     if (s.statLevels) setStatLevels({ ...JSON.parse(JSON.stringify(STAT_LEVELS)), ...s.statLevels });
     if (s.resources) setResources(s.resources);
     if (s.stage) setStage(s.stage);
-    if (s.timeMin) setTimeMin({ med: 0, qi: 0, ...s.timeMin });
+    if (s.timeMin) setTimeMin({ med: 0, qi: 0, know: 0, body: 0, ...s.timeMin });
     setStreak(strk);
     setDayStamp(cur);
   };

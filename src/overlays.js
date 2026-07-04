@@ -413,6 +413,8 @@ export function Onboarding({ onDone }) {
 const METRIC_META = {
   med: { name: 'Часы медитации', unit: 'min', icon: 'moon-stars' },
   qi: { name: 'Часы цигун', unit: 'min', icon: 'wind' },
+  know: { name: 'Часы знания', unit: 'min', icon: 'book' },
+  body: { name: 'Часы тела', unit: 'min', icon: 'human-run' },
   streak: { name: 'Страйк · дни ≥80%', unit: 'day', icon: 'trending-up' },
 };
 export function MetricEditor({ metric, value, onSave, onClose }) {
