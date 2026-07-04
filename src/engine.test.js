@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { atPracticeCap, FREE_PRACTICE_CAP, migratePractices } from './engine';
+import { atPracticeCap, FREE_PRACTICE_CAP, migratePractices, applyReorder } from './engine';
 describe('atPracticeCap', () => {
   const mk = (n) => Array.from({ length: n }, (_, i) => ({ id: 'p' + i, custom: true, archived: false }));
   it('premium never capped', () => expect(atPracticeCap(mk(50), true)).toBe(false));
@@ -30,5 +30,34 @@ describe('migratePractices', () => {
   });
   it('returns null when there is no practices array', () => {
     expect(migratePractices(undefined)).toBe(null);
+  });
+});
+
+describe('applyReorder', () => {
+  const mk = (...ids) => ids.map((id) => ({ id }));
+  const ids = (l) => l.map((p) => p.id);
+  it('moves before target (down)', () => expect(ids(applyReorder(mk('a', 'b', 'c', 'd'), 'a', 'c'))).toEqual(['b', 'a', 'c', 'd']));
+  it('moves before target (up)', () => expect(ids(applyReorder(mk('a', 'b', 'c', 'd'), 'c', 'b'))).toEqual(['a', 'c', 'b', 'd']));
+  it('null target → end of the FULL array (past archived tail too)', () => {
+    expect(ids(applyReorder(mk('a', 'b', 'arch', 'c'), 'a', null))).toEqual(['b', 'arch', 'c', 'a']);
+  });
+  it('self-drop returns the same instance', () => {
+    const l = mk('a', 'b');
+    expect(applyReorder(l, 'a', 'a')).toBe(l);
+  });
+  it('unknown fromId → same instance', () => {
+    const l = mk('a', 'b');
+    expect(applyReorder(l, 'zzz', 'a')).toBe(l);
+  });
+  it('unknown toId → same instance', () => {
+    const l = mk('a', 'b');
+    expect(applyReorder(l, 'a', 'zzz')).toBe(l);
+  });
+  it('no-op drop before the immediate next sibling → same instance (no phantom state churn)', () => {
+    const l = mk('a', 'b', 'c');
+    expect(applyReorder(l, 'a', 'b')).toBe(l);
+  });
+  it('relative order of untouched practices is preserved (incl. archived in the middle)', () => {
+    expect(ids(applyReorder(mk('a', 'x', 'b', 'c'), 'c', 'a'))).toEqual(['c', 'a', 'x', 'b']);
   });
 });

@@ -6,9 +6,10 @@ import { C } from './theme';
 // comfortable single-column reading width on desktop (shared by PadView + full-bleed banners)
 export const WIDE_MAX = 760;
 
-export function ScreenScroll({ children, style, contentStyle, nativeID }) {
+export function ScreenScroll({ children, style, contentStyle, nativeID, scrollRef }) {
   return (
     <ScrollView
+      ref={scrollRef}
       nativeID={nativeID}
       style={[{ flex: 1, backgroundColor: C.paper }, style]}
       contentContainerStyle={contentStyle}

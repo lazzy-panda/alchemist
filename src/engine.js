@@ -31,6 +31,26 @@ export function migratePractices(practices) {
     .filter((p) => p.today || p.archived || p.custom || p.fromTeacher);
 }
 
+// reorder: drop `fromId` ONTO `toId` → the dragged practice takes the target's slot and the
+// target shifts after it (insert BEFORE the target, recomputing its index after removal so the
+// direction doesn't matter). `toId == null` means dropped past the last item → move to the end.
+// Returns the SAME instance when nothing changes so setState can bail out (no phantom saves).
+export function applyReorder(list, fromId, toId) {
+  const from = list.findIndex((x) => x.id === fromId);
+  if (from < 0 || fromId === toId) return list;
+  const next = list.slice();
+  const [moved] = next.splice(from, 1);
+  if (toId == null) {
+    next.push(moved);
+  } else {
+    const to = next.findIndex((x) => x.id === toId);
+    if (to < 0) return list;
+    next.splice(to, 0, moved);
+  }
+  for (let i = 0; i < list.length; i++) if (list[i] !== next[i]) return next;
+  return list;
+}
+
 // practice-day index that flips at local 03:00 (checkboxes reset at 3am, not midnight)
 function practiceDay() {
   const t = new Date(Date.now() - 3 * 3600e3);
@@ -258,21 +278,9 @@ export function useGame(userId) {
     });
   }, []);
 
-  // reorder: drop `fromId` ONTO `toId` → the dragged practice takes the target's slot and the
-  // target shifts after it (insert BEFORE the target, recomputing its index after removal so the
-  // direction doesn't matter). `toId == null` means dropped past the last item → move to the end.
+  // reorder: drop `fromId` ONTO `toId` (see applyReorder above useGame)
   const reorderPractices = useCallback((fromId, toId) => {
-    setPractices((ps) => {
-      const from = ps.findIndex((x) => x.id === fromId);
-      if (from < 0 || fromId === toId) return ps;
-      const next = ps.slice();
-      const [moved] = next.splice(from, 1);
-      if (toId == null) { next.push(moved); return next; }
-      const to = next.findIndex((x) => x.id === toId);
-      if (to < 0) return ps;
-      next.splice(to, 0, moved);
-      return next;
-    });
+    setPractices((ps) => applyReorder(ps, fromId, toId));
   }, []);
 
   // header-metric editors (clamped, integer)

@@ -67,9 +67,10 @@ export function TodayScreen({ ctx }) {
   const onCompleteAll = () => pending.forEach((pp) => onToggle(pp));
   const name = (userName || '').trim().split(' ')[0] || 'Странник';
   const streakMilestone = streak >= 7 && streak % 7 === 0;
+  const scrollRef = React.useRef(null); // DragList auto-scrolls this while dragging near viewport edges
 
   return (
-    <ScreenScroll nativeID="screen-today">
+    <ScreenScroll nativeID="screen-today" scrollRef={scrollRef}>
       {/* hero */}
       <Gradient nativeID="today-hero" colors={[C.heroBg, C.railBg]} angle={180} style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.paperDeep }}>
         <View style={[{ position: 'relative' }, wide ? { width: '100%', maxWidth: WIDE_MAX, alignSelf: 'center' } : null]}>
@@ -134,6 +135,7 @@ export function TodayScreen({ ctx }) {
           onToggle={onToggle}
           onOpen={onOpen}
           onReorder={reorderPractices}
+          scrollRef={scrollRef}
         />
 
         <Btn nativeID="today-add-practice" variant="ghost" block onPress={onAdd} style={{ marginTop: 14, minHeight: 44 }}>+ Добавить практику</Btn>

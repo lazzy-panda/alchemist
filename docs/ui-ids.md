@@ -29,6 +29,7 @@ are also clickable selectors (verified: `#nav-tab-character`, `#today-add-practi
 - `today-will` — the «Воля» bar · `today-summary` — the «N из M / +XP» ribbon
 - `today-complete-all` — «Выполнить всё» · `today-add-practice` — «+ Добавить практику»
 - `practice-card-<practiceId>` — a practice row · `practice-check-<practiceId>` — its checkbox
+- `today-grip-<practiceId>` — the drag grip of a practice row (aria-label `Переместить: <name>`)
 
 ## Character (`screen-character`)
 - `character-overview` (mastery card) · `character-overview-stat-<statKey>` · `character-help`

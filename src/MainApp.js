@@ -7,7 +7,7 @@ import { useGame, atPracticeCap, todayCounts } from './engine';
 import { useAuth } from './auth';
 import { usePremium } from './premium';
 import { supabase, signInWithTelegram, attributeToTeacher, getMyTeacherProgram, loadReferredBy, saveAdherence, loadTeacher } from './supabase';
-import { inTelegram, getInitData, openInvoice, getStartParam } from './telegram.web';
+import { inTelegram, getInitData, openInvoice, getStartParam, disableVerticalSwipes } from './telegram.web';
 import { kf, KF, EASE } from './ui';
 import { BottomNav, SideRail } from './nav';
 import { TodayScreen } from './screens/Today';
@@ -62,7 +62,7 @@ export function MainApp() {
     return () => { cancelled = true; };
   }, []);
 
-  useEffect(() => { if (inTelegram()) signInWithTelegram(getInitData()); }, []);
+  useEffect(() => { if (inTelegram()) { signInWithTelegram(getInitData()); disableVerticalSwipes(); } }, []);
 
   // attribution + program injection: runs once the user id is known
   useEffect(() => {
