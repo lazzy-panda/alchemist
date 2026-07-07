@@ -1,6 +1,6 @@
 /* Alchemist — overlays: PracticeDetail, EditorSheet, DayDetailSheet, LevelUpOverlay, FogVeil */
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, AppState } from 'react-native';
 import { C, FONT, shade } from './theme';
 import { CATS, STATS, PRACTICES, AVATARS, repWord, durLabel, hoursLabel } from './data';
 import { ascension } from './quotes';
@@ -23,22 +23,33 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
   const [remaining, setRemaining] = useState(practice.dur * 60);
   const [running, setRunning] = useState(false);
   const [showInstr, setShowInstr] = useState(false);
-  const timer = useRef(null);
+  const endAtRef = useRef(0); // wall-clock ms when the countdown reaches zero
+  const remainingRef = useRef(remaining);
+  remainingRef.current = remaining;
 
+  // The countdown is anchored to a wall-clock deadline (endAtRef), not a tick counter, so it stays
+  // correct when the phone screen turns off / the app is backgrounded and setInterval is frozen or
+  // throttled. On resume — tab visible, window focus/pageshow, or app foreground — we recompute
+  // straight from Date.now(), so the time (and completion) reflect the real elapsed wall-clock time.
   useEffect(() => {
-    if (running) {
-      timer.current = setInterval(() => {
-        setRemaining((r) => {
-          if (r <= 1) {
-            clearInterval(timer.current);
-            setRunning(false);
-            return 0;
-          }
-          return r - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timer.current);
+    if (!running) return;
+    endAtRef.current = Date.now() + remainingRef.current * 1000;
+    const tick = () => {
+      const rem = Math.max(0, Math.ceil((endAtRef.current - Date.now()) / 1000));
+      setRemaining(rem);
+      if (rem <= 0) setRunning(false);
+    };
+    const onResume = () => { if (typeof document === 'undefined' || !document.hidden) tick(); };
+    const id = setInterval(tick, 250);
+    const appSub = AppState.addEventListener('change', (st) => { if (st === 'active') tick(); });
+    if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onResume);
+    if (typeof window !== 'undefined') { window.addEventListener('focus', onResume); window.addEventListener('pageshow', onResume); }
+    return () => {
+      clearInterval(id);
+      if (appSub && appSub.remove) appSub.remove();
+      if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', onResume);
+      if (typeof window !== 'undefined') { window.removeEventListener('focus', onResume); window.removeEventListener('pageshow', onResume); }
+    };
   }, [running]);
 
   const adjust = (delta) => {
@@ -415,7 +426,7 @@ const METRIC_META = {
   qi: { name: 'Часы цигун', unit: 'min', icon: 'wind' },
   know: { name: 'Часы знания', unit: 'min', icon: 'book' },
   body: { name: 'Часы тела', unit: 'min', icon: 'human-run' },
-  streak: { name: 'Страйк · дни ≥80%', unit: 'day', icon: 'trending-up' },
+  streak: { name: 'Страйк · дни ≥75%', unit: 'day', icon: 'trending-up' },
 };
 export function MetricEditor({ metric, value, onSave, onClose }) {
   const meta = METRIC_META[metric] || METRIC_META.med;

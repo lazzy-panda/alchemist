@@ -64,7 +64,7 @@ export function useGame(userId) {
   const [resources, setResources] = useState({ hp: 86, hpMax: 100, qi: 64, qiMax: 100 });
   const [stage, setStage] = useState({ lvl: 8, xp: 60, next: 100 });
   const [timeMin, setTimeMin] = useState({ med: 0, qi: 0, know: 0, body: 0 }); // accumulated practice minutes per category
-  const [streak, setStreak] = useState(0); // consecutive days with >=85% of the day's practices done
+  const [streak, setStreak] = useState(0); // consecutive days with >=75% of the day's practices done
   const [dayStamp, setDayStamp] = useState(null); // practice-day index the `done` flags belong to
   const [levelUp, setLevelUp] = useState(null);
   const [lastArchived, setLastArchived] = useState(null);
@@ -93,7 +93,7 @@ export function useGame(userId) {
       if (stamp != null) {
         const td = ps.filter((p) => p.today && !p.archived);
         const pct = td.length ? td.filter((p) => p.done).length / td.length : 0;
-        strk = pct >= 0.85 ? (cur - stamp === 1 ? strk + 1 : 1) : 0;
+        strk = pct >= 0.75 ? (cur - stamp === 1 ? strk + 1 : 1) : 0;
       }
       ps = ps.map((p) => (p.done ? { ...p, done: false } : p));
     }
@@ -156,7 +156,7 @@ export function useGame(userId) {
     };
   }, [userId, KEY]);
 
-  // daily rollover at 03:00: evaluate prev-day 85% → streak, clear checkboxes, advance dayStamp
+  // daily rollover at 03:00: evaluate prev-day 75% → streak, clear checkboxes, advance dayStamp
   const maybeRollover = useCallback(() => {
     const cur = practiceDay();
     const { practices: ps, dayStamp: prevStamp } = stateRef.current;
@@ -165,7 +165,7 @@ export function useGame(userId) {
     const todayP = (ps || []).filter((p) => p.today && !p.archived);
     const pct = todayP.length ? todayP.filter((p) => p.done).length / todayP.length : 0;
     stateRef.current.dayStamp = cur; // guard re-entrancy before the re-render lands
-    setStreak((s) => (pct >= 0.85 ? (cur - prevStamp === 1 ? s + 1 : 1) : 0));
+    setStreak((s) => (pct >= 0.75 ? (cur - prevStamp === 1 ? s + 1 : 1) : 0));
     setPractices((arr) => arr.map((p) => (p.done ? { ...p, done: false } : p)));
     setDayStamp(cur);
   }, []);
