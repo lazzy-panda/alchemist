@@ -10,6 +10,7 @@ import { CircularTimer } from './svg';
 import { PracticeCard } from './PracticeCard';
 import { KitPanel, KitClose, KitGem, KitBanner } from './kit';
 import { IconTile, PixelIcon } from './PixelIcon';
+import { playBell, primeAudio } from './sound';
 
 // curated pixel icons a user can pick for their own practice
 const ICON_CHOICES = ['moon-stars', 'wind', 'human-handsup', 'human-run', 'book', 'brain', 'heart', 'zap', 'shield', 'move', 'bullseye', 'mood-happy', 'drop-full', 'lightbulb', 'tea', 'trophy', 'music', 'sun', 'gift', 'coffee', 'lock'];
@@ -26,6 +27,7 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
   const endAtRef = useRef(0); // wall-clock ms when the countdown reaches zero
   const remainingRef = useRef(remaining);
   remainingRef.current = remaining;
+  const chimedRef = useRef(false); // ring the meditation bell once per run when time is up
 
   // The countdown is anchored to a wall-clock deadline (endAtRef), not a tick counter, so it stays
   // correct when the phone screen turns off / the app is backgrounded and setInterval is frozen or
@@ -34,12 +36,16 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
   useEffect(() => {
     if (!running) return;
     endAtRef.current = Date.now() + remainingRef.current * 1000;
+    chimedRef.current = false;
     const tick = () => {
       const rem = Math.max(0, Math.ceil((endAtRef.current - Date.now()) / 1000));
       setRemaining(rem);
-      if (rem <= 0) setRunning(false);
+      if (rem <= 0) {
+        if (!chimedRef.current) { chimedRef.current = true; playBell(); } // fires on foreground finish or on resume if it ended in the background
+        setRunning(false);
+      }
     };
-    const onResume = () => { if (typeof document === 'undefined' || !document.hidden) tick(); };
+    const onResume = () => { if (typeof document === 'undefined' || !document.hidden) { primeAudio(); tick(); } };
     const id = setInterval(tick, 250);
     const appSub = AppState.addEventListener('change', (st) => { if (st === 'active') tick(); });
     if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onResume);
@@ -94,9 +100,9 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
 
               {/* controls */}
               <View style={{ flexDirection: 'row', gap: 10, marginTop: 14, marginBottom: 8 }}>
-                {!running && remaining > 0 && remaining === total ? <Btn nativeID="detail-start" variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Начать</Btn> : null}
+                {!running && remaining > 0 && remaining === total ? <Btn nativeID="detail-start" variant="primary" block onPress={() => { primeAudio(); setRunning(true); }} style={{ flex: 1 }}>▶ Начать</Btn> : null}
                 {running ? <Btn nativeID="detail-pause" variant="secondary" block onPress={() => setRunning(false)} style={{ flex: 1 }}>⏸ Пауза</Btn> : null}
-                {!running && remaining < total && remaining > 0 ? <Btn nativeID="detail-resume" variant="primary" block onPress={() => setRunning(true)} style={{ flex: 1 }}>▶ Продолжить</Btn> : null}
+                {!running && remaining < total && remaining > 0 ? <Btn nativeID="detail-resume" variant="primary" block onPress={() => { primeAudio(); setRunning(true); }} style={{ flex: 1 }}>▶ Продолжить</Btn> : null}
                 {remaining === 0 ? <Btn nativeID="detail-complete" variant="gold" block onPress={() => onComplete(practice)} style={{ flex: 1 }}>✦ Завершить</Btn> : null}
                 {remaining < total && remaining > 0 ? <Btn nativeID="detail-reset" variant="ghost" onPress={() => { setRemaining(total); setRunning(false); }}>Сброс</Btn> : null}
               </View>
