@@ -10,7 +10,7 @@ import { CircularTimer } from './svg';
 import { PracticeCard } from './PracticeCard';
 import { KitPanel, KitClose, KitGem, KitBanner } from './kit';
 import { IconTile, PixelIcon } from './PixelIcon';
-import { playBell, primeAudio } from './sound';
+import { scheduleBell, cancelBell, ringBellNow, primeAudio } from './sound';
 
 // curated pixel icons a user can pick for their own practice
 const ICON_CHOICES = ['moon-stars', 'wind', 'human-handsup', 'human-run', 'book', 'brain', 'heart', 'zap', 'shield', 'move', 'bullseye', 'mood-happy', 'drop-full', 'lightbulb', 'tea', 'trophy', 'music', 'sun', 'gift', 'coffee', 'lock'];
@@ -37,21 +37,34 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
     if (!running) return;
     endAtRef.current = Date.now() + remainingRef.current * 1000;
     chimedRef.current = false;
+    scheduleBell(remainingRef.current); // pre-arm the chime on the audio clock (rings on time even backgrounded where the OS keeps audio alive)
+    const finish = () => {
+      if (!chimedRef.current) { chimedRef.current = true; ringBellNow(); }
+      setRemaining(0);
+      setRunning(false);
+    };
     const tick = () => {
       const rem = Math.max(0, Math.ceil((endAtRef.current - Date.now()) / 1000));
+      if (rem <= 0) { finish(); return; }
       setRemaining(rem);
-      if (rem <= 0) {
-        if (!chimedRef.current) { chimedRef.current = true; playBell(); } // fires on foreground finish or on resume if it ended in the background
-        setRunning(false);
-      }
     };
-    const onResume = () => { if (typeof document === 'undefined' || !document.hidden) { primeAudio(); tick(); } };
+    // resume from a hidden tab / screen-off: re-read the wall clock, finish if due, else re-anchor
+    // the pre-armed chime (the audio clock froze while suspended, so it must be rescheduled).
+    const onResume = () => {
+      if (typeof document !== 'undefined' && document.hidden) return;
+      primeAudio();
+      const rem = Math.max(0, Math.ceil((endAtRef.current - Date.now()) / 1000));
+      if (rem <= 0) { finish(); return; }
+      setRemaining(rem);
+      scheduleBell(rem);
+    };
     const id = setInterval(tick, 250);
-    const appSub = AppState.addEventListener('change', (st) => { if (st === 'active') tick(); });
+    const appSub = AppState.addEventListener('change', (st) => { if (st === 'active') onResume(); });
     if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onResume);
     if (typeof window !== 'undefined') { window.addEventListener('focus', onResume); window.addEventListener('pageshow', onResume); }
     return () => {
       clearInterval(id);
+      cancelBell(); // a paused / left timer must not ring; a finished one already rang
       if (appSub && appSub.remove) appSub.remove();
       if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', onResume);
       if (typeof window !== 'undefined') { window.removeEventListener('focus', onResume); window.removeEventListener('pageshow', onResume); }
