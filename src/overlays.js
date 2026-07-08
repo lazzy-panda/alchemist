@@ -38,6 +38,21 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
     endAtRef.current = Date.now() + remainingRef.current * 1000;
     chimedRef.current = false;
     scheduleBell(remainingRef.current); // pre-arm the chime on the audio clock (rings on time even backgrounded where the OS keeps audio alive)
+
+    // Keep the screen awake while the timer runs: on iOS a web page can't play audio once the
+    // screen locks (JS + audio are frozen), but holding a Screen Wake Lock stops the auto-lock, so
+    // JS keeps running and the bell rings on time when the phone is simply set down. Non-intrusive:
+    // unlike a background audio session it doesn't stop the user's music or drain the battery.
+    let wake = null;
+    const acquireWake = () => {
+      if (typeof navigator === 'undefined' || !navigator.wakeLock || wake) return;
+      navigator.wakeLock.request('screen').then((s) => {
+        wake = s;
+        s.addEventListener && s.addEventListener('release', () => { wake = null; });
+      }).catch(() => { wake = null; });
+    };
+    const releaseWake = () => { try { wake && wake.release && wake.release(); } catch (e) {} wake = null; };
+
     const finish = () => {
       if (!chimedRef.current) { chimedRef.current = true; ringBellNow(); }
       setRemaining(0);
@@ -49,7 +64,8 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
       setRemaining(rem);
     };
     // resume from a hidden tab / screen-off: re-read the wall clock, finish if due, else re-anchor
-    // the pre-armed chime (the audio clock froze while suspended, so it must be rescheduled).
+    // the pre-armed chime (the audio clock froze while suspended, so it must be rescheduled) and
+    // re-acquire the wake lock (the browser drops it whenever the page is hidden).
     const onResume = () => {
       if (typeof document !== 'undefined' && document.hidden) return;
       primeAudio();
@@ -57,7 +73,9 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
       if (rem <= 0) { finish(); return; }
       setRemaining(rem);
       scheduleBell(rem);
+      acquireWake();
     };
+    acquireWake();
     const id = setInterval(tick, 250);
     const appSub = AppState.addEventListener('change', (st) => { if (st === 'active') onResume(); });
     if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onResume);
@@ -65,6 +83,7 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
     return () => {
       clearInterval(id);
       cancelBell(); // a paused / left timer must not ring; a finished one already rang
+      releaseWake();
       if (appSub && appSub.remove) appSub.remove();
       if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', onResume);
       if (typeof window !== 'undefined') { window.removeEventListener('focus', onResume); window.removeEventListener('pageshow', onResume); }
