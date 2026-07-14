@@ -26,13 +26,35 @@ function CardBase({ done, style, children }) {
   );
 }
 
+// per-practice streak: 7 tiny squares under the icon (icon-width), grey → green as the streak grows
+function StreakPips({ streak = 0, width = 44 }) {
+  return (
+    <View style={{ flexDirection: 'row', width, marginTop: 4, gap: 2 }}>
+      {Array.from({ length: 7 }).map((_, i) => (
+        <View key={i} style={{ flex: 1, height: 5, borderRadius: 1, backgroundColor: i < streak ? C.jadeLight : 'rgba(255,255,255,0.15)' }} />
+      ))}
+    </View>
+  );
+}
+
 function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
   // never crash on an unknown/legacy category — fall back to a neutral one
   const cat = CATS[p.cat] || { name: p.cat || 'Прочее', icon: 'flag', color: C.inkMuted };
   const cardRef = useRef(null);
   const checkRef = useRef(null);
+  const iconColRef = useRef(null);
+  const prevLevel = useRef(p.level || 1);
   const [shake, setShake] = useState(false);
   const fx = useEffects();
+
+  // celebrate a 7-streak level-up with a green burst over the icon (fires only when level rises)
+  useEffect(() => {
+    const lvl = p.level || 1;
+    if (lvl > prevLevel.current && iconColRef.current && iconColRef.current.measureInWindow) {
+      iconColRef.current.measureInWindow((x, y, w, h) => fx.burst(x + w / 2, y + h / 2, [C.jadeLight, C.jade, C.gold]));
+    }
+    prevLevel.current = lvl;
+  }, [p.level]);
   const rewards = Object.entries(p.r || {});
 
   const swipeable = !locked && !p.done && !compact && !!onToggle;
@@ -79,7 +101,10 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
           done={p.done}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingRight: 56, opacity: locked ? 0.6 : 1 }}
         >
-          <IconTile name={p.icon || cat.icon} color={cat.color} size={44} />
+          <View ref={iconColRef} style={{ alignItems: 'center' }}>
+            <IconTile name={p.icon || cat.icon} color={cat.color} size={44} />
+            {compact ? null : <StreakPips streak={p.streak || 0} />}
+          </View>
           <View style={{ flex: 1, minWidth: 0 }}>
             <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontSize: 20, color: p.done ? C.jadeLight : C.ink, marginBottom: 5, lineHeight: 28, textDecorationLine: p.done ? 'line-through' : 'none', textDecorationColor: C.jadeLight }}>{p.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>

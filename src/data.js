@@ -61,7 +61,7 @@ export function hoursLabel(min) {
 // on no screen — it would only haunt the duplicate-name guard. Practices without `today` are not
 // a supported state; see migratePractices() in engine.js, which strips any legacy leftovers.
 let _id = 0;
-const P = (o) => ({ id: 'p' + ++_id, ...o });
+const P = (o) => ({ id: 'p' + ++_id, streak: 0, level: 1, streakDay: null, ...o });
 export const PRACTICES = [
   P({ name: 'Самомассаж в душе', cat: 'body', dur: 5, r: { strength: 2, energy: 1 }, qi: 2, today: true }),
   P({ name: 'Даосская медитация', cat: 'med', dur: 20, r: { focus: 3, energy: 2 }, qi: 4, today: true }),

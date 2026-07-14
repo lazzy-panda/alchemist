@@ -1,9 +1,13 @@
 /* Alchemist — game state & mechanics (ported 1:1 from app.jsx) */
 import { useState, useCallback, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PRACTICES, STAT_LEVELS } from './data';
+import { PRACTICES, STAT_LEVELS, CATS } from './data';
 import { clamp } from './theme';
 import { loadUserData, saveUserField } from './supabase';
+import { advancePracticeStreak, revertPracticeStreak, rolloverPracticeStreak } from './streaks';
+
+// seed per-category level (1 each) — categories gain a level when a practice hits its 7-streak
+const CAT_LEVELS = Object.fromEntries(Object.keys(CATS).map((k) => [k, 1]));
 
 export const FREE_PRACTICE_CAP = 10;
 // only user-created, non-archived practices count toward the free cap (seed practices are always free)
@@ -27,7 +31,7 @@ export function todayCounts(practices) {
 export function migratePractices(practices) {
   if (!Array.isArray(practices)) return null;
   return practices
-    .map((p) => (p.cat === 'zhan' ? { ...p, cat: 'qi' } : p))
+    .map((p) => ({ streak: 0, level: 1, streakDay: null, ...(p.cat === 'zhan' ? { ...p, cat: 'qi' } : p) }))
     .filter((p) => p.today || p.archived || p.custom || p.fromTeacher);
 }
 
@@ -61,6 +65,7 @@ function practiceDay() {
 export function useGame(userId) {
   const [practices, setPractices] = useState(() => PRACTICES.map((p) => ({ ...p })));
   const [statLevels, setStatLevels] = useState(() => JSON.parse(JSON.stringify(STAT_LEVELS)));
+  const [catLevels, setCatLevels] = useState(() => ({ ...CAT_LEVELS })); // per-category level (from practice 7-streaks)
   const [resources, setResources] = useState({ hp: 86, hpMax: 100, qi: 64, qiMax: 100 });
   const [stage, setStage] = useState({ lvl: 8, xp: 60, next: 100 });
   const [timeMin, setTimeMin] = useState({ med: 0, qi: 0, know: 0, body: 0 }); // accumulated practice minutes per category
@@ -90,16 +95,19 @@ export function useGame(userId) {
     let strk = typeof s.streak === 'number' ? s.streak : 0;
     const crossed = stamp == null || cur > stamp; // legacy (no stamp) OR a new day → reset checkboxes
     if (ps && crossed) {
+      const consecutive = stamp != null && cur - stamp === 1;
       if (stamp != null) {
         const td = ps.filter((p) => p.today && !p.archived);
         const pct = td.length ? td.filter((p) => p.done).length / td.length : 0;
-        strk = pct >= 0.75 ? (cur - stamp === 1 ? strk + 1 : 1) : 0;
+        strk = pct >= 0.75 ? (consecutive ? strk + 1 : 1) : 0;
       }
-      ps = ps.map((p) => (p.done ? { ...p, done: false } : p));
+      // reset per-practice streaks broken by a missed day / gap (skip when there's no prior day to compare)
+      ps = ps.map((p) => ({ ...(stamp != null ? rolloverPracticeStreak(p, consecutive) : p), done: false }));
     }
     if (ps) setPractices(ps);
     // merge over seed defaults so a legacy/partial save can't crash the Character screen
     if (s.statLevels) setStatLevels({ ...JSON.parse(JSON.stringify(STAT_LEVELS)), ...s.statLevels });
+    if (s.catLevels) setCatLevels({ ...CAT_LEVELS, ...s.catLevels });
     if (s.resources) setResources(s.resources);
     if (s.stage) setStage(s.stage);
     if (s.timeMin) setTimeMin({ med: 0, qi: 0, know: 0, body: 0, ...s.timeMin });
@@ -127,14 +135,14 @@ export function useGame(userId) {
   }, [KEY]);
   useEffect(() => {
     if (hydratedKey.current !== KEY) return; // don't persist until this key is hydrated
-    const snap = { practices, statLevels, resources, stage, timeMin, streak, dayStamp };
+    const snap = { practices, statLevels, resources, stage, timeMin, streak, dayStamp, catLevels };
     latestSnap.current = snap;
     AsyncStorage.setItem(KEY, JSON.stringify(snap)).catch(() => {});
     if (userId) {
       clearTimeout(cloudTimer.current);
       cloudTimer.current = setTimeout(() => saveUserField(userId, 'game', snap), 600); // debounce cloud writes
     }
-  }, [practices, statLevels, resources, stage, timeMin, streak, dayStamp, KEY]);
+  }, [practices, statLevels, resources, stage, timeMin, streak, dayStamp, catLevels, KEY]);
 
   // Flush the debounced cloud save when the app is hidden/closed (Telegram Mini App close, tab switch,
   // reload). Without this, the user's LAST action before closing — typically ticking practices, which
@@ -164,9 +172,10 @@ export function useGame(userId) {
     if (cur <= prevStamp) return;
     const todayP = (ps || []).filter((p) => p.today && !p.archived);
     const pct = todayP.length ? todayP.filter((p) => p.done).length / todayP.length : 0;
+    const consecutive = cur - prevStamp === 1;
     stateRef.current.dayStamp = cur; // guard re-entrancy before the re-render lands
-    setStreak((s) => (pct >= 0.75 ? (cur - prevStamp === 1 ? s + 1 : 1) : 0));
-    setPractices((arr) => arr.map((p) => (p.done ? { ...p, done: false } : p)));
+    setStreak((s) => (pct >= 0.75 ? (consecutive ? s + 1 : 1) : 0));
+    setPractices((arr) => arr.map((p) => ({ ...rolloverPracticeStreak(p, consecutive), done: false })));
     setDayStamp(cur);
   }, []);
   useEffect(() => {
@@ -186,6 +195,7 @@ export function useGame(userId) {
       }
       const sign = value ? 1 : -1;
       const mult = p.mult || 1;
+      const today = practiceDay();
 
       // stats
       setStatLevels((prev) => {
@@ -234,7 +244,19 @@ export function useGame(userId) {
         });
       }
 
-      return curr.map((x) => (x.id === p.id ? { ...x, done: value } : x));
+      // per-practice streak: advance on complete, reverse on un-check; the 7th step levels the
+      // practice and its category up (see streaks.js). Category level mutates its own state.
+      let updated;
+      if (value) {
+        const r = advancePracticeStreak(p, today);
+        updated = r.p;
+        if (r.catLeveled) setCatLevels((prev) => ({ ...prev, [p.cat]: (prev[p.cat] || 1) + 1 }));
+      } else {
+        const r = revertPracticeStreak(p, today);
+        updated = r.p;
+        if (r.catDelta) setCatLevels((prev) => ({ ...prev, [p.cat]: Math.max(1, (prev[p.cat] || 1) + r.catDelta) }));
+      }
+      return curr.map((x) => (x.id === p.id ? { ...updated, done: value } : x));
     });
   }, []);
 
@@ -243,7 +265,7 @@ export function useGame(userId) {
   const savePractice = useCallback((data) => {
     setPractices((ps) => {
       if (data.id) return ps.map((x) => (x.id === data.id ? { ...x, ...data } : x));
-      return [...ps, { ...data, id: 'p' + Date.now(), custom: true }];
+      return [...ps, { streak: 0, level: 1, streakDay: null, ...data, id: 'p' + Date.now(), custom: true }];
     });
   }, []);
 
@@ -302,6 +324,7 @@ export function useGame(userId) {
   return {
     practices,
     statLevels,
+    catLevels,
     resources,
     stage,
     timeMin,
