@@ -4,14 +4,16 @@ import { advancePracticeStreak, revertPracticeStreak, rolloverPracticeStreak, st
 const mk = (o) => ({ id: 'p1', cat: 'qi', today: true, archived: false, done: false, streak: 0, level: 1, streakDay: null, ...o });
 const TODAY = 100;
 
-describe('streakDigits (base-9 day/week/month bars)', () => {
-  it('empty', () => expect(streakDigits(0)).toEqual({ day: 0, week: 0, month: 0 }));
-  it('mid day-bar', () => expect(streakDigits(5)).toEqual({ day: 5, week: 0, month: 0 }));
-  it('day-bar full carries to one week (bar resets)', () => expect(streakDigits(9)).toEqual({ day: 0, week: 1, month: 0 }));
-  it('one week + one day', () => expect(streakDigits(10)).toEqual({ day: 1, week: 1, month: 0 }));
-  it('eight weeks, eight days', () => expect(streakDigits(80)).toEqual({ day: 8, week: 8, month: 0 }));
-  it('week-bar full carries to one month', () => expect(streakDigits(81)).toEqual({ day: 0, week: 0, month: 1 }));
-  it('one month + one day', () => expect(streakDigits(82)).toEqual({ day: 1, week: 0, month: 1 }));
+describe('streakDigits (base-9 day/week/month/year bars)', () => {
+  it('empty', () => expect(streakDigits(0)).toEqual({ day: 0, week: 0, month: 0, year: 0 }));
+  it('mid day-bar', () => expect(streakDigits(5)).toEqual({ day: 5, week: 0, month: 0, year: 0 }));
+  it('day-bar full carries to one week (bar resets)', () => expect(streakDigits(9)).toEqual({ day: 0, week: 1, month: 0, year: 0 }));
+  it('one week + one day', () => expect(streakDigits(10)).toEqual({ day: 1, week: 1, month: 0, year: 0 }));
+  it('eight weeks, eight days', () => expect(streakDigits(80)).toEqual({ day: 8, week: 8, month: 0, year: 0 }));
+  it('week-bar full carries to one month', () => expect(streakDigits(81)).toEqual({ day: 0, week: 0, month: 1, year: 0 }));
+  it('one month + one day', () => expect(streakDigits(82)).toEqual({ day: 1, week: 0, month: 1, year: 0 }));
+  it('month-bar full (729 days) carries to one year', () => expect(streakDigits(729)).toEqual({ day: 0, week: 0, month: 0, year: 1 }));
+  it('one year + one day', () => expect(streakDigits(730)).toEqual({ day: 1, week: 0, month: 0, year: 1 }));
 });
 
 describe('advancePracticeStreak', () => {
@@ -31,7 +33,7 @@ describe('advancePracticeStreak', () => {
   it('completing the 9th day levels the practice up and flags the category', () => {
     const { p, catLeveled } = advancePracticeStreak(mk({ streak: 8, level: 3, streakDay: TODAY - 1 }), TODAY);
     expect(p.streak).toBe(9);
-    expect(streakDigits(p.streak)).toEqual({ day: 0, week: 1, month: 0 });
+    expect(streakDigits(p.streak)).toEqual({ day: 0, week: 1, month: 0, year: 0 });
     expect(p.level).toBe(4);
     expect(catLeveled).toBe(true);
   });
@@ -70,7 +72,7 @@ describe('revertPracticeStreak', () => {
   it('reverses across a month boundary too (81 → 80)', () => {
     const { p, catDelta } = revertPracticeStreak(mk({ streak: 81, level: 10, streakDay: TODAY }), TODAY);
     expect(p.streak).toBe(80);
-    expect(streakDigits(p.streak)).toEqual({ day: 8, week: 8, month: 0 });
+    expect(streakDigits(p.streak)).toEqual({ day: 8, week: 8, month: 0, year: 0 });
     expect(p.level).toBe(9);
     expect(catDelta).toBe(-1);
   });

@@ -27,13 +27,16 @@ function CardBase({ done, style, children }) {
   );
 }
 
-// a streak bar: `count` tiny squares, `filled` of them green; horizontal (day/month) or vertical (week)
-function Pips({ filled = 0, count = STREAK_CYCLE, vertical = false, length = 44, thickness = 5 }) {
+// streak-bar colours per tier — an escalating "rarity" ladder (day → week → month → year)
+const STREAK_COLORS = { day: C.jadeLight, week: '#E8944A', month: '#B98AE0', year: C.goldLight };
+
+// a streak bar: `count` tiny squares, `filled` of them lit in `color`; horizontal or vertical
+function Pips({ filled = 0, color = C.jadeLight, count = STREAK_CYCLE, vertical = false, length = 44, thickness = 5 }) {
   const base = vertical ? { flexDirection: 'column', height: length, width: thickness } : { flexDirection: 'row', width: length, height: thickness };
   return (
     <View style={{ ...base, gap: 1.5 }}>
       {Array.from({ length: count }).map((_, i) => (
-        <View key={i} style={{ flex: 1, borderRadius: 1, backgroundColor: i < filled ? C.jadeLight : 'rgba(255,255,255,0.15)' }} />
+        <View key={i} style={{ flex: 1, borderRadius: 1, backgroundColor: i < filled ? color : 'rgba(255,255,255,0.15)' }} />
       ))}
     </View>
   );
@@ -114,17 +117,18 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
               {levelBadge}
             </View>
           ) : (
-            /* three streak bars framing the icon: months (top), weeks (left), days (bottom) */
+            /* four streak bars framing the icon: months (top), days (bottom), weeks (left), years (right) */
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-              <Pips filled={dig.week} vertical />
+              <Pips filled={dig.week} color={STREAK_COLORS.week} vertical />
               <View style={{ width: 44, alignItems: 'center' }}>
-                <Pips filled={dig.month} />
+                <Pips filled={dig.month} color={STREAK_COLORS.month} />
                 <View ref={iconColRef} style={{ position: 'relative', marginVertical: 2 }}>
                   <IconTile name={p.icon || cat.icon} color={cat.color} size={44} />
                   {levelBadge}
                 </View>
-                <Pips filled={dig.day} />
+                <Pips filled={dig.day} color={STREAK_COLORS.day} />
               </View>
+              <Pips filled={dig.year} color={STREAK_COLORS.year} vertical />
             </View>
           )}
           <View style={{ flex: 1, minWidth: 0 }}>
