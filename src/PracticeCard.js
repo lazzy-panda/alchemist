@@ -105,7 +105,7 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
             <View style={{ position: 'relative' }}>
               <IconTile name={p.icon || cat.icon} color={cat.color} size={44} />
               {/* practice level as a small math-style exponent in the icon's top-right corner */}
-              <Text style={{ position: 'absolute', top: 6, right: 6, fontFamily: FONT.display, fontSize: 13, lineHeight: 13, color: cat.color, textShadowColor: 'rgba(0,0,0,0.9)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>{p.level || 1}</Text>
+              <Text style={{ position: 'absolute', top: 4, right: 4, fontFamily: FONT.display, fontSize: 13, lineHeight: 13, color: cat.color, textShadowColor: 'rgba(0,0,0,0.9)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>{p.level || 1}</Text>
             </View>
             {compact ? null : <StreakPips streak={p.streak || 0} />}
           </View>
