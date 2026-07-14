@@ -1,36 +1,45 @@
-/* Alchemist — per-practice streak logic (pure, so vitest can pin it; mirrors the dragMath /
-   applyReorder split). Each practice carries `streak` (0..6 pips filled), `level` (starts 1) and
-   `streakDay` (the practiceDay index its streak last advanced — the once-per-day guard). Completing
-   a practice fills a pip; the 7th fills level the practice up, bumps its category, and resets the
-   row. A missed day (or a multi-day gap) resets the streak — see rolloverPracticeStreak. */
+/* Alchemist — nested per-practice streak logic (pure, unit-tested; mirrors the dragMath split).
 
-// A practice was just marked done. Advance its streak once per day; the 7th step levels it up.
-// Returns { p, catLeveled } — catLeveled true means the caller should bump the category's level.
+   A practice's streak is a single count of consecutive days done (`p.streak`). It is shown as three
+   9-square bars framing the icon: days (bottom), weeks (left), months (top). The bars are just the
+   base-9 digits of that count — day = total%9, week = ⌊total/9⌋%9, month = ⌊total/81⌋%9 — so a full
+   day-bar (9 days) carries into a week square, a full week-bar (9 weeks) into a month square.
+   Completing a full day-bar (every 9th day) levels the practice + its category up and bursts.
+   A missed day / gap resets the whole count to 0 → all three bars clear at once (see rollover). */
+
+export const STREAK_CYCLE = 9; // squares per bar; a full bar carries into the next tier
+
+// filled squares per bar (day / week / month) from the total consecutive-day count
+export function streakDigits(total) {
+  const t = Math.max(0, total || 0);
+  const C = STREAK_CYCLE;
+  return { day: t % C, week: Math.floor(t / C) % C, month: Math.floor(t / (C * C)) % C };
+}
+
+// A practice was marked done. Advance the streak once per day; every 9th day completes a day-bar
+// and levels the practice + category up. Returns { p, catLeveled }.
 export function advancePracticeStreak(p, today) {
   if (p.streakDay === today) return { p, catLeveled: false }; // already counted this day
-  const next = (p.streak || 0) + 1;
-  if (next >= 7) {
-    return { p: { ...p, streak: 0, level: (p.level || 1) + 1, streakDay: today }, catLeveled: true };
-  }
-  return { p: { ...p, streak: next, streakDay: today }, catLeveled: false };
+  const total = (p.streak || 0) + 1;
+  const catLeveled = total % STREAK_CYCLE === 0; // a full day-bar (9 days) → practice + category level up
+  return { p: { ...p, streak: total, level: (p.level || 1) + (catLeveled ? 1 : 0), streakDay: today }, catLeveled };
 }
 
 // A practice was un-checked. Reverse the same-day advance (symmetric to the stat-xp reversal in
-// setDone). Returns { p, catDelta } — catDelta -1 means undo a category level-up. streakDay is
-// cleared so re-checking the same day counts again.
+// setDone). Returns { p, catDelta } — catDelta -1 undoes a category level-up.
 export function revertPracticeStreak(p, today) {
   if (p.streakDay !== today) return { p, catDelta: 0 }; // the advance being undone wasn't from today
-  if ((p.streak || 0) === 0) {
-    // streak 0 with streakDay === today can only mean today's advance wrapped 7 → 0 (a level-up)
-    return { p: { ...p, streak: 6, level: Math.max(1, (p.level || 1) - 1), streakDay: null }, catDelta: -1 };
-  }
-  return { p: { ...p, streak: (p.streak || 0) - 1, streakDay: null }, catDelta: 0 };
+  const total = p.streak || 0;
+  const wasLevelUp = total > 0 && total % STREAK_CYCLE === 0; // today's advance completed a day-bar
+  return {
+    p: { ...p, streak: Math.max(0, total - 1), level: wasLevelUp ? Math.max(1, (p.level || 1) - 1) : (p.level || 1), streakDay: null },
+    catDelta: wasLevelUp ? -1 : 0,
+  };
 }
 
-// Daily rollover (03:00): keep the streak only if the just-ended day was consecutive AND the
-// practice was done; otherwise it's broken → reset to 0. Archived / non-Today practices are frozen.
-// `consecutive` = (currentDay - previousDay === 1), so multi-day gaps also reset (mirrors the
-// global streak). The caller clears the `done` flag separately.
+// Daily rollover (03:00): keep the count only if the just-ended day was consecutive AND the practice
+// was done; otherwise the streak is broken → reset to 0, which clears days, weeks AND months at once.
+// Archived / non-Today practices are frozen. `consecutive` = (currentDay - previousDay === 1).
 export function rolloverPracticeStreak(p, consecutive) {
   if (!(p.today && !p.archived)) return p;
   const keep = consecutive && !!p.done;

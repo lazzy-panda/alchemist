@@ -9,6 +9,7 @@ import { IconTile } from './PixelIcon';
 import { QiTag } from './badges';
 import { useEffects } from './effects';
 import { kf, KF, EASE } from './anim';
+import { streakDigits, STREAK_CYCLE } from './streaks';
 
 const WEB = Platform.OS === 'web';
 const USE_NATIVE = !WEB;
@@ -26,12 +27,13 @@ function CardBase({ done, style, children }) {
   );
 }
 
-// per-practice streak: 7 tiny squares under the icon (icon-width), grey → green as the streak grows
-function StreakPips({ streak = 0, width = 44 }) {
+// a streak bar: `count` tiny squares, `filled` of them green; horizontal (day/month) or vertical (week)
+function Pips({ filled = 0, count = STREAK_CYCLE, vertical = false, length = 44, thickness = 5 }) {
+  const base = vertical ? { flexDirection: 'column', height: length, width: thickness } : { flexDirection: 'row', width: length, height: thickness };
   return (
-    <View style={{ flexDirection: 'row', width, marginTop: 4, gap: 2 }}>
-      {Array.from({ length: 7 }).map((_, i) => (
-        <View key={i} style={{ flex: 1, height: 5, borderRadius: 1, backgroundColor: i < streak ? C.jadeLight : 'rgba(255,255,255,0.15)' }} />
+    <View style={{ ...base, gap: 1.5 }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <View key={i} style={{ flex: 1, borderRadius: 1, backgroundColor: i < filled ? C.jadeLight : 'rgba(255,255,255,0.15)' }} />
       ))}
     </View>
   );
@@ -94,6 +96,11 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
     })
   ).current;
 
+  const dig = streakDigits(p.streak || 0); // filled squares per bar: day / week / month
+  const levelBadge = (
+    <Text style={{ position: 'absolute', top: 4, right: 4, fontFamily: FONT.display, fontSize: 13, lineHeight: 13, color: cat.color, textShadowColor: 'rgba(0,0,0,0.9)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>{p.level || 1}</Text>
+  );
+
   const inner = (
     <View ref={cardRef} style={[{ position: 'relative' }, active ? kf(KF.breathe, 3.2, { ease: EASE.soft, iter: 'infinite' }) : null, shake ? kf(KF.shakeNo, 0.42, { ease: EASE.soft }) : null]}>
       <Pressable nativeID={'practice-card-' + p.id} onPress={() => onOpen && onOpen(p)} disabled={locked} accessibilityRole="button" accessibilityLabel={p.name + (locked ? ', заблокировано' : '')}>
@@ -101,14 +108,25 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
           done={p.done}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingRight: 56, opacity: locked ? 0.6 : 1 }}
         >
-          <View ref={iconColRef} style={{ alignItems: 'center' }}>
-            <View style={{ position: 'relative' }}>
+          {compact ? (
+            <View ref={iconColRef} style={{ position: 'relative' }}>
               <IconTile name={p.icon || cat.icon} color={cat.color} size={44} />
-              {/* practice level as a small math-style exponent in the icon's top-right corner */}
-              <Text style={{ position: 'absolute', top: 4, right: 4, fontFamily: FONT.display, fontSize: 13, lineHeight: 13, color: cat.color, textShadowColor: 'rgba(0,0,0,0.9)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>{p.level || 1}</Text>
+              {levelBadge}
             </View>
-            {compact ? null : <StreakPips streak={p.streak || 0} />}
-          </View>
+          ) : (
+            /* three streak bars framing the icon: months (top), weeks (left), days (bottom) */
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+              <Pips filled={dig.week} vertical />
+              <View style={{ width: 44, alignItems: 'center' }}>
+                <Pips filled={dig.month} />
+                <View ref={iconColRef} style={{ position: 'relative', marginVertical: 2 }}>
+                  <IconTile name={p.icon || cat.icon} color={cat.color} size={44} />
+                  {levelBadge}
+                </View>
+                <Pips filled={dig.day} />
+              </View>
+            </View>
+          )}
           <View style={{ flex: 1, minWidth: 0 }}>
             <Text numberOfLines={2} style={{ fontFamily: FONT.display, fontSize: 20, color: p.done ? C.jadeLight : C.ink, marginBottom: 5, lineHeight: 28, textDecorationLine: p.done ? 'line-through' : 'none', textDecorationColor: C.jadeLight }}>{p.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
