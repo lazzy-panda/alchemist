@@ -102,7 +102,11 @@ function PracticeCardImpl({ p, onToggle, onOpen, locked, active, compact }) {
           style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingRight: 56, opacity: locked ? 0.6 : 1 }}
         >
           <View ref={iconColRef} style={{ alignItems: 'center' }}>
-            <IconTile name={p.icon || cat.icon} color={cat.color} size={44} />
+            <View style={{ position: 'relative' }}>
+              <IconTile name={p.icon || cat.icon} color={cat.color} size={44} />
+              {/* practice level as a small math-style exponent in the icon's top-right corner */}
+              <Text style={{ position: 'absolute', top: -4, right: -4, fontFamily: FONT.display, fontSize: 13, lineHeight: 13, color: C.goldLight, textShadowColor: 'rgba(0,0,0,0.9)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}>{p.level || 1}</Text>
+            </View>
             {compact ? null : <StreakPips streak={p.streak || 0} />}
           </View>
           <View style={{ flex: 1, minWidth: 0 }}>
