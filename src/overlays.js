@@ -244,6 +244,18 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
             </Field>
             {nameError ? <Text style={{ marginTop: -10, marginBottom: 12, color: C.red, fontFamily: FONT.ui, fontSize: 18 }}>{nameError}</Text> : null}
 
+            <Field nativeID="editor-instr-field" label="Инструкция / описание">
+              <Input
+                nativeID="editor-instr-input"
+                value={instruction}
+                onChangeText={setInstruction}
+                placeholder="Как выполнять практику — поза, дыхание, на чём держать внимание…"
+                multiline
+                numberOfLines={4}
+                style={{ minHeight: 104, textAlignVertical: 'top', lineHeight: 30 }}
+              />
+            </Field>
+
             <Field nativeID="editor-cat-field" label="Категория">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {Object.keys(CATS).map((ck) => (
@@ -295,18 +307,6 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
               </View>
             </Field>
             {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 18, lineHeight: 28 }}>Совет: привяжите хотя бы одну характеристику, чтобы практика давала очки.</Text> : null}
-
-            <Field nativeID="editor-instr-field" label="Инструкция">
-              <Input
-                nativeID="editor-instr-input"
-                value={instruction}
-                onChangeText={setInstruction}
-                placeholder="Как выполнять практику — поза, дыхание, на чём держать внимание…"
-                multiline
-                numberOfLines={4}
-                style={{ minHeight: 104, textAlignVertical: 'top', lineHeight: 30 }}
-              />
-            </Field>
 
             {confirm ? (
               <View nativeID="editor-confirm-panel" style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
