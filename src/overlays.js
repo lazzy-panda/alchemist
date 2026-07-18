@@ -15,6 +15,9 @@ import { scheduleBell, cancelBell, ringBellNow, primeAudio } from './sound';
 // curated pixel icons a user can pick for their own practice
 const ICON_CHOICES = ['moon-stars', 'wind', 'human-handsup', 'human-run', 'book', 'brain', 'heart', 'zap', 'shield', 'move', 'bullseye', 'mood-happy', 'drop-full', 'lightbulb', 'tea', 'trophy', 'music', 'sun', 'gift', 'coffee', 'lock'];
 
+// shown on the detail screen when a practice has no custom instruction of its own
+const DEFAULT_INSTRUCTION = 'Сядьте удобно, спина прямая. Дышите в живот, медленно и ровно. Удерживайте внимание на течении Ци по меридианам. Не торопитесь — спокойный ритм важнее длительности.';
+
 /* ============================================================
    PRACTICE DETAIL (full-screen page, timer)
    ============================================================ */
@@ -149,7 +152,7 @@ export function PracticeDetail({ practice, onComplete, onClose, onEdit, wide }) 
           </Pressable>
           {showInstr ? (
             <Text style={[T.body, { color: C.inkMuted, paddingHorizontal: 4, paddingTop: 8, lineHeight: 40 }, kf(KF.fadeUp, 0.5, { ease: EASE.out })]}>
-              Сядьте удобно, спина прямая. Дышите в живот, медленно и ровно. Удерживайте внимание на течении Ци по меридианам. Не торопитесь — спокойный ритм важнее длительности.
+              {practice.instruction || DEFAULT_INSTRUCTION}
             </Text>
           ) : null}
 
@@ -216,6 +219,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
   const [cat, setCat] = useState(practice?.cat || 'med');
   const [dur, setDur] = useState(practice?.dur || 15);
   const [rewards, setRewards] = useState(practice?.r ? { ...practice.r } : {});
+  const [instruction, setInstruction] = useState(practice?.instruction || '');
   const [icon, setIcon] = useState(practice?.icon || '');
   const [unit, setUnit] = useState(practice?.unit === 'reps' ? 'reps' : 'min');
   const [today, setToday] = useState(practice ? !!practice.today : true);
@@ -292,6 +296,18 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
             </Field>
             {Object.keys(rewards).length === 0 ? <Text style={{ marginTop: -8, marginBottom: 10, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 18, lineHeight: 28 }}>Совет: привяжите хотя бы одну характеристику, чтобы практика давала очки.</Text> : null}
 
+            <Field nativeID="editor-instr-field" label="Инструкция">
+              <Input
+                nativeID="editor-instr-input"
+                value={instruction}
+                onChangeText={setInstruction}
+                placeholder="Как выполнять практику — поза, дыхание, на чём держать внимание…"
+                multiline
+                numberOfLines={4}
+                style={{ minHeight: 104, textAlignVertical: 'top', lineHeight: 30 }}
+              />
+            </Field>
+
             {confirm ? (
               <View nativeID="editor-confirm-panel" style={{ marginTop: 22, padding: 14, borderRadius: 14, borderWidth: 2, borderColor: C.redLine, backgroundColor: 'rgba(217,84,59,0.08)' }}>
                 <Text style={{ fontFamily: FONT.ui, fontSize: 18, color: C.red, marginBottom: 12, lineHeight: 28 }}>
@@ -326,7 +342,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
                     if (!trimmed) { setNameError('Введите название практики'); return; }
                     const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
                     if (dup) { setNameError('Практика с таким названием уже существует'); return; }
-                    onSave({ id: practice?.id, name: trimmed, cat, dur, unit, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, today: true, done: practice?.done });
+                    onSave({ id: practice?.id, name: trimmed, cat, dur, unit, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, instruction: instruction.trim() || undefined, today: true, done: practice?.done });
                   }}
                 >
                   Сохранить
