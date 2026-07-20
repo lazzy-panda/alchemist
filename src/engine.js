@@ -223,9 +223,11 @@ export function useGame(userId) {
         return { ...prev, qi: clamp(prev.qi + dq, 0, prev.qiMax), hp: clamp(prev.hp + dh, 0, prev.hpMax) };
       });
 
-      // accumulated practice minutes per category (minutes practices only; reps have no time)
-      if (p.unit !== 'reps' && p.dur) {
-        setTimeMin((prev) => ({ ...prev, [p.cat]: Math.max(0, (prev[p.cat] || 0) + sign * p.dur) }));
+      // accumulated practice time per category (minutes) — minute practices add their minutes;
+      // reps count as one second each (dur/60 minutes) so they're tracked too
+      if (p.dur) {
+        const minutes = p.unit === 'reps' ? p.dur / 60 : p.dur;
+        setTimeMin((prev) => ({ ...prev, [p.cat]: Math.max(0, (prev[p.cat] || 0) + sign * minutes) }));
       }
 
       // stage progress
