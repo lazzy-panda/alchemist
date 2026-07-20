@@ -224,9 +224,9 @@ export function useGame(userId) {
       });
 
       // accumulated practice time per category (minutes) — minute practices add their minutes;
-      // reps count as one second each (dur/60 minutes) so they're tracked too
+      // reps count as 5 seconds each (dur*5/60 minutes) so they're tracked too
       if (p.dur) {
-        const minutes = p.unit === 'reps' ? p.dur / 60 : p.dur;
+        const minutes = p.unit === 'reps' ? (p.dur * 5) / 60 : p.dur;
         setTimeMin((prev) => ({ ...prev, [p.cat]: Math.max(0, (prev[p.cat] || 0) + sign * minutes) }));
       }
 
