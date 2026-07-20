@@ -31,19 +31,24 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     let mounted = true;
+    const markReady = () => { if (mounted) setReady(true); };
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       const u = toUser(data.session);
       setUser(u);
       if (u) ensureUserRow(u.id, u.name);
-      setReady(true);
-    });
+      markReady();
+    }).catch(markReady);
+    // anti-hang: never leave the user on a blank screen if the session check stalls on a slow /
+    // flaky network — show the UI after a bounded wait; onAuthStateChange still restores the
+    // session (and getSession's own resolve still sets the user) once the network responds.
+    const t = setTimeout(markReady, 4000);
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       const u = toUser(session);
       setUser(u);
       if (u) ensureUserRow(u.id, u.name);
     });
-    return () => { mounted = false; sub.subscription.unsubscribe(); };
+    return () => { mounted = false; clearTimeout(t); sub.subscription.unsubscribe(); };
   }, []);
 
   const register = useCallback(async (name, email, password) => {
