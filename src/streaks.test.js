@@ -83,20 +83,46 @@ describe('revertPracticeStreak', () => {
   });
 });
 
-describe('rolloverPracticeStreak (miss resets everything)', () => {
-  it('keeps the count when yesterday was consecutive AND done', () => {
-    expect(rolloverPracticeStreak(mk({ streak: 25, done: true }), true).streak).toBe(25);
+describe('rolloverPracticeStreak (grace 0 — strict)', () => {
+  it('keeps the count when the ended day was done (gap 1)', () => {
+    expect(rolloverPracticeStreak(mk({ streak: 25, done: true }), 1).streak).toBe(25);
   });
-  it('a missed day wipes days, weeks AND months (→ 0)', () => {
-    expect(rolloverPracticeStreak(mk({ streak: 25, done: false }), true).streak).toBe(0);
+  it('a missed day wipes everything (→ 0)', () => {
+    expect(rolloverPracticeStreak(mk({ streak: 25, done: false }), 1).streak).toBe(0);
   });
-  it('a multi-day gap wipes everything even if the last day was done', () => {
-    expect(rolloverPracticeStreak(mk({ streak: 25, done: true }), false).streak).toBe(0);
+  it('a multi-day gap wipes everything even if the last active day was done', () => {
+    expect(rolloverPracticeStreak(mk({ streak: 25, done: true }), 2).streak).toBe(0);
   });
   it('freezes archived practices', () => {
-    expect(rolloverPracticeStreak(mk({ streak: 25, done: false, archived: true }), true).streak).toBe(25);
+    expect(rolloverPracticeStreak(mk({ streak: 25, done: false, archived: true }), 1).streak).toBe(25);
   });
   it('freezes practices not on Today', () => {
-    expect(rolloverPracticeStreak(mk({ streak: 25, done: false, today: false }), true).streak).toBe(25);
+    expect(rolloverPracticeStreak(mk({ streak: 25, done: false, today: false }), 1).streak).toBe(25);
+  });
+});
+
+describe('rolloverPracticeStreak (grace — tolerated missed days)', () => {
+  it('grace 2: one missed day keeps the streak (missed=1)', () => {
+    const r = rolloverPracticeStreak(mk({ streak: 25, done: false, grace: 2, missed: 0 }), 1);
+    expect(r.streak).toBe(25);
+    expect(r.missed).toBe(1);
+  });
+  it('grace 2: a second missed day still keeps it (missed=2)', () => {
+    const r = rolloverPracticeStreak(mk({ streak: 25, done: false, grace: 2, missed: 1 }), 1);
+    expect(r.streak).toBe(25);
+    expect(r.missed).toBe(2);
+  });
+  it('grace 2: the third missed day breaks it (→ 0, missed reset)', () => {
+    const r = rolloverPracticeStreak(mk({ streak: 25, done: false, grace: 2, missed: 2 }), 1);
+    expect(r.streak).toBe(0);
+    expect(r.missed).toBe(0);
+  });
+  it('grace 2: completing after a miss clears the missed counter, streak intact', () => {
+    const r = rolloverPracticeStreak(mk({ streak: 25, done: true, grace: 2, missed: 1 }), 1);
+    expect(r.streak).toBe(25);
+    expect(r.missed).toBe(0);
+  });
+  it('grace 1: a 2-day gap (both missed) breaks it', () => {
+    expect(rolloverPracticeStreak(mk({ streak: 25, done: false, grace: 1, missed: 0 }), 2).streak).toBe(0);
   });
 });

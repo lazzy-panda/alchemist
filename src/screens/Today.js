@@ -68,6 +68,10 @@ export function TodayScreen({ ctx }) {
   const name = (userName || '').trim().split(' ')[0] || 'Странник';
   const streakMilestone = streak >= 7 && streak % 7 === 0;
   const scrollRef = React.useRef(null); // DragList auto-scrolls this while dragging near viewport edges
+  // flag a category whose accumulated time lags far behind the leading one (≥1h leader, ≤30% of it)
+  const catT = { med: timeMin.med || 0, qi: timeMin.qi || 0, know: timeMin.know || 0, body: timeMin.body || 0 };
+  const maxCatT = Math.max(catT.med, catT.qi, catT.know, catT.body);
+  const lags = (t) => maxCatT >= 60 && t < maxCatT * 0.3;
 
   return (
     <ScreenScroll nativeID="screen-today" scrollRef={scrollRef}>
@@ -93,10 +97,10 @@ export function TodayScreen({ ctx }) {
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 6, marginTop: 16, zIndex: 2 }}>
-            <MetricChip nativeID="today-chip-med" icon={CATS.med.icon} color={CATS.med.color} value={hoursLabel(timeMin.med)} accessibilityLabel="Часы медитации" onPress={() => onEditMetric && onEditMetric('med')} />
-            <MetricChip nativeID="today-chip-qi" icon={CATS.qi.icon} color={CATS.qi.color} value={hoursLabel(timeMin.qi)} accessibilityLabel="Часы цигун" onPress={() => onEditMetric && onEditMetric('qi')} />
-            <MetricChip nativeID="today-chip-know" icon={CATS.know.icon} color={CATS.know.color} value={hoursLabel(timeMin.know)} accessibilityLabel="Часы знания" onPress={() => onEditMetric && onEditMetric('know')} />
-            <MetricChip nativeID="today-chip-body" icon={CATS.body.icon} color={CATS.body.color} value={hoursLabel(timeMin.body)} accessibilityLabel="Часы тела" onPress={() => onEditMetric && onEditMetric('body')} />
+            <MetricChip nativeID="today-chip-med" icon={CATS.med.icon} color={CATS.med.color} value={hoursLabel(timeMin.med)} warn={lags(catT.med)} accessibilityLabel="Часы медитации" onPress={() => onEditMetric && onEditMetric('med')} />
+            <MetricChip nativeID="today-chip-qi" icon={CATS.qi.icon} color={CATS.qi.color} value={hoursLabel(timeMin.qi)} warn={lags(catT.qi)} accessibilityLabel="Часы цигун" onPress={() => onEditMetric && onEditMetric('qi')} />
+            <MetricChip nativeID="today-chip-know" icon={CATS.know.icon} color={CATS.know.color} value={hoursLabel(timeMin.know)} warn={lags(catT.know)} accessibilityLabel="Часы знания" onPress={() => onEditMetric && onEditMetric('know')} />
+            <MetricChip nativeID="today-chip-body" icon={CATS.body.icon} color={CATS.body.color} value={hoursLabel(timeMin.body)} warn={lags(catT.body)} accessibilityLabel="Часы тела" onPress={() => onEditMetric && onEditMetric('body')} />
             <MetricChip nativeID="today-chip-streak" icon="trending-up" color={C.gold} value={`${streak}д`} accessibilityLabel="Страйк 75 процентов" onPress={() => onEditMetric && onEditMetric('streak')} />
           </View>
           <View style={{ marginTop: 14, zIndex: 2 }}>

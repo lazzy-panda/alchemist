@@ -31,7 +31,7 @@ export function todayCounts(practices) {
 export function migratePractices(practices) {
   if (!Array.isArray(practices)) return null;
   return practices
-    .map((p) => ({ streak: 0, level: 1, streakDay: null, ...(p.cat === 'zhan' ? { ...p, cat: 'qi' } : p) }))
+    .map((p) => ({ streak: 0, level: 1, streakDay: null, grace: 0, missed: 0, ...(p.cat === 'zhan' ? { ...p, cat: 'qi' } : p) }))
     .filter((p) => p.today || p.archived || p.custom || p.fromTeacher);
 }
 
@@ -101,8 +101,8 @@ export function useGame(userId) {
         const pct = td.length ? td.filter((p) => p.done).length / td.length : 0;
         strk = pct >= 0.75 ? (consecutive ? strk + 1 : 1) : 0;
       }
-      // reset per-practice streaks broken by a missed day / gap (skip when there's no prior day to compare)
-      ps = ps.map((p) => ({ ...(stamp != null ? rolloverPracticeStreak(p, consecutive) : p), done: false }));
+      // reset per-practice streaks broken beyond their grace (skip when there's no prior day to compare)
+      ps = ps.map((p) => ({ ...(stamp != null ? rolloverPracticeStreak(p, cur - stamp) : p), done: false }));
     }
     if (ps) setPractices(ps);
     // merge over seed defaults so a legacy/partial save can't crash the Character screen
@@ -117,16 +117,28 @@ export function useGame(userId) {
   useEffect(() => {
     let cancelled = false;
     hydratedKey.current = null;
+    // Guard against a stale snapshot clobbering fresher progress: applyGame runs twice (local cache
+    // then cloud). If the cloud copy lagged a day behind (its dayStamp < the local one already
+    // applied), letting it through would re-run the new-day rollover and wipe today's checkboxes —
+    // an "everything reset for no reason" bug. So never apply a snapshot older than one already applied.
+    let appliedStamp = -1;
+    const hydrate = (s) => {
+      if (!s) return;
+      const stamp = typeof s.dayStamp === 'number' ? s.dayStamp : -1;
+      if (stamp < appliedStamp) return;
+      appliedStamp = stamp;
+      applyGame(s);
+    };
     (async () => {
       try {
         const raw = await AsyncStorage.getItem(KEY);
-        if (!cancelled && raw) applyGame(JSON.parse(raw)); // 1) local cache → instant / offline
+        if (!cancelled && raw) hydrate(JSON.parse(raw)); // 1) local cache → instant / offline
         const av = await AsyncStorage.getItem(AVATAR_KEY);
         if (!cancelled && av) setAvatarState(av);
       } catch (e) {}
       if (userId) {
-        const row = await loadUserData(userId); // 2) cloud → authoritative when signed in
-        if (!cancelled && row && row.game) applyGame(row.game);
+        const row = await loadUserData(userId); // 2) cloud → authoritative when signed in (unless staler)
+        if (!cancelled && row && row.game) hydrate(row.game);
         if (!cancelled && row && row.avatar) setAvatarState(row.avatar);
       }
       if (!cancelled) { hydratedKey.current = KEY; setDayStamp((d) => (d == null ? practiceDay() : d)); }
@@ -175,7 +187,7 @@ export function useGame(userId) {
     const consecutive = cur - prevStamp === 1;
     stateRef.current.dayStamp = cur; // guard re-entrancy before the re-render lands
     setStreak((s) => (pct >= 0.75 ? (consecutive ? s + 1 : 1) : 0));
-    setPractices((arr) => arr.map((p) => ({ ...rolloverPracticeStreak(p, consecutive), done: false })));
+    setPractices((arr) => arr.map((p) => ({ ...rolloverPracticeStreak(p, cur - prevStamp), done: false })));
     setDayStamp(cur);
   }, []);
   useEffect(() => {
@@ -267,7 +279,7 @@ export function useGame(userId) {
   const savePractice = useCallback((data) => {
     setPractices((ps) => {
       if (data.id) return ps.map((x) => (x.id === data.id ? { ...x, ...data } : x));
-      return [...ps, { streak: 0, level: 1, streakDay: null, ...data, id: 'p' + Date.now(), custom: true }];
+      return [...ps, { streak: 0, level: 1, streakDay: null, grace: 0, missed: 0, ...data, id: 'p' + Date.now(), custom: true }];
     });
   }, []);
 

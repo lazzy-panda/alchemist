@@ -101,11 +101,11 @@ export function StateChip({ state, text, gold }) {
 }
 
 /* ---------- header metric chip (icon + value, tappable to edit) ---------- */
-export function MetricChip({ icon, color, value, onPress, accessibilityLabel, nativeID }) {
+export function MetricChip({ icon, color, value, onPress, accessibilityLabel, nativeID, warn }) {
   const inner = (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3, paddingVertical: 7, paddingHorizontal: 3, borderRadius: 6, borderWidth: 2, borderColor: C.goldLine, backgroundColor: C.frameDark }}>
-      <PixelIcon name={icon} size={14} color={color} />
-      <Text numberOfLines={1} style={{ fontFamily: FONT.display, fontSize: 13, color: C.ink }}>{value}</Text>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3, paddingVertical: 7, paddingHorizontal: 3, borderRadius: 6, borderWidth: 2, borderColor: warn ? C.red : C.goldLine, backgroundColor: warn ? 'rgba(217,84,59,0.18)' : C.frameDark }}>
+      <PixelIcon name={icon} size={14} color={warn ? C.red : color} />
+      <Text numberOfLines={1} style={{ fontFamily: FONT.display, fontSize: 13, color: warn ? C.red : C.ink }}>{value}</Text>
     </View>
   );
   if (!onPress) return <View nativeID={nativeID} style={{ flex: 1, minWidth: 0 }}>{inner}</View>;

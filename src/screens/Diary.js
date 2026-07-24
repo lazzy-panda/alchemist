@@ -6,7 +6,7 @@ import { loadUserData, saveUserField } from '../supabase';
 import { C, FONT } from '../theme';
 import { DIARY_TIMES, DIARY_SETS } from '../data';
 import { ScreenScroll, PadView } from '../layout';
-import { Card, Gradient, T, SectionHead, DiaryInput, SelChip, kf, KF, EASE } from '../ui';
+import { Card, Gradient, T, SectionHead, DiaryInput, kf, KF, EASE } from '../ui';
 import { KitPill, KitCheckbox } from '../kit';
 import { useEffects } from '../effects';
 
@@ -138,7 +138,6 @@ export function DiaryScreen({ ctx }) {
   const todays = Array.from({ length: 6 }, (_, i) => ({ ...vows[(start + i) % vows.length], n: ((start + i) % vows.length) + 1 }));
   const doneCount = data.checks.filter((c) => c.done).length;
 
-  const chooseSet = (k) => setData((d) => ({ ...fresh(k), best: d.best, worst: d.worst, note: d.note }));
   const upd = (i, field, val) => setData((d) => ({ ...d, checks: d.checks.map((x, j) => (j === i ? { ...x, [field]: val } : x)) }));
   const updList = (key, i, val) => setData((d) => { const a = [...d[key]]; a[i] = val; return { ...d, [key]: a }; });
 
@@ -154,16 +153,10 @@ export function DiaryScreen({ ctx }) {
   return (
     <ScreenScroll nativeID="screen-diary">
       <PadView wide={wide}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <View style={{ flex: 1 }}>
-            <Text style={T.eyebrow}>Шестиразовый этический дневник</Text>
-            <Text accessibilityRole="header" style={[T.displayL, { marginTop: 6 }]}>Дневник</Text>
-          </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <Text accessibilityRole="header" style={[T.displayL, { flex: 1 }]}>Кармический дневник</Text>
           <Text style={{ fontFamily: FONT.display, fontSize: 18, color: C.gold }}>{todayStr}</Text>
         </View>
-        <Text style={[T.body, { color: C.inkMuted, marginBottom: 16 }]}>
-          Шесть раз в день остановитесь, проверьте один обет и запишите <Text style={{ color: C.jadeLight }}>Плюс</Text>, <Text style={{ color: C.red }}>Минус</Text> и <Text style={{ color: C.gold }}>дело</Text>.
-        </Text>
 
         {saveError ? (
           <Card frame="grey" style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 }}>
@@ -171,13 +164,6 @@ export function DiaryScreen({ ctx }) {
             <Text style={{ flex: 1, fontFamily: FONT.ui, fontSize: 18, color: C.red, lineHeight: 28 }}>Не удалось сохранить дневник на этом устройстве — записи могут потеряться после закрытия.</Text>
           </Card>
         ) : null}
-
-        {/* set chooser */}
-        <View nativeID="diary-set-chooser" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
-          {Object.keys(SETS).map((k) => (
-            <SelChip nativeID={`diary-set-${k}`} key={k} on={setKey === k} color={SETS[k].color} icon={SETS[k].icon} label={SETS[k].name} onPress={() => chooseSet(k)} />
-          ))}
-        </View>
 
         {/* progress */}
         <Card nativeID="diary-progress" frame="grey" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>

@@ -222,6 +222,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
   const [instruction, setInstruction] = useState(practice?.instruction || '');
   const [icon, setIcon] = useState(practice?.icon || '');
   const [unit, setUnit] = useState(practice?.unit === 'reps' ? 'reps' : 'min');
+  const [grace, setGrace] = useState(Math.min(3, Math.max(0, practice?.grace || 0))); // missed-day tolerance for the streak
   const [today, setToday] = useState(practice ? !!practice.today : true);
   const [nameError, setNameError] = useState('');
   const [confirm, setConfirm] = useState(null); // null | 'archive' | 'delete'
@@ -299,6 +300,15 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
               />
             </Field>
 
+            <Field nativeID="editor-grace-field" label="Погрешность страйка (пропуск дней)">
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                {[{ v: 0, l: 'Нет' }, { v: 1, l: '1 день' }, { v: 2, l: '2 дня' }, { v: 3, l: '3 дня' }].map((o) => (
+                  <SelChip nativeID={`editor-grace-${o.v}`} key={o.v} on={grace === o.v} color={C.gold} label={o.l} onPress={() => setGrace(o.v)} />
+                ))}
+              </View>
+              <Text style={{ marginTop: 8, color: C.inkMuted, fontFamily: FONT.ui, fontSize: 17, lineHeight: 26 }}>Сколько дней можно пропустить, чтобы страйк не сгорел.</Text>
+            </Field>
+
             <Field nativeID="editor-rewards-field" label="Награды-характеристики">
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {STATS.map((s) => (
@@ -342,7 +352,7 @@ export function EditorSheet({ practice, onSave, onClose, onArchive, onDelete, ex
                     if (!trimmed) { setNameError('Введите название практики'); return; }
                     const dup = (existingNames || []).some((n) => n && n.toLowerCase() === trimmed.toLowerCase() && n.toLowerCase() !== (practice?.name || '').toLowerCase());
                     if (dup) { setNameError('Практика с таким названием уже существует'); return; }
-                    onSave({ id: practice?.id, name: trimmed, cat, dur, unit, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, instruction: instruction.trim() || undefined, today: true, done: practice?.done });
+                    onSave({ id: practice?.id, name: trimmed, cat, dur, unit, r: rewards, qi: practice?.qi ?? 2, icon: icon || undefined, instruction: instruction.trim() || undefined, grace, today: true, done: practice?.done });
                   }}
                 >
                   Сохранить

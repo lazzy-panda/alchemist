@@ -38,11 +38,22 @@ export function revertPracticeStreak(p, today) {
   };
 }
 
-// Daily rollover (03:00): keep the count only if the just-ended day was consecutive AND the practice
-// was done; otherwise the streak is broken → reset to 0, which clears days, weeks AND months at once.
-// Archived / non-Today practices are frozen. `consecutive` = (currentDay - previousDay === 1).
-export function rolloverPracticeStreak(p, consecutive) {
+// Daily rollover (03:00): decide whether the streak survives the just-ended day, honouring the
+// practice's `grace` — how many missed days are tolerated before the streak breaks (0 = strict).
+// `gap` = practice-days since the last rollover (1 = consecutive). `missed` tracks consecutive
+// missed days since the last completion; a completion clears it, and once it exceeds grace the
+// whole streak resets to 0 (clearing days/weeks/months/years at once). Archived / non-Today frozen.
+export function rolloverPracticeStreak(p, gap) {
   if (!(p.today && !p.archived)) return p;
-  const keep = consecutive && !!p.done;
-  return { ...p, streak: keep ? (p.streak || 0) : 0 };
+  const grace = Math.max(0, p.grace || 0);
+  const g = Math.max(1, gap || 1);
+  if (p.done) {
+    // completed the ended day; any days skipped before it (a multi-day gap) count as misses
+    const missed = (p.missed || 0) + (g - 1);
+    return { ...p, streak: missed > grace ? 0 : (p.streak || 0), missed: 0 };
+  }
+  // not done: every day in the gap (incl. the ended day) is a miss
+  const missed = (p.missed || 0) + g;
+  const broke = missed > grace;
+  return { ...p, streak: broke ? 0 : (p.streak || 0), missed: broke ? 0 : missed };
 }
