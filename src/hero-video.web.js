@@ -7,6 +7,7 @@ import { reducedMotion } from './anim';
 
 const VIDEO = require('../assets/avatars/panda-live.mp4');
 const POSTER = require('../assets/avatars/panda-live.jpg');
+const WALL = require('../assets/avatars/panda-wall.jpg');
 const srcUri = (a) => (a && typeof a === 'object' && a.uri ? a.uri : a);
 
 /* текущий играющий <video> героя — источник для живой подложки */
@@ -17,7 +18,6 @@ const box = (size) => ({
   height: size,
   display: 'block',
   objectFit: 'cover',
-  borderRadius: 6,
 });
 
 export function HeroVideoArt({ size = 144, style }) {
@@ -135,6 +135,19 @@ export function HeroWall() {
       pointerEvents: 'none',
     },
     children: [
+      // каменная кладка из чистого участка кадра — «та же стена», зеркальная плитка
+      unstable_createElement('div', {
+        key: 'stone',
+        style: {
+          position: 'absolute',
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundImage: `url(${srcUri(WALL)})`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '228px 180px',
+          filter: 'brightness(1.12) saturate(1.05)',
+        },
+      }),
+      // живой средний тон стены поверх кладки — связывает её яркость с мерцанием кадра
       unstable_createElement('canvas', {
         key: 'wall',
         ref: wallRef,
@@ -144,7 +157,9 @@ export function HeroWall() {
           position: 'absolute',
           top: '-25%', left: '-25%',
           width: '150%', height: '150%',
-          filter: 'blur(36px) saturate(1.05) brightness(0.92)',
+          filter: 'blur(36px) saturate(1.05)',
+          opacity: 0.35,
+          mixBlendMode: 'multiply',
         },
       }),
       unstable_createElement('canvas', {
@@ -155,7 +170,7 @@ export function HeroWall() {
         style: {
           position: 'absolute',
           top: 0, left: 0, width: 0, height: 0,
-          filter: 'blur(22px) brightness(0.96)',
+          filter: 'blur(20px) brightness(1.02)',
           WebkitMaskImage: haloMask,
           maskImage: haloMask,
         },
@@ -165,7 +180,7 @@ export function HeroWall() {
         style: {
           position: 'absolute',
           top: 0, left: 0, right: 0, bottom: 0,
-          background: 'linear-gradient(180deg, rgba(26,16,7,0.08) 0%, rgba(22,13,6,0.35) 100%)',
+          background: 'linear-gradient(180deg, rgba(26,16,7,0.05) 0%, rgba(22,13,6,0.30) 100%)',
         },
       }),
     ],
