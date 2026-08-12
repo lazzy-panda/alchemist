@@ -16,7 +16,7 @@ export default defineConfig({
     transform(code, id) {
       if (!id.endsWith('.js') && !id.endsWith('.jsx')) return;
       if (!code.includes('require(')) return;
-      const patched = code.replace(/require\(['"][^'"]*\.(png|jpg|jpeg|gif|webp|svg)['"]\)/g, '"__asset__"');
+      const patched = code.replace(/require\(['"][^'"]*\.(png|jpg|jpeg|gif|webp|svg|mp4)['"]\)/g, '"__asset__"');
       if (patched !== code) return { code: patched, map: null };
     },
   }],

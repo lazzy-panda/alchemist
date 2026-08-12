@@ -2,8 +2,9 @@
 import React from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { C, FONT } from './theme';
-import { STAT, AVATARS, AVATAR_BY_ID } from './data';
+import { STAT } from './data';
 import { KitBar, KitGem, KitPill, KitParchPill } from './kit';
+import { HeroVideoArt } from './hero-video';
 import { PixelIcon, IconTile } from './PixelIcon';
 
 /* ---------- icon medallion ---------- */
@@ -132,10 +133,9 @@ export function AvatarArt({ av, size = 88, style }) {
 
 /* ---------- avatar — chosen pixel portrait + stage badge (tappable to change) ---------- */
 export function Avatar({ flow, size = 96, stage, avatar, onPress, nativeID }) {
-  const av = AVATAR_BY_ID[avatar] || AVATARS[0];
   const inner = (
     <View nativeID={onPress ? undefined : nativeID} style={{ width: size, height: size, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
-      <AvatarArt av={av} size={size} style={{ borderRadius: 8, borderWidth: 3 }} />
+      <HeroVideoArt size={size} />
       {stage != null ? (
         <View pointerEvents="none" style={{ position: 'absolute', right: -3, bottom: -3, minWidth: 22, height: 20, paddingHorizontal: 5, backgroundColor: C.gold, borderWidth: 2, borderColor: C.goldLine, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: FONT.display, fontSize: 16, color: C.kitGoldText }}>{stage}</Text>
