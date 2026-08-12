@@ -8,6 +8,7 @@ import { reducedMotion } from './anim';
 const VIDEO = require('../assets/avatars/panda-live.mp4');
 const POSTER = require('../assets/avatars/panda-live.jpg');
 const WALL = require('../assets/avatars/panda-wall.jpg');
+const MASK = require('../assets/avatars/panda-mask.png'); // нарисована пользователем вручную
 const srcUri = (a) => (a && typeof a === 'object' && a.uri ? a.uri : a);
 
 /* текущий играющий <video> героя — источник для живой подложки */
@@ -18,6 +19,10 @@ const box = (size) => ({
   height: size,
   display: 'block',
   objectFit: 'cover',
+  WebkitMaskImage: `url(${srcUri(MASK)})`,
+  maskImage: `url(${srcUri(MASK)})`,
+  WebkitMaskSize: '100% 100%',
+  maskSize: '100% 100%',
 });
 
 export function HeroVideoArt({ size = 144, style }) {
@@ -87,23 +92,38 @@ const HALO_CELL = 96; // внутреннее разрешение одной я
 export function HeroWall() {
   const wallRef = React.useRef(null);
   const haloRef = React.useRef(null);
-  const rimRef = React.useRef(null);
 
   React.useEffect(() => {
     const wall = wallRef.current;
     const halo = haloRef.current;
-    const rim = rimRef.current;
-    if (!wall || !halo || !rim) return;
+    if (!wall || !halo) return;
     const wctx = wall.getContext('2d');
     const hctx = halo.getContext('2d');
-    const rctx = rim.getContext('2d');
+    // offscreen: кадр с наложенной пользовательской маской — свечение только от видимого
+    const off = document.createElement('canvas');
+    off.width = HALO_CELL;
+    off.height = HALO_CELL;
+    const octx = off.getContext('2d');
+    const maskImg = new window.Image();
+    let maskReady = false;
+    maskImg.onload = () => { maskReady = true; };
+    maskImg.src = srcUri(MASK);
     let poster = null;
     let posterReady = false;
     const drawFrom = (src) => {
       // база — верхняя полоса кадра (чистая стена), растянутая на шапку
       wctx.drawImage(src, 0, 0, 480, 70, 0, 0, WALL_RES, WALL_RES);
-      // ореол — зеркальная 3×3 сетка
+      // кадр × маска
       const c = HALO_CELL;
+      octx.clearRect(0, 0, c, c);
+      octx.drawImage(src, 0, 0, c, c);
+      if (maskReady) {
+        octx.globalCompositeOperation = 'destination-in';
+        octx.drawImage(maskImg, 0, 0, c, c);
+        octx.globalCompositeOperation = 'source-over';
+      }
+      // ореол — зеркальная 3×3 сетка из замаскированного кадра
+      hctx.clearRect(0, 0, c * 3, c * 3);
       for (let gx = 0; gx < 3; gx++) {
         for (let gy = 0; gy < 3; gy++) {
           const fx = gx !== 1;
@@ -111,12 +131,10 @@ export function HeroWall() {
           hctx.save();
           hctx.translate(gx * c + (fx ? c : 0), gy * c + (fy ? c : 0));
           hctx.scale(fx ? -1 : 1, fy ? -1 : 1);
-          hctx.drawImage(src, 0, 0, c, c);
+          hctx.drawImage(off, 0, 0, c, c);
           hctx.restore();
         }
       }
-      // кайма — копия той же сетки, покажется почти без блюра у самой кромки
-      rctx.drawImage(halo, 0, 0);
     };
     let raf = 0;
     const tick = () => {
@@ -137,14 +155,10 @@ export function HeroWall() {
         const a = av.getBoundingClientRect();
         const h = hero.getBoundingClientRect();
         const size = a.width * HALO_SCALE;
-        const left = (a.left - h.left + a.width / 2 - size / 2) + 'px';
-        const top = (a.top - h.top + a.height / 2 - size / 2) + 'px';
-        for (const el2 of [halo, rim]) {
-          el2.style.width = size + 'px';
-          el2.style.height = size + 'px';
-          el2.style.left = left;
-          el2.style.top = top;
-        }
+        halo.style.width = size + 'px';
+        halo.style.height = size + 'px';
+        halo.style.left = (a.left - h.left + a.width / 2 - size / 2) + 'px';
+        halo.style.top = (a.top - h.top + a.height / 2 - size / 2) + 'px';
       }
     };
     tick();
@@ -152,7 +166,6 @@ export function HeroWall() {
   }, []);
 
   const haloMask = 'radial-gradient(circle closest-side, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 92%)';
-  const rimMask = 'radial-gradient(circle closest-side, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 68%)';
   return unstable_createElement('div', {
     'aria-hidden': true,
     style: {
@@ -208,19 +221,6 @@ export function HeroWall() {
           filter: 'blur(16px)',
           WebkitMaskImage: haloMask,
           maskImage: haloMask,
-        },
-      }),
-      unstable_createElement('canvas', {
-        key: 'rim',
-        ref: rimRef,
-        width: HALO_CELL * 3,
-        height: HALO_CELL * 3,
-        style: {
-          position: 'absolute',
-          top: 0, left: 0, width: 0, height: 0,
-          filter: 'blur(5px)',
-          WebkitMaskImage: rimMask,
-          maskImage: rimMask,
         },
       }),
     ],
