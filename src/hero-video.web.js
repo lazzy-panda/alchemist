@@ -1,22 +1,24 @@
-/* Alchemist — live hero portrait: looping muted <video> (web). Poster on reduced-motion or error. */
+/* Alchemist — live hero portrait: looping muted <video> (web), бесшовно растворён в стене шапки.
+   Края гасятся перьевой альфа-маской (panda-mask.png), рамки нет — фон шапки продолжает стену видео.
+   Poster on reduced-motion or error. */
 import React from 'react';
-import { Image } from 'react-native';
 import { unstable_createElement } from 'react-native-web';
-import { C } from './theme';
 import { reducedMotion } from './anim';
 
 const VIDEO = require('../assets/avatars/panda-live.mp4');
 const POSTER = require('../assets/avatars/panda-live.jpg');
+const MASK = require('../assets/avatars/panda-mask.png');
 const srcUri = (a) => (a && typeof a === 'object' && a.uri ? a.uri : a);
 
-/* same square frame as AvatarArt */
-const frameBox = (size) => ({
+const seamlessBox = (size) => ({
   width: size,
   height: size,
-  borderRadius: 8,
-  borderWidth: 3,
-  borderColor: C.goldLine,
-  backgroundColor: C.frameDark,
+  display: 'block',
+  objectFit: 'cover',
+  WebkitMaskImage: `url(${srcUri(MASK)})`,
+  maskImage: `url(${srcUri(MASK)})`,
+  WebkitMaskSize: '100% 100%',
+  maskSize: '100% 100%',
 });
 
 export function HeroVideoArt({ size = 144, style }) {
@@ -43,7 +45,12 @@ export function HeroVideoArt({ size = 144, style }) {
   }, [still]);
 
   if (still) {
-    return <Image source={POSTER} resizeMode="cover" style={[frameBox(size), style]} />;
+    return unstable_createElement('img', {
+      src: srcUri(POSTER),
+      alt: '',
+      draggable: false,
+      style: [seamlessBox(size), style],
+    });
   }
   return unstable_createElement('video', {
     ref,
@@ -60,10 +67,6 @@ export function HeroVideoArt({ size = 144, style }) {
     'aria-hidden': true,
     tabIndex: -1,
     onError: () => setFailed(true),
-    style: [
-      frameBox(size),
-      { display: 'block', objectFit: 'cover', borderStyle: 'solid', boxSizing: 'border-box' },
-      style,
-    ],
+    style: [seamlessBox(size), style],
   });
 }

@@ -80,8 +80,9 @@ export const C = {
   frameGoldBg: '#2f2613', // unlocked perk tile
   chipBg: '#33302a',      // non-interactive chip background
   chipGold: '#3a2c10',    // gold chip background
-  heroBg: '#363025',      // Today hero gradient (top)
-  railBg: '#2a251d',      // hero gradient bottom · bottom-nav · side-rail
+  heroBg: '#3c2b1b',      // Today hero gradient top — стена из live-портрета (верхняя кромка видео)
+  heroBg2: '#2b1b0e',     // Today hero gradient bottom — виньетка стены (нижняя кромка видео)
+  railBg: '#2a251d',      // bottom-nav · side-rail
   doneBg: '#2e7d46',      // completed-check green
 
   // characteristic semantics (CSS --c-*)
