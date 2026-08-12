@@ -93,7 +93,7 @@ export function TodayScreen({ ctx }) {
             ) : null}
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, zIndex: 2 }}>
-            <Avatar nativeID="today-avatar" flow={dayState === 'flow'} size={144} avatar={avatar} onPress={onAvatar} />
+            <Avatar nativeID="today-avatar" flow={dayState === 'flow'} size={216} avatar={avatar} onPress={onAvatar} />
             <View style={{ flex: 1, paddingTop: 2, paddingRight: 12 }}>
               <Text accessibilityRole="header" style={[T.displayM]}>{greeting()},{'\n'}{name}</Text>
             </View>
