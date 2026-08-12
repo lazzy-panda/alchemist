@@ -13,8 +13,3 @@ export function HeroVideoArt({ size = 144, style }) {
     />
   );
 }
-
-/* Подложка шапки существует только на вебе. */
-export function HeroWall() {
-  return null;
-}
