@@ -1,24 +1,23 @@
-/* Alchemist — live hero portrait: looping muted <video> (web), бесшовно растворён в стене шапки.
-   Края гасятся перьевой альфа-маской (panda-mask.png), рамки нет — фон шапки продолжает стену видео.
-   Poster on reduced-motion or error. */
+/* Alchemist — live hero portrait (web): looping muted <video>, кадр показывается ЦЕЛИКОМ, без масок.
+   HeroWall — живая амбиент-подложка шапки: играющий кадр видео рисуется в размытый canvas,
+   так что фон шапки — та же стена, мерцает синхронно с порталом. Poster on reduced-motion or error. */
 import React from 'react';
 import { unstable_createElement } from 'react-native-web';
 import { reducedMotion } from './anim';
 
 const VIDEO = require('../assets/avatars/panda-live.mp4');
 const POSTER = require('../assets/avatars/panda-live.jpg');
-const MASK = require('../assets/avatars/panda-mask.png');
 const srcUri = (a) => (a && typeof a === 'object' && a.uri ? a.uri : a);
 
-const seamlessBox = (size) => ({
+/* текущий играющий <video> героя — источник для живой подложки */
+let liveVideoEl = null;
+
+const box = (size) => ({
   width: size,
   height: size,
   display: 'block',
   objectFit: 'cover',
-  WebkitMaskImage: `url(${srcUri(MASK)})`,
-  maskImage: `url(${srcUri(MASK)})`,
-  WebkitMaskSize: '100% 100%',
-  maskSize: '100% 100%',
+  borderRadius: 6,
 });
 
 export function HeroVideoArt({ size = 144, style }) {
@@ -41,7 +40,11 @@ export function HeroVideoArt({ size = 144, style }) {
     };
     kick();
     document.addEventListener('visibilitychange', kick);
-    return () => document.removeEventListener('visibilitychange', kick);
+    liveVideoEl = el;
+    return () => {
+      if (liveVideoEl === el) liveVideoEl = null;
+      document.removeEventListener('visibilitychange', kick);
+    };
   }, [still]);
 
   if (still) {
@@ -49,7 +52,7 @@ export function HeroVideoArt({ size = 144, style }) {
       src: srcUri(POSTER),
       alt: '',
       draggable: false,
-      style: [seamlessBox(size), style],
+      style: [box(size), style],
     });
   }
   return unstable_createElement('video', {
@@ -67,6 +70,104 @@ export function HeroVideoArt({ size = 144, style }) {
     'aria-hidden': true,
     tabIndex: -1,
     onError: () => setFailed(true),
-    style: [seamlessBox(size), style],
+    style: [box(size), style],
+  });
+}
+
+/* Абсолютная подложка на всю шапку: живой размытый кадр видео + затемнение для читаемости.
+   Два слоя: базовая «стена» (верхняя полоса кадра, растянутая на шапку) и «эмбилайт»-ореол —
+   размытый полный кадр, пространственно совмещённый с порталом, растворяющийся в стену.
+   Пока видео не играет (загрузка/reduced-motion/ошибка) — рисуется постер. */
+const WALL_RES = 64; // внутреннее разрешение canvas; блюр всё равно съедает детали
+const HALO_SCALE = 3; // ореол в 3 размера портала, по центру
+
+export function HeroWall() {
+  const wallRef = React.useRef(null);
+  const haloRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const wall = wallRef.current;
+    const halo = haloRef.current;
+    if (!wall || !halo) return;
+    const wctx = wall.getContext('2d');
+    const hctx = halo.getContext('2d');
+    let poster = null;
+    let posterReady = false;
+    const drawFrom = (src) => {
+      // база — верхняя полоса кадра (чистая стена), ореол — кадр целиком
+      wctx.drawImage(src, 0, 0, 480, 70, 0, 0, WALL_RES, WALL_RES);
+      hctx.drawImage(src, 0, 0, WALL_RES, WALL_RES);
+    };
+    const tick = () => {
+      const el = liveVideoEl;
+      if (el && el.readyState >= 2 && !el.paused) drawFrom(el);
+      else if (posterReady) drawFrom(poster);
+      else if (!poster) {
+        poster = new window.Image();
+        poster.onload = () => { posterReady = true; drawFrom(poster); };
+        poster.src = srcUri(POSTER);
+      }
+      // совместить ореол с порталом (координаты относительно шапки)
+      const av = document.getElementById('today-avatar');
+      const hero = halo.parentElement;
+      if (av && hero) {
+        const a = av.getBoundingClientRect();
+        const h = hero.getBoundingClientRect();
+        const size = a.width * HALO_SCALE;
+        halo.style.width = size + 'px';
+        halo.style.height = size + 'px';
+        halo.style.left = (a.left - h.left + a.width / 2 - size / 2) + 'px';
+        halo.style.top = (a.top - h.top + a.height / 2 - size / 2) + 'px';
+      }
+    };
+    tick();
+    const t = setInterval(tick, 150);
+    return () => clearInterval(t);
+  }, []);
+
+  const haloMask = 'radial-gradient(circle closest-side, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 96%)';
+  return unstable_createElement('div', {
+    'aria-hidden': true,
+    style: {
+      position: 'absolute',
+      top: 0, left: 0, right: 0, bottom: 0,
+      overflow: 'hidden',
+      pointerEvents: 'none',
+    },
+    children: [
+      unstable_createElement('canvas', {
+        key: 'wall',
+        ref: wallRef,
+        width: WALL_RES,
+        height: WALL_RES,
+        style: {
+          position: 'absolute',
+          top: '-25%', left: '-25%',
+          width: '150%', height: '150%',
+          filter: 'blur(36px) saturate(1.05) brightness(0.92)',
+        },
+      }),
+      unstable_createElement('canvas', {
+        key: 'halo',
+        ref: haloRef,
+        width: WALL_RES,
+        height: WALL_RES,
+        style: {
+          position: 'absolute',
+          top: 0, left: 0, width: 0, height: 0,
+          filter: 'blur(22px) brightness(0.96)',
+          WebkitMaskImage: haloMask,
+          maskImage: haloMask,
+        },
+      }),
+      unstable_createElement('div', {
+        key: 'dim',
+        style: {
+          position: 'absolute',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'linear-gradient(180deg, rgba(26,16,7,0.08) 0%, rgba(22,13,6,0.35) 100%)',
+        },
+      }),
+    ],
   });
 }

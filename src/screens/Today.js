@@ -5,6 +5,7 @@ import { C, FONT } from '../theme';
 import { ScreenScroll, PadView, WIDE_MAX } from '../layout';
 import { Gradient, Card, Btn, T, Seal, kf, KF, EASE } from '../ui';
 import { Avatar, WillBar, StateChip, MetricChip } from '../badges';
+import { HeroWall } from '../hero-video';
 import { PracticeCard } from '../PracticeCard';
 import { PixelIcon } from '../PixelIcon';
 import { DragList } from '../DragList';
@@ -77,6 +78,7 @@ export function TodayScreen({ ctx }) {
     <ScreenScroll nativeID="screen-today" scrollRef={scrollRef}>
       {/* hero */}
       <Gradient nativeID="today-hero" colors={[C.heroBg, C.heroBg2]} angle={180} style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.paperDeep }}>
+        <HeroWall />
         <View style={[{ position: 'relative' }, wide ? { width: '100%', maxWidth: WIDE_MAX, alignSelf: 'center' } : null]}>
           <View style={{ position: 'absolute', right: 0, top: 2, flexDirection: 'row', alignItems: 'center', gap: 8, zIndex: 3 }}>
             {onMenu ? (
