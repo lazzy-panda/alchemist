@@ -75,7 +75,9 @@ export function TodayScreen({ ctx }) {
   // (216px + отступы), и на 430px в неё влезает вдвое меньше. Считаем от ширины КОЛОНКИ,
   // а не экрана, и упираем в 60 сверху — на широком экране кегль дорастает до задуманного.
   const blessCol = Math.min(winW, WIDE_MAX) - 216 - 14 - 36 - 12; // аватар, gap, паддинги героя, правый отступ
-  const blessSize = Math.max(18, Math.min(60, Math.round(blessCol / 6.8)));
+  // -10px к задуманному кеглю: потолок 60 -> 50, делитель подобран так, чтобы на 430px вышло
+  // 18px. Вычитать 10 из готового значения нельзя — на телефоне это 12px, мельче чипов под ним.
+  const blessSize = Math.max(16, Math.min(50, Math.round(blessCol / 8.4)));
   const scrollRef = React.useRef(null); // DragList auto-scrolls this while dragging near viewport edges
   // flag a category whose accumulated time lags far behind the leading one (≥1h leader, ≤30% of it)
   const catT = { med: timeMin.med || 0, qi: timeMin.qi || 0, know: timeMin.know || 0, body: timeMin.body || 0 };
@@ -109,7 +111,7 @@ export function TodayScreen({ ctx }) {
               <Text
                 accessibilityRole="header"
                 nativeID="today-greeting"
-                style={{ textAlign: 'right', fontFamily: FONT.display, fontWeight: '800', fontSize: blessSize, lineHeight: Math.round(blessSize * 1.16), color: C.title, textShadowColor: 'rgba(0,0,0,0.55)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 0 }}
+                style={{ textAlign: 'center', fontFamily: FONT.display, fontWeight: '800', fontSize: blessSize, lineHeight: Math.round(blessSize * 1.16), color: C.title, textShadowColor: 'rgba(0,0,0,0.55)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 0 }}
               >
                 {dailyBlessing()}
               </Text>
