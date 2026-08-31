@@ -33,14 +33,32 @@ export function HeroVideoArt({ size = 144, style }) {
     el.muted = true;
     el.setAttribute('muted', '');
     el.setAttribute('playsinline', '');
-    const kick = () => {
+    // iOS-вебвью (в т.ч. Chrome на iPhone — там тот же WebKit) отклоняет autoplay в режиме
+    // энергосбережения: promise от play() отвергается, кадр замирает навсегда, и WebKit рисует
+    // поверх свою кнопку play. Ловим первый жест в ЛЮБОМ месте страницы — жать по самой
+    // аватарке не нужно (тап по ней открывает «Сменить образ»).
+    const GESTURES = ['pointerdown', 'touchend', 'click', 'keydown'];
+    function onGesture() { kick(); }
+    const arm = () => GESTURES.forEach((g) => document.addEventListener(g, onGesture, true));
+    const disarm = () => GESTURES.forEach((g) => document.removeEventListener(g, onGesture, true));
+    function kick() {
       if (document.hidden) return;
       const p = el.play();
-      if (p && p.catch) p.catch(() => {});
-    };
+      // пошло — слушатели больше не нужны; отказ глотаем, ждём жеста
+      if (p && p.then) p.then(disarm, () => {});
+    }
+    // видео встало не по нашей воле (заблокированный autoplay, сворачивание приложения,
+    // входящий звонок) — снова ждём жеста, иначе панда замрёт до конца сессии
+    const onPause = () => arm();
+    el.addEventListener('pause', onPause);
     kick();
+    arm();
     document.addEventListener('visibilitychange', kick);
-    return () => document.removeEventListener('visibilitychange', kick);
+    return () => {
+      disarm();
+      el.removeEventListener('pause', onPause);
+      document.removeEventListener('visibilitychange', kick);
+    };
   }, [still]);
 
   if (still) {

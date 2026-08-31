@@ -50,6 +50,13 @@ const overrides = `
 .rpgui-content .rpgui-container { text-align: left !important; }
 /* RPGUI applies image-rendering: pixelated globally; keep our vector art (radar/timer/charts) crisp */
 .rpgui-content svg, .rpgui-content svg * { image-rendering: auto !important; }
+/* WebKit рисует поверх незапустившегося видео свою кнопку play (и панель контролов).
+   Живой портрет на «Сегодня» — декоративный, управлять им нечем: прячем оба слоя, иначе на
+   iPhone поверх панды висит значок play, пока autoplay заблокирован энергосбережением. */
+video::-webkit-media-controls-start-playback-button,
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-panel,
+video::-webkit-media-controls { display: none !important; -webkit-appearance: none !important; }
 /* крышки пробирки перекрывают её, а не стыкуются встык: труба уходит на 1px под каждую
    крышку (RPGUI по умолчанию ставит track ровно между ними — left/right: 40px). Крышки идут
    в DOM после трека (kit.web.js KitBar), поэтому рисуются поверх. */
