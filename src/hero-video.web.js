@@ -1,10 +1,10 @@
-/* Alchemist — live hero portrait (web): looping muted <video> с ручной маской Кирилла
-   (panda-mask.png, альфа-канал). Poster on reduced-motion or error. */
+/* Alchemist — live hero portrait (web): анимированный GIF с ручной маской Кирилла
+   (panda-mask.png, альфа-канал). Статичный кадр при prefers-reduced-motion. */
 import React from 'react';
 import { unstable_createElement } from 'react-native-web';
 import { reducedMotion } from './anim';
 
-const VIDEO = require('../assets/avatars/panda-live.mp4');
+const GIF = require('../assets/avatars/panda-live.gif');
 const POSTER = require('../assets/avatars/panda-live.jpg');
 const MASK = require('../assets/avatars/panda-mask.png'); // нарисована пользователем вручную
 const srcUri = (a) => (a && typeof a === 'object' && a.uri ? a.uri : a);
@@ -20,52 +20,19 @@ const box = (size) => ({
   maskSize: '100% 100%',
 });
 
+/* Раньше здесь был <video>. iOS-вебвью (в т.ч. Chrome на iPhone — там тот же WebKit) отказывал
+   в автозапуске, кадр замирал, и поверх висела кнопка play. Анимация в <img> политикам
+   автозапуска не подчиняется: играет всегда, везде и без жеста, рисовать поверх нечего. */
 export function HeroVideoArt({ size = 144, style }) {
-  const ref = React.useRef(null);
   const [failed, setFailed] = React.useState(false);
   const still = failed || reducedMotion();
-
-  React.useEffect(() => {
-    if (still) return;
-    const el = ref.current;
-    if (!el) return;
-    // React ставит muted только как property; вебвью-эвристики autoplay смотрят атрибут.
-    el.muted = true;
-    el.setAttribute('muted', '');
-    el.setAttribute('playsinline', '');
-    const kick = () => {
-      if (document.hidden) return;
-      const p = el.play();
-      if (p && p.catch) p.catch(() => {});
-    };
-    kick();
-    document.addEventListener('visibilitychange', kick);
-    return () => document.removeEventListener('visibilitychange', kick);
-  }, [still]);
-
-  if (still) {
-    return unstable_createElement('img', {
-      src: srcUri(POSTER),
-      alt: '',
-      draggable: false,
-      style: [box(size), style],
-    });
-  }
-  return unstable_createElement('video', {
-    ref,
-    src: srcUri(VIDEO),
-    poster: srcUri(POSTER),
-    autoPlay: true,
-    muted: true,
-    loop: true,
-    playsInline: true,
-    preload: 'auto',
-    controls: false,
-    disablePictureInPicture: true,
-    disableRemotePlayback: true,
+  return unstable_createElement('img', {
+    src: srcUri(still ? POSTER : GIF),
+    alt: '',
+    draggable: false,
     'aria-hidden': true,
     tabIndex: -1,
-    onError: () => setFailed(true),
+    onError: () => setFailed(true), // не догрузился GIF — показываем статичный кадр
     style: [box(size), style],
   });
 }
