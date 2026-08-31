@@ -123,10 +123,10 @@ export function KitCheckbox({ on, size = 28, style, nativeID }) {
     src: srcUri(on ? CHECKBOX_ON : CHECKBOX_OFF),
     alt: on ? 'checked' : 'unchecked',
     draggable: false,
-    // спрайт — детальная иллюстрация, не блочный пиксель-арт: сглаженное масштабирование
-    // держит рамку и заклёпки ровными на 18/28/30 px и на 2x/3x экранах. RPGUI ставит
-    // pixelated на `.rpgui-content *`, поэтому auto прописан явно — инлайн перебивает класс.
-    style: [{ width: size, height: size, imageRendering: 'auto', objectFit: 'fill', display: 'block' }, style],
+    // pixelated (как у всего RPGUI-кита): спрайт обрезан по рисунку и лежит в 128px, так что
+    // nearest-neighbour берёт ~1 из 4 и держит заклёпки и грани гема резкими. Сглаживание тут
+    // мылит орнамент — проверено на 30px. Не менять, не уменьшив сперва исходник.
+    style: [{ width: size, height: size, imageRendering: 'pixelated', objectFit: 'fill', display: 'block' }, style],
   });
 }
 /* kept for back-compat; KitCheckbox is the native control */
