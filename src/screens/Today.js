@@ -1,6 +1,6 @@
 /* Alchemist — Today screen (RPGUI, English) */
 import React from 'react';
-import { View, Text, Pressable, Image } from 'react-native';
+import { View, Text, Pressable, Image, useWindowDimensions } from 'react-native';
 import { C, FONT } from '../theme';
 import { ScreenScroll, PadView, WIDE_MAX } from '../layout';
 import { Gradient, Card, Btn, T, Seal, kf, KF, EASE } from '../ui';
@@ -9,7 +9,7 @@ import { PracticeCard } from '../PracticeCard';
 import { PixelIcon } from '../PixelIcon';
 import { DragList } from '../DragList';
 import { hoursLabel, CATS } from '../data';
-import { dailyWisdom } from '../quotes';
+import { dailyWisdom, dailyBlessing } from '../quotes';
 
 // фреска Дуньхуана — фон героя «Сегодня» (контент лежит поверх, ничего не режем)
 const HERO_BG = require('../../assets/today-hero-bg.jpg');
@@ -70,6 +70,12 @@ export function TodayScreen({ ctx }) {
   const onCompleteAll = () => pending.forEach((pp) => onToggle(pp));
   const name = (userName || '').trim().split(' ')[0] || 'Странник';
   const streakMilestone = streak >= 7 && streak % 7 === 0;
+  const { width: winW } = useWindowDimensions();
+  // 60px — задуманный кегль приветствия, но фраза живёт в узкой колонке справа от аватарки
+  // (216px + отступы), и на 430px в неё влезает вдвое меньше. Считаем от ширины КОЛОНКИ,
+  // а не экрана, и упираем в 60 сверху — на широком экране кегль дорастает до задуманного.
+  const blessCol = Math.min(winW, WIDE_MAX) - 216 - 14 - 36 - 12; // аватар, gap, паддинги героя, правый отступ
+  const blessSize = Math.max(18, Math.min(60, Math.round(blessCol / 6.8)));
   const scrollRef = React.useRef(null); // DragList auto-scrolls this while dragging near viewport edges
   // flag a category whose accumulated time lags far behind the leading one (≥1h leader, ≤30% of it)
   const catT = { med: timeMin.med || 0, qi: timeMin.qi || 0, know: timeMin.know || 0, body: timeMin.body || 0 };
@@ -99,8 +105,14 @@ export function TodayScreen({ ctx }) {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, zIndex: 2 }}>
             <Avatar nativeID="today-avatar" flow={dayState === 'flow'} size={216} avatar={avatar} onPress={onAvatar} />
-            <View style={{ flex: 1, paddingTop: 2, paddingRight: 12 }}>
-              <Text accessibilityRole="header" style={[T.displayM]}>{greeting()},{'\n'}{name}</Text>
+            <View style={{ flex: 1, paddingRight: 12, paddingTop: 34 }}>
+              <Text
+                accessibilityRole="header"
+                nativeID="today-greeting"
+                style={{ textAlign: 'right', fontFamily: FONT.display, fontWeight: '800', fontSize: blessSize, lineHeight: Math.round(blessSize * 1.16), color: C.title, textShadowColor: 'rgba(0,0,0,0.55)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 0 }}
+              >
+                {dailyBlessing()}
+              </Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 6, marginTop: 16, zIndex: 2 }}>

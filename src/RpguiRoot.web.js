@@ -32,7 +32,8 @@ function inject() {
   vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=Tiny5&display=swap';
+  // Alegreya — засечный, с кириллицей; 800 нужен для приветствия на «Сегодня»
+  link.href = 'https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;700;800;900&display=swap';
   document.head.appendChild(link);
   const style = document.createElement('style');
   style.id = 'rpgui-css';

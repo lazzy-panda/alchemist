@@ -57,7 +57,7 @@ const overrides = `
 /* Cyrillic-capable pixel font on EVERY descendant — overrides rpgui.css's
    ".rpgui-content * { font-family:'Press Start 2P', cursive }" so a missing glyph or a late
    font load can never fall through to the handwritten cursive default (#8). Fallback: monospace. */
-.rpgui-content, .rpgui-content * { font-family: 'Tiny5', monospace !important; }
+.rpgui-content, .rpgui-content * { font-family: 'Alegreya', Georgia, serif !important; }
 /* 2× font scale: RPGUI native text (buttons/inputs/labels) is sized in em relative to .rpgui-content;
    doubling its base (rpgui.css sets 0.8em ≈ 12.8px → 25.6px) doubles that text to match the doubled RN Text sizes */
 .rpgui-content { font-size: 25.6px !important; }

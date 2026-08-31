@@ -104,11 +104,11 @@ export const R = {
 };
 
 export const FONT = {
-  // Tiny5 — blocky pixel font WITH Cyrillic + clearly legible digits (replaced Pixelify Sans, whose
-  // digits read ambiguously; Press Start 2P has no Russian, VT323 read too soft); native keeps system default
-  display: WEB ? 'Tiny5' : undefined,
-  ui: WEB ? 'Tiny5' : undefined,
-  han: WEB ? 'Tiny5' : undefined,
+  // Alegreya — засечная антиква с полной кириллицей и весами до 900; сменила пиксельный Tiny5
+  // (см. RpguiRoot.web.js — там же грузится сам файл шрифта); native keeps system default
+  display: WEB ? 'Alegreya' : undefined,
+  ui: WEB ? 'Alegreya' : undefined,
+  han: WEB ? 'Alegreya' : undefined,
 };
 
 // box-shadow strings (RN 0.85 + react-native-web both support boxShadow)
