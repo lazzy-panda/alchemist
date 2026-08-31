@@ -22,6 +22,22 @@ const box = (size) => ({
 
 export function HeroVideoArt({ size = 144, style }) {
   const ref = React.useRef(null);
+  // Порядок здесь — и есть автозапуск на iOS. WebKit решает, можно ли играть без жеста, в
+  // момент загрузки источника, и читает АТРИБУТЫ muted/playsinline. React выставляет muted
+  // только как property, а прежний код дописывал атрибуты в useEffect — то есть уже после
+  // загрузки, когда отказ был вынесен. Поэтому src не отдаём React: вешаем атрибуты в
+  // ref-колбэке (он срабатывает при вставке элемента, до useEffect) и только потом источник.
+  const attach = React.useCallback((el) => {
+    ref.current = el;
+    if (!el) return;
+    el.muted = true;
+    el.defaultMuted = true;          // отражается в атрибут muted
+    el.setAttribute('muted', '');
+    el.setAttribute('playsinline', '');
+    el.setAttribute('webkit-playsinline', '');
+    el.setAttribute('autoplay', '');
+    if (!el.getAttribute('src')) el.setAttribute('src', srcUri(VIDEO));
+  }, []);
   const [failed, setFailed] = React.useState(false);
   const still = failed || reducedMotion();
 
@@ -29,10 +45,6 @@ export function HeroVideoArt({ size = 144, style }) {
     if (still) return;
     const el = ref.current;
     if (!el) return;
-    // React ставит muted только как property; вебвью-эвристики autoplay смотрят атрибут.
-    el.muted = true;
-    el.setAttribute('muted', '');
-    el.setAttribute('playsinline', '');
     // iOS-вебвью (в т.ч. Chrome на iPhone — там тот же WebKit) отклоняет autoplay в режиме
     // энергосбережения: promise от play() отвергается, кадр замирает навсегда, и WebKit рисует
     // поверх свою кнопку play. Ловим первый жест в ЛЮБОМ месте страницы — жать по самой
@@ -70,8 +82,7 @@ export function HeroVideoArt({ size = 144, style }) {
     });
   }
   return unstable_createElement('video', {
-    ref,
-    src: srcUri(VIDEO),
+    ref: attach,
     poster: srcUri(POSTER),
     autoPlay: true,
     muted: true,
