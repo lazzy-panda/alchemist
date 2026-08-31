@@ -50,6 +50,10 @@ const overrides = `
 .rpgui-content .rpgui-container { text-align: left !important; }
 /* RPGUI applies image-rendering: pixelated globally; keep our vector art (radar/timer/charts) crisp */
 .rpgui-content svg, .rpgui-content svg * { image-rendering: auto !important; }
+/* крышки пробирки перекрывают её, а не стыкуются встык: труба уходит на 1px под каждую
+   крышку (RPGUI по умолчанию ставит track ровно между ними — left/right: 40px). Крышки идут
+   в DOM после трека (kit.web.js KitBar), поэтому рисуются поверх. */
+.rpgui-content .rpgui-progress-track { left: 39px !important; right: 39px !important; }
 /* Cyrillic-capable pixel font on EVERY descendant — overrides rpgui.css's
    ".rpgui-content * { font-family:'Press Start 2P', cursive }" so a missing glyph or a late
    font load can never fall through to the handwritten cursive default (#8). Fallback: monospace. */
