@@ -1,6 +1,6 @@
 /* Alchemist — Today screen (RPGUI, English) */
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { C, FONT } from '../theme';
 import { ScreenScroll, PadView, WIDE_MAX } from '../layout';
 import { Gradient, Card, Btn, T, Seal, kf, KF, EASE } from '../ui';
@@ -10,6 +10,9 @@ import { PixelIcon } from '../PixelIcon';
 import { DragList } from '../DragList';
 import { hoursLabel, CATS } from '../data';
 import { dailyWisdom } from '../quotes';
+
+// фреска Дуньхуана — фон героя «Сегодня» (контент лежит поверх, ничего не режем)
+const HERO_BG = require('../../assets/today-hero-bg.jpg');
 
 function greeting() {
   let h = 9;
@@ -77,6 +80,10 @@ export function TodayScreen({ ctx }) {
     <ScreenScroll nativeID="screen-today" scrollRef={scrollRef}>
       {/* hero */}
       <Gradient nativeID="today-hero" colors={[C.heroBg, C.heroBg]} angle={180} style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 20, overflow: 'hidden', borderBottomWidth: 3, borderBottomColor: C.paperDeep }}>
+        {/* фреска целиком, cover; heroBg под ней остаётся запасным цветом на время загрузки */}
+        <Image source={HERO_BG} resizeMode="cover" pointerEvents="none" accessible={false} style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} />
+        {/* затемняющая вуаль: светлые нимбы фрески не должны спорить с золотым заголовком и чипами */}
+        <Gradient colors={['rgba(28,18,10,0.28)', 'rgba(28,18,10,0.62)']} angle={180} pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }} />
         <View style={[{ position: 'relative' }, wide ? { width: '100%', maxWidth: WIDE_MAX, alignSelf: 'center' } : null]}>
           <View style={{ position: 'absolute', right: 0, top: 2, flexDirection: 'row', alignItems: 'center', gap: 8, zIndex: 3 }}>
             {onMenu ? (
