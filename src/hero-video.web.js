@@ -22,22 +22,6 @@ const box = (size) => ({
 
 export function HeroVideoArt({ size = 144, style }) {
   const ref = React.useRef(null);
-  // Порядок здесь — и есть автозапуск на iOS. WebKit решает, можно ли играть без жеста, в
-  // момент загрузки источника, и читает АТРИБУТЫ muted/playsinline. React выставляет muted
-  // только как property, а прежний код дописывал атрибуты в useEffect — то есть уже после
-  // загрузки, когда отказ был вынесен. Поэтому src не отдаём React: вешаем атрибуты в
-  // ref-колбэке (он срабатывает при вставке элемента, до useEffect) и только потом источник.
-  const attach = React.useCallback((el) => {
-    ref.current = el;
-    if (!el) return;
-    el.muted = true;
-    el.defaultMuted = true;          // отражается в атрибут muted
-    el.setAttribute('muted', '');
-    el.setAttribute('playsinline', '');
-    el.setAttribute('webkit-playsinline', '');
-    el.setAttribute('autoplay', '');
-    if (!el.getAttribute('src')) el.setAttribute('src', srcUri(VIDEO));
-  }, []);
   const [failed, setFailed] = React.useState(false);
   const still = failed || reducedMotion();
 
@@ -45,32 +29,18 @@ export function HeroVideoArt({ size = 144, style }) {
     if (still) return;
     const el = ref.current;
     if (!el) return;
-    // iOS-вебвью (в т.ч. Chrome на iPhone — там тот же WebKit) отклоняет autoplay в режиме
-    // энергосбережения: promise от play() отвергается, кадр замирает навсегда, и WebKit рисует
-    // поверх свою кнопку play. Ловим первый жест в ЛЮБОМ месте страницы — жать по самой
-    // аватарке не нужно (тап по ней открывает «Сменить образ»).
-    const GESTURES = ['pointerdown', 'touchend', 'click', 'keydown'];
-    function onGesture() { kick(); }
-    const arm = () => GESTURES.forEach((g) => document.addEventListener(g, onGesture, true));
-    const disarm = () => GESTURES.forEach((g) => document.removeEventListener(g, onGesture, true));
-    function kick() {
+    // React ставит muted только как property; вебвью-эвристики autoplay смотрят атрибут.
+    el.muted = true;
+    el.setAttribute('muted', '');
+    el.setAttribute('playsinline', '');
+    const kick = () => {
       if (document.hidden) return;
       const p = el.play();
-      // пошло — слушатели больше не нужны; отказ глотаем, ждём жеста
-      if (p && p.then) p.then(disarm, () => {});
-    }
-    // видео встало не по нашей воле (заблокированный autoplay, сворачивание приложения,
-    // входящий звонок) — снова ждём жеста, иначе панда замрёт до конца сессии
-    const onPause = () => arm();
-    el.addEventListener('pause', onPause);
-    kick();
-    arm();
-    document.addEventListener('visibilitychange', kick);
-    return () => {
-      disarm();
-      el.removeEventListener('pause', onPause);
-      document.removeEventListener('visibilitychange', kick);
+      if (p && p.catch) p.catch(() => {});
     };
+    kick();
+    document.addEventListener('visibilitychange', kick);
+    return () => document.removeEventListener('visibilitychange', kick);
   }, [still]);
 
   if (still) {
@@ -82,7 +52,8 @@ export function HeroVideoArt({ size = 144, style }) {
     });
   }
   return unstable_createElement('video', {
-    ref: attach,
+    ref,
+    src: srcUri(VIDEO),
     poster: srcUri(POSTER),
     autoPlay: true,
     muted: true,
