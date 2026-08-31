@@ -111,7 +111,7 @@ export function TodayScreen({ ctx }) {
               <Text
                 accessibilityRole="header"
                 nativeID="today-greeting"
-                style={{ textAlign: 'center', fontFamily: FONT.display, fontWeight: '800', fontSize: blessSize, lineHeight: Math.round(blessSize * 1.16), color: C.title, textShadowColor: 'rgba(0,0,0,0.55)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 0 }}
+                style={{ textAlign: 'left', fontFamily: FONT.display, fontWeight: '800', fontSize: blessSize, lineHeight: Math.round(blessSize * 1.16), color: C.title, textShadowColor: 'rgba(0,0,0,0.55)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 0 }}
               >
                 {dailyBlessing()}
               </Text>
